@@ -1,5 +1,7 @@
 
 
+
+
 import wpilib
 import time
 
@@ -8,16 +10,18 @@ class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
         import config
-        self.sp = config.sp
+      
         self.hid_sp = config.hid_sp
         self.ds = config.ds
+        self.cv2 = config.cv2
 
 
     def disabled(self):
         while self.isDisabled():
             tinit = time.time()
-            self.sp.poll()
+           
             self.safeSleep(tinit, .04)
+            print(self.cv2.__version__)
     
     def autonomous(self):
         # define auto here
@@ -26,7 +30,7 @@ class MyRobot(wpilib.SampleRobot):
     def operatorControl(self):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
-            self.sp.poll()
+           
             self.hid_sp.poll()
             self.safeSleep(tinit, .04)
             
