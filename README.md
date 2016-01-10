@@ -4,8 +4,6 @@ Robot code for GRT 192 for the 2016 FRC Season (Stronghold).
 
 Written using GRTPyFramework, a library for event-based robotics programming in Python.
 
-GRTFramework for Python, for event-based robotics programming.
-
 Introduction:
 =============
 
