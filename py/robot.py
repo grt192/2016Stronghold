@@ -1,10 +1,22 @@
-
+#execfile("../camscript.py")
+with open("grt/vision/camscript_new.py") as f:
+    code = compile(f.read(), "grt/vision/camscript_new.py", 'exec')
+    exec(code)
 
 
 
 import wpilib
 import time
-
+import threading
+#camera = wpilib.USBCamera()
+#camera.startCapture()
+#camera.setExposureAuto() #-1 old
+#camera.setBrightness(20)
+#camera.stopCapture()
+#camera.setSize(camera.width / 2, camera.height / 2)
+#camera.setFPS(15)
+#cameraServer = wpilib.CameraServer()
+#cameraServer.startAutomaticCapture(camera)
 
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
@@ -13,7 +25,13 @@ class MyRobot(wpilib.SampleRobot):
       
         self.hid_sp = config.hid_sp
         self.ds = config.ds
-        self.cv2 = config.cv2
+        self.vision = config.vision
+        self.vision_thread = threading.Thread(target=self.vision.vision_main)
+        self.vision_thread.start()
+        #self.vision = config.vision
+        #self.vision_thread = threading.Thread(target=self.vision.vision_main)
+        #self.vision_thread.start()
+        #self.cv2 = config.cv2
 
 
     def disabled(self):
@@ -21,7 +39,7 @@ class MyRobot(wpilib.SampleRobot):
             tinit = time.time()
            
             self.safeSleep(tinit, .04)
-            print(self.cv2.__version__)
+            #print(self.cv2.__version__)
     
     def autonomous(self):
         # define auto here

@@ -16,12 +16,15 @@ class ArcadeDriveController:
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
-        self.engage()
+        self.l_joystick.add_listener(self._joylistener)
+        if self.r_joystick:
+            self.r_joystick.add_listener(self._joylistener)
+        #self.engage()
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
             power = -self.l_joystick.y_axis
-            turnval = self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
+            turnval = self.r_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
             # get turn value from r_joystick if it exists, else get it from l_joystick
             self.dt.set_dt_output(power + turnval,
                                   power - turnval)
@@ -31,15 +34,16 @@ class ArcadeDriveController:
             else:
                 self.dt.downshift()
 
-    def engage(self):
-            self.l_joystick.add_listener(self._joylistener)
-            if self.r_joystick:
-                self.r_joystick.add_listener(self._joylistener)
+    #def _vision_listener(self, sensor, state_id, datum):
 
-    def disengage(self):
-            self.l_joystick.remove_listener(self._joylistener)
-            if self.r_joystick:
-                self.r_joystick.remove_listener(self._joylistener)
+
+    #def engage(self):
+            
+
+    #def disengage(self):
+    #        self.l_joystick.remove_listener(self._joylistener)
+    #        if self.r_joystick:
+    #            self.r_joystick.remove_listener(self._joylistener)
 
 class TankDriveController:
     """
