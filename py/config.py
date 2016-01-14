@@ -7,7 +7,7 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
-from grt.sensors.gyro import Gyro
+#from grt.sensors.gyro import Gyro
 from grt.core import SensorPoller
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
@@ -16,7 +16,11 @@ from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
 from grt.sensors.talon import Talon
 from grt.mechanism.mechcontroller import MechController
+from grt.mechanism import Flywheel
 
+
+flywheel_motor = CANTalon(8)
+flywheel = Flywheel(flywheel_motor)
 
 #DT Talons and Objects
 
@@ -47,7 +51,7 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 
 
 #Skeleton sensor poller
-gyro = Gyro(1)
+#gyro = Gyro(1)
 # define sensor poller
 # sp = SensorPoller()
 
@@ -63,7 +67,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface device
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController()
+mc = MechController(driver_stick, xbox_controller, flywheel)
 
 # define DriverStation
 ds = DriverStation.getInstance()
