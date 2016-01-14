@@ -16,7 +16,10 @@ from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
 from grt.sensors.talon import Talon
 from grt.mechanism.mechcontroller import MechController
-import cv2
+#from vision.robot_vision_dynamic import Vision
+
+#vision = Vision()
+#import cv2
 #
 
 #DT Talons and Objects
