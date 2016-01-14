@@ -16,6 +16,14 @@ from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
 from grt.sensors.talon import Talon
 from grt.mechanism.mechcontroller import MechController
+
+from grt.vision.robot_vision import Vision
+from grt.sensors.vision_sensor import VisionSensor
+from grt.mechanism.vision_mechanism import VisionMechanism
+
+vision_sensor = VisionSensor()
+vision = Vision(vision_sensor)
+vision_mechanism = VisionMechanism(vision_sensor)
 #from vision.robot_vision_dynamic import Vision
 
 #vision = Vision()
@@ -60,7 +68,7 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick)
-hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface devices
+hid_sp = SensorPoller((driver_stick, xbox_controller, vision_sensor))  # human interface devices
 
 
 

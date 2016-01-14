@@ -7,7 +7,7 @@ with open("grt/vision/camscript_new.py") as f:
 
 import wpilib
 import time
-#import threading
+import threading
 #camera = wpilib.USBCamera()
 #camera.startCapture()
 #camera.setExposureAuto() #-1 old
@@ -25,8 +25,11 @@ class MyRobot(wpilib.SampleRobot):
       
         self.hid_sp = config.hid_sp
         self.ds = config.ds
+        self.vision = config.vision
+        self.vision_thread = threading.Thread(target=self.vision.vision_main)
+        self.vision_thread.start()
         #self.vision = config.vision
-        #self.vision_thread = threading.Thread(target=self.vision.vision_main())
+        #self.vision_thread = threading.Thread(target=self.vision.vision_main)
         #self.vision_thread.start()
         #self.cv2 = config.cv2
 
