@@ -5,6 +5,10 @@ import time
 
 
 class MyRobot(wpilib.SampleRobot):
+
+    autonomousCommand = None
+    autoChooser = None
+    
     def __init__(self):
         super().__init__()
         import config
@@ -12,6 +16,12 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.ds = config.ds
 
+        self.autoChooser = SendableChooser()
+        self.autoChooser.addDefault("Basic Auto", BasicAuto)
+        self.autoChooser.addObject("One Bin Steal", OneBinSteal)
+        self.autoChooser.addObject("Two Bin Steal", TwoBinSteal)
+        self.autoChooser.addObject("Backup Bin Steal", BackupBinSteal)
+        self.SmartDashboard.putData("Autonomous mode chooser", self.autoChooser)
 
     def disabled(self):
         while self.isDisabled():
@@ -37,6 +47,12 @@ class MyRobot(wpilib.SampleRobot):
         if tdif <= 0:
             print("Code running slowly!")
 
+    def autonomousInit(self):
+        self.autonomousCommand = autoChooser.getSelected()
+        self.autonomousCommand.start()
+
+    def autonomousPeriodic(self):
+        Scheduler.getInstance().run()
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
