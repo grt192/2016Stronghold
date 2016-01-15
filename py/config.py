@@ -43,6 +43,10 @@ dt_l2.set(7)
 dt_l3.set(7)
 dt_l4.set(7)
 
+voltage_compensation_tester = CANTalon(12)
+voltage_compensation_tester.changeControlMode(CANTalon.ControlMode.Voltage)
+voltage_compensation_tester.set(10)
+
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 
 
