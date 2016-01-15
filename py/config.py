@@ -20,6 +20,7 @@ from grt.mechanism import Flywheel
 
 
 flywheel_motor = CANTalon(8)
+flywheel_motor.changeControlMode(CANTalon.ControlMode.Voltage)
 flywheel = Flywheel(flywheel_motor)
 
 #DT Talons and Objects
