@@ -72,3 +72,22 @@ ds = DriverStation.getInstance()
 
 
 
+# tests for CANTalon closeLoopRampRate
+test = CANTalon(5)
+testSensor = Talon(5)
+
+def talonListener(sensor, state_id, datum):
+        if sensor == testSensor and state_id == 'outputVoltage':
+        	print("outputVoltage: " + testSensor.outputVoltage)
+
+testSensor.add_listener(talonListener)
+
+test.changeControlMode(CANTalon.ControlMode.Speed)
+test.set(1)
+
+test.changeControlMode(CANTalon.ControlMode.Voltage)
+test.setCloseLoopRampRate(1)
+test.set(1)
+print("original voltage: " + test.outputVoltage)
+
+test.set(12)
