@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import time, math
+#import platform
 #from wpilib.usbcamera import USBCamera
 #import wpilib
 
@@ -20,7 +21,9 @@ class Vision:
 	GREEN_LOWER_HSV = np.array([75, 100, 100], 'uint8')
 	GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
 	cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
-	drawing = False
+	drawing = True
+	#if os.platform == "darwin":
+	#	drawing = True
 	should_abort = False
 
 	#Gimp: H = 0-360, S = 0-100, V = 0-100
@@ -198,6 +201,7 @@ class Vision:
 			
 		
 		#cv2.imshow("Original", self.img)
+		#cv2.imwrite("test_img.bmp", self.img)
 		#cv2.waitKey(25)
 		time.sleep(.025)
 		#cv2.destroyAllWindows()

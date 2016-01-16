@@ -23,7 +23,6 @@ from grt.mechanism.vision_mechanism import VisionMechanism
 
 vision_sensor = VisionSensor()
 vision = Vision(vision_sensor)
-vision_mechanism = VisionMechanism(vision_sensor)
 #from vision.robot_vision_dynamic import Vision
 
 #vision = Vision()
@@ -56,6 +55,7 @@ dt_l3.set(7)
 dt_l4.set(7)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
+vision_mechanism = VisionMechanism(vision_sensor, dt_left, dt_right)
 
 
 #Skeleton sensor poller
@@ -75,7 +75,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, vision_sensor))  # human i
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller)
+mc = MechController(driver_stick, xbox_controller, vision_mechanism)
 
 # define DriverStation
 ds = DriverStation.getInstance()
