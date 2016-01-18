@@ -63,7 +63,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface device
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController()
+mc = MechController(driver_stick, xbox_controller)
 
 # define DriverStation
 ds = DriverStation.getInstance()
