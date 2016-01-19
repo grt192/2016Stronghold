@@ -14,10 +14,14 @@ class TurnTable:
         def __init__(self, vision_mechanism):
             super().__init__()
             self.vision_mechanism = vision_mechanism
-            self.setPIDSourceType(wpilib.PIDsource.PIDSourceType.kDisplacement)
+            #self.setPIDSourceType(wpilib.interfaces.PIDSource.PIDSourceType.kDisplacement)
 
         def pidGet(self):
-            return self.vision_mechanism.vision_sensor.rotation_error
+            print("Inputing", self.vision_mechanism.vision_sensor.rotational_error)
+            return self.vision_mechanism.vision_sensor.rotational_error
+
+        def getPIDSourceType(self):
+            return wpilib.interfaces.PIDSource.PIDSourceType.kDisplacement
 
 
     class PIDVisionOutput(wpilib.interfaces.PIDOutput):
@@ -29,6 +33,7 @@ class TurnTable:
             # self.vision_macro.set_output
             # self.turn_macro.dt.set_dt_output(output, -output)
             # self.turntable.turn(output)
+            print("Outputing ", output)
             self.turntable.dt_turn(output)
 
     def __init__(self, motor: wpilib.CANTalon, vision_mechanism, dt=None):
@@ -40,6 +45,9 @@ class TurnTable:
                                                       # the PID output.
 
         self.PID_controller = wpilib.PIDController(1, 0, 0, self.PID_source, self.PID_output)
+        self.PID_controller.setOutputRange(-1, 1)
+        self.PID_controller.setAbsoluteTolerance(50)
+        self.PID_controller.setSetpoint(0)
 
     def turn(self, output):
         enc_pos = self.motor.getEncPosition()
@@ -58,5 +66,6 @@ class TurnTable:
         self.motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
 
     def disable(self):
-        self.motor.disable()
-        self.motor.disableControl()
+        pass
+        #self.motor.disable()
+        #self.motor.disableControl()

@@ -11,10 +11,10 @@ class VisionMechanism:
 
     def _vision_listener(self, sensor, state_id, datum):
         # print("Listener running")
-        print(state_id)
+        #print(state_id)
         if self.vision_enabled:
             self.turntable.PID_controller.enable()
-            if state_id == "rotation_error":
+            if state_id == "rotational_error":
                 if datum:
                     print("Rotation error: ", datum)
                     # PID Controller magic
