@@ -28,11 +28,13 @@ class TurnTable:
         def pidWrite(self, output):
             # self.vision_macro.set_output
             # self.turn_macro.dt.set_dt_output(output, -output)
-            self.turntable.turn(output)
+            # self.turntable.turn(output)
+            self.turntable.dt_turn(output)
 
-    def __init__(self, motor: wpilib.CANTalon, vision_mechanism):
+    def __init__(self, motor: wpilib.CANTalon, vision_mechanism, dt=None):
         self.motor = motor
         self.vision_mechanism = vision_mechanism
+        self.dt = dt
         self.PID_source = self.PIDVisionSource(vision_mechanism)
         self.PID_output = self.PIDVisionOutput(self)  # It is intentional that the turntable passes itself to
                                                       # the PID output.
@@ -45,6 +47,10 @@ class TurnTable:
             self.motor.set(output)
         else:
             self.motor.set(0)
+
+    def dt_turn(self, output):
+        if self.dt:
+            self.dt.set_dt_output(output, -output)
 
     def turn_to(self, target):
         self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
