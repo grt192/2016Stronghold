@@ -14,12 +14,12 @@ from grt.mechanism.drivecontroller import ArcadeDriveController
 from grt.mechanism.motorset import Motorset
 from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
-from grt.sensors.talon import Talon
+#from grt.sensors.talon import Talon
 from grt.mechanism.mechcontroller import MechController
 
 from grt.vision.robot_vision import Vision
-from grt.sensors.vision_sensor import VisionSensor
-from grt.mechanism.vision_mechanism import VisionMechanism
+#from grt.sensors.vision_sensor import VisionSensor
+from grt.mechanism.shooter import Shooter
 
 
 #from vision.robot_vision_dynamic import Vision
@@ -30,37 +30,27 @@ from grt.mechanism.vision_mechanism import VisionMechanism
 
 #DT Talons and Objects
 
-dt_right = CANTalon(3)
-dt_r2 = CANTalon(4)
-# dt_r3 = CANTalon(3)
-# dt_r4 = CANTalon(4)
+dt_right = CANTalon(1)
+dt_r2 = CANTalon(2)
+dt_left = CANTalon(3)
+dt_l2 = CANTalon(4)
 
-dt_left = CANTalon(1)
-dt_l2 = CANTalon(2)
-# dt_l3 = CANTalon(9)
-# dt_l4 = CANTalon(10)
 
 dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_r4.changeControlMode(CANTalon.ControlMode.Follower)
 dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_l4.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(3)
-# dt_r3.set(1)
-# dt_r4.set(1)
-dt_l2.set(1)
-# dt_l3.set(7)
-# dt_l4.set(7)
+dt_r2.set(1)
+dt_l2.set(3)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
-vision_mechanism = VisionMechanism(vision_sensor, dt_left, dt_right)
 
-turntable_motor = CANTalon(5)
+flywheel_motor = CANTalon(5)
+turntable_motor = CANTalon(6)
+hood_motor = CANTalon(7)
+rails_actuator = Solenoid(2)
 
-vision_sensor = VisionSensor()
-vision = Vision(vision_sensor)
-vision_mechanism = VisionMechanism(vision_sensor, turntable_motor, dt)
+robot_vision = Vision()
+
+shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, rails_actuator, dt)
 
 
 
@@ -76,14 +66,14 @@ vision_mechanism = VisionMechanism(vision_sensor, turntable_motor, dt)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick)
-hid_sp = SensorPoller((driver_stick, xbox_controller, vision_sensor))  # human interface devices
+hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor))  # human interface devices
 
 
 
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, vision_mechanism)
+mc = MechController(driver_stick, xbox_controller, shooter)
 
 # define DriverStation
 ds = DriverStation.getInstance()

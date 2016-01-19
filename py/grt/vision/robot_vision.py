@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import time, math
+import time, math, threading
 
 class Vision:
     GREEN_LOWER = np.array([0, 100, 0], 'uint8')
@@ -13,6 +13,7 @@ class Vision:
     cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
     drawing = False
     should_abort = False
+    status_print = True
 
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
@@ -25,8 +26,10 @@ class Vision:
                 self.vision_close()
                 break
 
-    def __init__(self, vision_sensor):
-        self.vision_sensor = vision_sensor
+    def __init__(self):
+        self.vision_thread = threading.Thread(target=self.vision_main)
+        self.vision_thread.start()
+        #self.vision_sensor = vision_sensor
 
     # Different depending on camera?
     def vision_init(self):
@@ -74,6 +77,9 @@ class Vision:
                 if area > area_max:
                     area_max = area
                     self.target_polygon = poly
+        if self.status_print:
+            pass
+            #print("Area: ", area_max)
                 # print(self.target_polygon)
                 # print(self.target_polygon.shape)
 
@@ -84,12 +90,12 @@ class Vision:
 
         # if abs(self.x_target - x_cm) < self.allowed_error:
         # print("Locked on target!")
-        #	print("Distance: ", distance)
+        #   print("Distance: ", distance)
         # elif x_target > x_cm:
         # Rotate left
-        #	print("Rotate left")
+        #   print("Rotate left")
         # elif x_target < x_cm:
-        #	print("Rotate right")
+        #   print("Rotate right")
 
 
 
@@ -121,8 +127,8 @@ class Vision:
             # print("K: ", k)
             # if j > 4 or k > 4:
             # The octagon is not formed properly --> abort
-            #	self.vector_mat = self.x_mat = self.y_mat = None
-            #	break
+            #   self.vector_mat = self.x_mat = self.y_mat = None
+            #   break
 
             if vector[1] > vector[0]:
                 if j == 4:
@@ -150,6 +156,19 @@ class Vision:
         # distance = -98.48 * math.log(avg_height) + 572.82
         self.distance = 275.56 * (math.e ** (-.008 * self.avg_height))
 
+    def get_shooter_values(self):
+        #GET ACTUAL DATA
+        self.target_speed = self.distance
+        self.target_angle = 45
+
+    def print_all_values(self):
+        if self.status_print:
+            print("Rotational Error: ", self.rotational_error)
+            #print("Average Height: ", self.avg_height)
+            #print("Distance: ", self.distance)
+            #print("Target Speed: ", self.target_speed)
+            #print("Target Angle: ", self.target_angle)
+
     def vision_loop(self):
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
         self.get_contours()
@@ -170,19 +189,22 @@ class Vision:
                 # That octagon meets the U-shape requirements
                 self.get_rotational_error()
                 # print("Rotational error: ", self.rotational_error)
-                self.vision_sensor.rotational_error = self.rotational_error
+                #############################################################self.vision_sensor.rotational_error = self.rotational_error
                 if self.drawing:
                     self.draw_initial_parameters()
 
-                if abs(self.rotational_error) < self.allowed_error:
-                    # Rotation has checked out, continue to height calculation
-                    # moments = cv2.moments(target_polygon)
-                    self.get_avg_height()
-                    # print(self.avg_height)
-                    self.vision_sensor.avg_height = self.avg_height
-                    self.get_distance()
-                    # print(self.distance)
-                    self.vision_sensor.distance = self.distance
+                #if abs(self.rotational_error) < self.allowed_error:
+                # Rotation has checked out, continue to height calculation
+                # moments = cv2.moments(target_polygon)
+                self.get_avg_height()
+                # print(self.avg_height)
+                #########################################self.vision_sensor.avg_height = self.avg_height
+                self.get_distance()
+
+                self.get_shooter_values()
+                self.print_all_values()
+                # print(self.distance)
+                ##########################################self.vision_sensor.distance = self.distance
 
                 # self.rotational_error = self.avg_height
 

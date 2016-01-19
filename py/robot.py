@@ -25,9 +25,8 @@ class MyRobot(wpilib.SampleRobot):
       
         self.hid_sp = config.hid_sp
         self.ds = config.ds
-        self.vision = config.vision
-        self.vision_thread = threading.Thread(target=self.vision.vision_main)
-        self.vision_thread.start()
+        #self.vision = config.vision
+        
         #self.vision = config.vision
         #self.vision_thread = threading.Thread(target=self.vision.vision_main)
         #self.vision_thread.start()
