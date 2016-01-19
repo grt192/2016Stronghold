@@ -21,9 +21,6 @@ from grt.vision.robot_vision import Vision
 from grt.sensors.vision_sensor import VisionSensor
 from grt.mechanism.vision_mechanism import VisionMechanism
 
-vision_sensor = VisionSensor()
-vision = Vision(vision_sensor)
-vision_mechanism = VisionMechanism(vision_sensor)
 #from vision.robot_vision_dynamic import Vision
 
 #vision = Vision()
@@ -32,30 +29,39 @@ vision_mechanism = VisionMechanism(vision_sensor)
 
 #DT Talons and Objects
 
-dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
-dt_r4 = CANTalon(4)
+dt_right = CANTalon(3)
+dt_r2 = CANTalon(4)
+# dt_r3 = CANTalon(3)
+# dt_r4 = CANTalon(4)
 
-dt_left = CANTalon(7)
-dt_l2 = CANTalon(8)
-dt_l3 = CANTalon(9)
-dt_l4 = CANTalon(10)
+dt_left = CANTalon(1)
+dt_l2 = CANTalon(2)
+# dt_l3 = CANTalon(9)
+# dt_l4 = CANTalon(10)
 
 dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r4.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_r4.changeControlMode(CANTalon.ControlMode.Follower)
 dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l4.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(1)
-dt_r3.set(1)
-dt_r4.set(1)
-dt_l2.set(7)
-dt_l3.set(7)
-dt_l4.set(7)
+# dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_l4.changeControlMode(CANTalon.ControlMode.Follower)
+dt_r2.set(3)
+# dt_r3.set(1)
+# dt_r4.set(1)
+dt_l2.set(1)
+# dt_l3.set(7)
+# dt_l4.set(7)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
+
+turntable_motor = CANTalon(5)
+
+vision_sensor = VisionSensor()
+vision = Vision(vision_sensor)
+vision_mechanism = VisionMechanism(vision_sensor, turntable_motor, dt)
+
+
+
 
 
 #Skeleton sensor poller
