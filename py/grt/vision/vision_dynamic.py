@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import time, math
+import wpilib
 
 src = np.array([[322, 388], [357, 728], [711, 396], [762, 708]], np.float32)
 dst = np.array([[322, 388], [322, 728], [711, 388], [711, 728]], np.float32)
@@ -8,6 +9,26 @@ dst = np.array([[322, 388], [322, 728], [711, 388], [711, 728]], np.float32)
 
 transform = cv2.getPerspectiveTransform(src, dst)
 print(transform)
+
+
+
+class PIDTurnSource(wpilib.PIDSource):
+    """
+    PIDSource for turning; uses gyro angle as feedback.
+    """
+    def __init__(self, turn_macro):
+        super().__init__()
+        self.turn_macro = turn_macro
+    def PIDGet(self):
+        return self.turn_macro.gyro.g.GetAngle()
+
+class PIDTurnOutput(wpilib.PIDOutput):
+    def __init__(self, turn_macro):
+        super().__init__()
+        self.turn_macro = turn_macro
+    def PIDWrite(self, output):
+        self.turn_macro.dt.set_dt_output(output, -output)
+
 
 
 GREEN_LOWER = np.array([0, 100, 0], 'uint8')
