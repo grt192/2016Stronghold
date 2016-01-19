@@ -39,10 +39,18 @@ class TurnTable:
 
         self.PID_controller = wpilib.PIDController(1, 0, 0, self.PID_source, self.PID_output)
 
-
     def turn(self, output):
         enc_pos = self.motor.getEncPosition()
         if enc_pos > ENC_MIN and enc_pos < ENC_MAX:
             self.motor.set(output)
         else:
             self.motor.set(0)
+
+    def turn_to(self, target):
+        self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
+        self.motor.setP(1)
+        self.motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
+
+    def disable(self):
+        self.motor.disable()
+        self.motor.disableControl()
