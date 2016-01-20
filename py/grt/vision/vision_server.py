@@ -1,34 +1,39 @@
-
 from flask import Flask, render_template, Response
-import threading
+import threading, time
+import numpy as np
+import platform
+if "Linux" in platform.platform():
+    host_ip = 'roborio-192-frc.local'
+else:
+    host_ip = '0.0.0.0'
 app = Flask(__name__)
 
-class VisionServer:
-	def __init__(self, robot_vision):
-		self.robot_vision = robot_vision
-		self.server_thread = threading.Thread(target=self.start_server)
-		self.server_thread.start()
+@app.route('/')
+def index():
+    """Video streaming home page."""
+    return render_template('index.html')
+
+#@staticmethod
+def gen(camera):
+    """Video streaming generator function."""
+    while True:
+        frame = camera.getFrame()[1]
+        #print(frame)
+        time.sleep(1)
+        to_print = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + np.ndarray.tostring(frame) + b'\r\n'
+        #print(to_print)
+        yield (to_print)
 
 
-	@app.route('/')
-	def index(self):
-	    """Video streaming home page."""
-	    return render_template('index.html')
+def prepare_module(robot_vision):
+    def start_server():
+        app.run(host=host_ip, debug=False, threaded=True)
 
-	#@staticmethod
-	def gen(self):
-	    """Video streaming generator function."""
-	    while True:
-	        frame = self.robot_vision.getFrame()
-	        time.sleep(.05)
-	        yield (b'--frame\r\n'
-	               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    @app.route('/video_feed')
+    def video_feed():
+        """Video streaming route. Put this in the src attribute of an img tag."""
+        return Response(gen(robot_vision),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
 
-	def start_server(self):
-	    app.run(host='0.0.0.0', debug=False, threaded=True)
-
-	@app.route('/video_feed')
-	def video_feed(self):
-	    """Video streaming route. Put this in the src attribute of an img tag."""
-	    return Response(self.gen(),
-	                    mimetype='multipart/x-mixed-replace; boundary=frame')
+    server_thread = threading.Thread(target=start_server)
+    server_thread.start()

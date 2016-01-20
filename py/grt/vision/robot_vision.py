@@ -98,7 +98,8 @@ class Vision:
     def print_all_values(self):
         if self.status_print:
             print("Target View: ", self.target_view)
-            print("Vertical Error: ", self.vertical_error)
+            #print("Vertical Error: ", self.vertical_error)
+            print("Rotational Error: ", self.rotational_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Average Height: ", self.avg_height)
             #print("Distance: ", self.distance)
@@ -106,7 +107,7 @@ class Vision:
             #print("Target Angle: ", self.target_angle)
     def getFrame(self):
         img_jpg = cv2.imencode(".jpg", self.img)
-        #print("Returning frame")
+        print("Returning frame")
         return img_jpg
 
     def getTargetView(self):
@@ -123,7 +124,7 @@ class Vision:
         with self.vision_lock:
             return self.vertical_error * 1 #Fancy coversion equation here
 
-  
+
 
     def vision_loop(self):
         #At the beginning of the loop, self.target_view is set to false

@@ -10,6 +10,7 @@ if "Linux" in platform.platform():
 import wpilib
 import time
 import threading
+from wpilib import Preferences
 #camera = wpilib.USBCamera()
 #camera.startCapture()
 #camera.setExposureAuto() #-1 old
@@ -27,6 +28,8 @@ class MyRobot(wpilib.SampleRobot):
       
         self.hid_sp = config.hid_sp
         self.ds = config.ds
+        #self.prefs = Preferences.getInstance()
+        #self.auto_sel = self.prefs.put("AutoSelector", 2)
         #self.vision = config.vision
         
         #self.vision = config.vision
