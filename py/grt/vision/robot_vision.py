@@ -11,7 +11,7 @@ class Vision:
     GREEN_LOWER_HSV = np.array([75, 100, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
     cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
-    drawing = False
+    drawing = True
     should_abort = False
     status_print = True
 
@@ -60,7 +60,7 @@ class Vision:
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
         # cv2.imshow("HSV", hsv)
         thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
-        # cv2.imwrite("thresh5.bmp", thresh)
+        #cv2.imwrite("/home/lvuser/py/thresh.bmp", thresh)
         # cv2.imshow("Thresh", thresh)
 
         im2, self.contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -71,10 +71,10 @@ class Vision:
         for c in self.contours:
             # print(c)
             poly = cv2.approxPolyDP(c, .008 * cv2.arcLength(c, True), True)
-            if poly.shape[0] == 8:
+            if poly.shape[0] >= 6 and poly.shape[0] <= 8:
                 # Shape is an octagon
                 area = cv2.contourArea(poly)
-                if area > area_max and area > 500:
+                if area > area_max and area > 0:
                     area_max = area
                     self.target_polygon = poly
         if self.status_print:
@@ -112,39 +112,44 @@ class Vision:
 
         # Form vectors from one point to the next (easier option?)
         i = j = k = 0
-        for vector in self.vector_mat:
-            if i < 7:
-                vector[0] = abs(self.target_polygon_opened[i, 0] - self.target_polygon_opened[i + 1, 0])
-                vector[1] = abs(self.target_polygon_opened[i, 1] - self.target_polygon_opened[i + 1, 1])
+        try:
+            for vector in self.vector_mat:
+                if i < 7:
+                    vector[0] = abs(self.target_polygon_opened[i, 0] - self.target_polygon_opened[i + 1, 0])
+                    vector[1] = abs(self.target_polygon_opened[i, 1] - self.target_polygon_opened[i + 1, 1])
 
-            if i == 7:
-                vector[0] = abs(self.target_polygon_opened[i, 0] - self.target_polygon_opened[0, 0])
-                vector[1] = abs(self.target_polygon_opened[i, 1] - self.target_polygon_opened[0, 1])
-            i += 1
+                if i == 7:
+                    vector[0] = abs(self.target_polygon_opened[i, 0] - self.target_polygon_opened[0, 0])
+                    vector[1] = abs(self.target_polygon_opened[i, 1] - self.target_polygon_opened[0, 1])
+                i += 1
 
-            vector[2] = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
-            # print("J: ", j)
-            # print("K: ", k)
-            # if j > 4 or k > 4:
-            # The octagon is not formed properly --> abort
-            #   self.vector_mat = self.x_mat = self.y_mat = None
-            #   break
+                vector[2] = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+                # print("J: ", j)
+                # print("K: ", k)
+                # if j > 4 or k > 4:
+                # The octagon is not formed properly --> abort
+                #   self.vector_mat = self.x_mat = self.y_mat = None
+                #   break
 
-            if vector[1] > vector[0]:
-                if j == 4:
-                    # The octagon is not formed properly --> abort
-                    self.should_abort = True
-                    break
-                self.y_mat[j] = vector
-                j += 1
-            else:
-                if k == 4:
-                    # The octagon is not formed properly --> abort
-                    self.should_abort = True
-                    break
-                self.x_mat[k] = vector
-                k += 1
-        self.should_abort = False
+                if vector[1] > vector[0]:
+                    if j == 4:
+                        # The octagon is not formed properly --> abort
+                        self.should_abort = True
+                        break
+                    self.y_mat[j] = vector
+                    j += 1
+                else:
+                    if k == 4:
+                        # The octagon is not formed properly --> abort
+                        self.should_abort = True
+                        break
+                    self.x_mat[k] = vector
+                    k += 1
+        except IndexError:
+            pass
+            #self.should_abort = True
+        finally:
+            self.should_abort = False
 
     def get_avg_height(self):
         self.avg_height = np.mean(self.y_mat[:, 2])
@@ -185,11 +190,11 @@ class Vision:
             # An octagon is visible
 
             self.get_polygon_matrix()
+            self.get_rotational_error()
             if not self.should_abort:
                 if self.drawing:
                     cv2.drawContours(self.img, [self.target_polygon], -1, (255, 0, 0), 2)
                 # That octagon meets the U-shape requirements
-                self.get_rotational_error()
                 # print("Rotational error: ", self.rotational_error)
                 #############################################################self.vision_sensor.rotational_error = self.rotational_error
                 if self.drawing:
@@ -205,6 +210,7 @@ class Vision:
 
                 self.get_shooter_values()
                 self.print_all_values()
+                #cv2.imwrite("/home/lvuser/img.bmp", self.img)
                 # print(self.distance)
                 ##########################################self.vision_sensor.distance = self.distance
 
