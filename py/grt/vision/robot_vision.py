@@ -74,12 +74,12 @@ class Vision:
             if poly.shape[0] == 8:
                 # Shape is an octagon
                 area = cv2.contourArea(poly)
-                if area > area_max:
+                if area > area_max and area > 500:
                     area_max = area
                     self.target_polygon = poly
         if self.status_print:
-            pass
-            #print("Area: ", area_max)
+            #pass
+            print("Area: ", area_max)
                 # print(self.target_polygon)
                 # print(self.target_polygon.shape)
 
@@ -168,6 +168,8 @@ class Vision:
             #print("Distance: ", self.distance)
             #print("Target Speed: ", self.target_speed)
             #print("Target Angle: ", self.target_angle)
+    def get_frame(self):
+        return self.img
 
     def vision_loop(self):
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))

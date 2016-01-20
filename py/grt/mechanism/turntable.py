@@ -18,10 +18,11 @@ class TurnTable:
         self.PID_output = self.PIDVisionOutput(self)  # It is intentional that the turntable passes itself to
                                                       # the PID output.
 
-        self.PID_controller = wpilib.PIDController(.01, 0, 0, self.get_input, self.set_output)
-        #self.PID_controller.setOutputRange(-1, 1)
-        #self.PID_controller.setInputRange(-300, 300)
+        self.PID_controller = wpilib.PIDController(.08, 0, 0, self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(100)
+        self.PID_controller.reset()
+        self.PID_controller.setOutputRange(-.2, .2)
+        #self.PID_controller.setInputRange(-300, 300)
         #Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(0)
 
@@ -41,7 +42,10 @@ class TurnTable:
 
     def dt_turn(self, output):
         if self.dt:
-            self.dt.set_dt_output(output, -output)
+            if not self.PID_controller.onTarget():
+                self.dt.set_dt_output(-output, -output)
+            else:
+                self.dt.set_dt_output(0, 0)
 
     def turn_to(self, target):
         self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)

@@ -1,7 +1,9 @@
 #execfile("../camscript.py")
-with open("grt/vision/camscript_new.py") as f:
-    code = compile(f.read(), "grt/vision/camscript_new.py", 'exec')
-    exec(code)
+import platform
+if "Linux" in platform.platform():
+    with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
+        code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
+        exec(code)
 
 
 
