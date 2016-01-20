@@ -19,6 +19,8 @@ class Vision:
 
     MIN_AREA = 100
 
+    DEFAULT_ERROR = 1000
+
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
     def vision_main(self):
@@ -32,7 +34,7 @@ class Vision:
 
     def __init__(self):
         self.target_view = False
-        self.rotational_error = self.vertical_error = 0
+        self.rotational_error = self.vertical_error = self.DEFAULT_ERROR
         self.vision_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
@@ -96,6 +98,7 @@ class Vision:
     def print_all_values(self):
         if self.status_print:
             print("Target View: ", self.target_view)
+            print("Vertical Error: ", self.vertical_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Average Height: ", self.avg_height)
             #print("Distance: ", self.distance)

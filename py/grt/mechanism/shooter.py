@@ -62,7 +62,7 @@ class Shooter:
         if state_id == "rotation_ready":
             if datum:
                 self.target_locked_rotation = True
-                self.turntable.PID_controller.disable()
+                #self.turntable.PID_controller.disable()
                 self.hood.go_to_target_angle()
                 self.flywheel.spin_to_target_speed()
             else:
