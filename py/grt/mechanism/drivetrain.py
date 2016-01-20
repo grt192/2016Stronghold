@@ -22,6 +22,8 @@ class DriveTrain:
         self.right_shifter = right_shifter
         self.left_encoder = left_encoder
         self.right_encoder = right_encoder
+        self.dt_left = self.left_motor
+        self.dt_right = self.right_motor
 
     def set_dt_output(self, left_output, right_output):
         """

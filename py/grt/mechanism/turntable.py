@@ -18,13 +18,15 @@ class TurnTable:
         self.PID_output = self.PIDVisionOutput(self)  # It is intentional that the turntable passes itself to
                                                       # the PID output.
 
-        self.PID_controller = wpilib.PIDController(.08, 0, 0, self.get_input, self.set_output)
-        self.PID_controller.setAbsoluteTolerance(20)
+        self.PID_controller = wpilib.PIDController(.01, 0, 0, self.get_input, self.set_output)
+        self.PID_controller.setAbsoluteTolerance(50)
         self.PID_controller.reset()
         self.PID_controller.setOutputRange(-.25, .25)
         #self.PID_controller.setInputRange(-300, 300)
         #Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(0)
+
+        
 
     def get_input(self):
         #print("Inputing", self.robot_vision.rotational_error)

@@ -18,6 +18,7 @@ from grt.sensors.encoder import Encoder
 from grt.mechanism.mechcontroller import MechController
 
 from grt.vision.robot_vision import Vision
+from grt.sensors.vision_sensor import VisionSensor
 #from grt.sensors.vision_sensor import VisionSensor
 from grt.mechanism.shooter import Shooter
 
@@ -48,7 +49,8 @@ turntable_motor = CANTalon(6)
 hood_motor = CANTalon(7)
 rails_actuator = Solenoid(2)
 
-robot_vision = Vision()
+vision_sensor = VisionSensor()
+robot_vision = Vision(vision_sensor)
 
 shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, rails_actuator, dt)
 
@@ -66,7 +68,7 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, rai
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick)
-hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor))  # human interface devices
+hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, vision_sensor))  # human interface devices
 
 
 

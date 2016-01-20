@@ -8,12 +8,13 @@ class Vision:
     # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
     # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
 
-    GREEN_LOWER_HSV = np.array([75, 100, 100], 'uint8')
+    GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
     cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
     drawing = True
     should_abort = False
     status_print = True
+    area_max = 0
 
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
@@ -26,7 +27,8 @@ class Vision:
                 self.vision_close()
                 break
 
-    def __init__(self):
+    def __init__(self, vision_sensor):
+        self.vision_sensor = vision_sensor
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
@@ -59,19 +61,19 @@ class Vision:
 
     def get_octagon(self):
         self.target_polygon = None  # Changed to get rid of the target polygon each cycle
-        area_max = area = 0
+        self.area_max = area = 0
         for c in self.contours:
             # print(c)
-            poly = cv2.approxPolyDP(c, .008 * cv2.arcLength(c, True), True)
-            if poly.shape[0] >= 6 and poly.shape[0] <= 8:
+            poly = cv2.approxPolyDP(c, .015 * cv2.arcLength(c, True), True)
+            if poly.shape[0] >= 6 and poly.shape[0] <= 11:
                 # Shape is an octagon
                 area = cv2.contourArea(poly)
-                if area > area_max and area > 0:
-                    area_max = area
+                if area > self.area_max and area > 100:
+                    self.area_max = area
                     self.target_polygon = poly
         if self.status_print:
             #pass
-            print("Area: ", area_max)
+            print("Area: ", self.area_max)
 
 
     def get_rotational_error(self):
@@ -159,6 +161,10 @@ class Vision:
 
             self.get_polygon_matrix()
             self.get_rotational_error()
+            if self.area_max > 300:
+                self.vision_sensor.rotational_error = self.rotational_error
+            else:
+                self.vision_sensor.rotational_error = False
             if not self.should_abort:
                 if self.drawing:
                     cv2.drawContours(self.img, [self.target_polygon], -1, (255, 0, 0), 2)
@@ -171,7 +177,7 @@ class Vision:
                 self.get_distance()
 
                 self.get_shooter_values()
-                self.print_all_values()
+        self.print_all_values()
                
         time.sleep(.025)
         
