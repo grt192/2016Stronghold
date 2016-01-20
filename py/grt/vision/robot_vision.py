@@ -123,6 +123,8 @@ class Vision:
         with self.vision_lock:
             return self.vertical_error * 1 #Fancy coversion equation here
 
+  
+
     def vision_loop(self):
         #At the beginning of the loop, self.target_view is set to false
         #If something useful is found, self.target_view is set to true

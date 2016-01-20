@@ -32,7 +32,11 @@ class TurnTable:
             return self.rotation_ready
 
     def get_input(self):
+        #Make sure this checks getTargetView(), as well
         return self.robot_vision.getRotationalError()
+
+    def no_view_timeout(self):
+        pass
         
     def set_output(self, output):
         
