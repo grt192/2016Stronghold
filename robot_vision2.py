@@ -8,7 +8,7 @@ class Vision:
     # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
     # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
 
-    GREEN_LOWER_HSV = np.array([75, 100, 100], 'uint8')
+    GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
     cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
     drawing = True
@@ -27,8 +27,9 @@ class Vision:
                 break
 
     def __init__(self):
-        self.vision_thread = threading.Thread(target=self.vision_main)
-        self.vision_thread.start()
+        pass
+        #self.vision_thread = threading.Thread(target=self.vision_main)
+        #self.vision_thread.start()
 
     def vision_init(self):
         self.cap = cv2.VideoCapture(0)
@@ -50,20 +51,22 @@ class Vision:
         cv2.destroyAllWindows()
 
     def get_contours(self):
-        _, self.img = self.cap.read()
+        #_, self.img = self.cap.read()
+        self.img = cv2.imread("img.bmp")
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
-        thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
+        self.thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
+        cv2.imshow("Thresh", self.thresh)
         #cv2.imwrite("/home/lvuser/py/thresh.bmp", thresh)
 
-        im2, self.contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        im2, self.contours, hierarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     def get_octagon(self):
         self.target_polygon = None  # Changed to get rid of the target polygon each cycle
         area_max = area = 0
         for c in self.contours:
             # print(c)
-            poly = cv2.approxPolyDP(c, .008 * cv2.arcLength(c, True), True)
-            if poly.shape[0] >= 6 and poly.shape[0] <= 8:
+            poly = cv2.approxPolyDP(c, .015 * cv2.arcLength(c, True), True)
+            if poly.shape[0] >= 6 and poly.shape[0] <= 11:
                 # Shape is an octagon
                 area = cv2.contourArea(poly)
                 if area > area_max and area > 0:
@@ -172,6 +175,12 @@ class Vision:
 
                 self.get_shooter_values()
                 self.print_all_values()
-               
+        cv2.imshow("Image", self.img)
+        cv2.waitKey(0)   
         time.sleep(.025)
+
+if __name__ == "__main__":
+    v = Vision()
+    v.vision_main()
+    #v.vision_main()
         
