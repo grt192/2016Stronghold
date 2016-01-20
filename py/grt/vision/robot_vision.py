@@ -8,7 +8,7 @@ class Vision:
     # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
     # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
 
-    GREEN_LOWER_HSV = np.array([75, 100, 100], 'uint8')
+    GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
     cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
     drawing = True
@@ -62,8 +62,8 @@ class Vision:
         area_max = area = 0
         for c in self.contours:
             # print(c)
-            poly = cv2.approxPolyDP(c, .008 * cv2.arcLength(c, True), True)
-            if poly.shape[0] >= 6 and poly.shape[0] <= 8:
+            poly = cv2.approxPolyDP(c, .015 * cv2.arcLength(c, True), True)
+            if poly.shape[0] >= 6 and poly.shape[0] <= 11:
                 # Shape is an octagon
                 area = cv2.contourArea(poly)
                 if area > area_max and area > 0:
