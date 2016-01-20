@@ -10,11 +10,14 @@ class Vision:
 
     GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
-    cap = vector_mat = x_mat = y_mat = contour_amax = target_polygon = x_cm = y_cm = target_polygon_opened = rotational_error = height = width = contours = img = moments = avg_height = distance = None
     drawing = True
-    should_abort = False
     status_print = True
-    area_max = 0
+
+    POLY_ARC_LENGTH = .015
+    POLY_MIN_SIDES = 6
+    POLY_MAX_SIDES = 11
+
+    MIN_AREA = 100
 
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
@@ -27,157 +30,112 @@ class Vision:
                 self.vision_close()
                 break
 
-    def __init__(self, vision_sensor):
-        self.vision_sensor = vision_sensor
+    def __init__(self):
+        self.target_view = False
+        self.rotational_error = self.vertical_error = 0
+        self.vision_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
     def vision_init(self):
         self.cap = cv2.VideoCapture(0)
-        # self.wcam = wpilib.USBCamera()
-        # self.wcam.startCapture()
-        # self.wcam.setExposureAuto()
-        # self.wcam.setExposureManual(10)
-        self.vector_mat = np.ndarray((8, 3))
-        self.x_mat = np.ndarray((4, 3))
-        self.y_mat = np.ndarray((4, 3))
         _, self.img = self.cap.read()
         self.height, self.width, channels = self.img.shape
         self.x_target = int(self.width / 2)
-        self.y_target = int(self.height / 2)
-        self.allowed_error = 20
 
 
     def vision_close(self):
         cv2.destroyAllWindows()
 
-    def get_contours(self):
-        _, self.img = self.cap.read()
-        hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
+    def get_max_contour(self, img):
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
-        #cv2.imwrite("/home/lvuser/py/thresh.bmp", thresh)
+        im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        area_max = area = 0
+        max_contour = None
+        for c in contours:
+            area = cv2.contourArea(c)
+            if area > area_max and area > self.MIN_AREA:
+                area_max = area
+                max_contour = c
+        if max_contour == None:
+            target_view = False
+        else:
+            target_view = True
+        return (target_view, max_contour)
 
-        im2, self.contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    def get_octagon(self):
-        self.target_polygon = None  # Changed to get rid of the target polygon each cycle
-        self.area_max = area = 0
-        for c in self.contours:
-            # print(c)
-            poly = cv2.approxPolyDP(c, .015 * cv2.arcLength(c, True), True)
-            if poly.shape[0] >= 6 and poly.shape[0] <= 11:
-                # Shape is an octagon
+    def get_max_polygon(self, img):
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
+        im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        area_max = area = 0
+        max_poly = None
+        for c in contours:
+            poly = cv2.approxPolyDP(c, self.POLY_ARC_LENGTH * cv2.arcLength(c, True), True)
+            if poly.shape[0] >= self.POLY_MIN_SIDES and poly.shape[0] <= self.POLY_MAX_SIDES:
                 area = cv2.contourArea(poly)
-                if area > self.area_max and area > 100:
-                    self.area_max = area
-                    self.target_polygon = poly
-        if self.status_print:
-            #pass
-            print("Area: ", self.area_max)
+                if area > area_max and area > self.MIN_AREA:
+                    area_max = area
+                    max_poly = poly
+        if max_poly == None:
+            target_view = False
+        else:
+            target_view = True
+        return (target_view, max_poly)
 
 
-    def get_rotational_error(self):
-        moments = cv2.moments(self.target_polygon)
-        self.x_cm = int(moments['m10'] / moments['m00'])
-        self.y_cm = int(moments['m01'] / moments['m00'])
-        self.rotational_error = self.x_cm - self.x_target  # Experimental - actual
+    def get_error(self, target):
+        moments = cv2.moments(target)
+        x_cm = int(moments['m10'] / moments['m00'])
+        vertical_error = y_cm = int(moments['m01'] / moments['m00'])
+        rotational_error = x_cm - self.x_target  # Experimental - actual
+        return (rotational_error, vertical_error)
 
-    def draw_initial_parameters(self):
-        cv2.circle(self.img, (self.x_cm, self.y_cm), 20, (255, 0, 0))
-        cv2.circle(self.img, (self.x_target, self.y_target), 20, (0, 0, 255))
-        cv2.drawContours(self.img, [self.target_polygon], -1, (255, 0, 0), 2)
-
-    def get_polygon_matrix(self):
-        self.target_polygon_opened = self.target_polygon[:, 0, :]
-        # print(self.target_polygon_opened)
-
-        # Form vectors from one point to the next (easier option?)
-        i = j = k = 0
-        try:
-            for vector in self.vector_mat:
-                if i < 7:
-                    vector[0] = abs(self.target_polygon_opened[i, 0] - self.target_polygon_opened[i + 1, 0])
-                    vector[1] = abs(self.target_polygon_opened[i, 1] - self.target_polygon_opened[i + 1, 1])
-
-                if i == 7:
-                    vector[0] = abs(self.target_polygon_opened[i, 0] - self.target_polygon_opened[0, 0])
-                    vector[1] = abs(self.target_polygon_opened[i, 1] - self.target_polygon_opened[0, 1])
-                i += 1
-
-                vector[2] = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
-
-                if vector[1] > vector[0]:
-                    if j == 4:
-                        # The octagon is not formed properly --> abort
-                        self.should_abort = True
-                        break
-                    self.y_mat[j] = vector
-                    j += 1
-                else:
-                    if k == 4:
-                        # The octagon is not formed properly --> abort
-                        self.should_abort = True
-                        break
-                    self.x_mat[k] = vector
-                    k += 1
-        except IndexError:
-            pass
-            #self.should_abort = True
-        finally:
-            self.should_abort = False
-
-    def get_avg_height(self):
-        self.avg_height = np.mean(self.y_mat[:, 2])
-
-    def get_distance(self):
-        # distance = 5420.8 * (avg_height ** -.828)
-        # horiz_dist = math.sqrt(abs((distance ** 2) - (41 ** 2)))
-        # distance = -.6807*avg_height + 184.31
-        # distance = -98.48 * math.log(avg_height) + 572.82
-        self.distance = 275.56 * (math.e ** (-.008 * self.avg_height))
-
-    def get_shooter_values(self):
-        #GET ACTUAL DATA
-        self.target_speed = self.distance
-        self.target_angle = 45
+    
 
     def print_all_values(self):
         if self.status_print:
-            print("Rotational Error: ", self.rotational_error)
+            print("Target View: ", self.target_view)
+            #print("Rotational Error: ", self.rotational_error)
             #print("Average Height: ", self.avg_height)
             #print("Distance: ", self.distance)
             #print("Target Speed: ", self.target_speed)
             #print("Target Angle: ", self.target_angle)
-    def get_frame(self):
-        return self.img
+    def getFrame(self):
+        img_jpg = cv2.imencode(".jpg", self.img)
+        #print("Returning frame")
+        return img_jpg
+
+    def getTargetView(self):
+        with self.vision_lock:
+            return self.target_view
+    def getRotationalError(self):
+        with self.vision_lock:
+            return self.rotational_error
+    def getTargetAngle(self):
+        with self.vision_lock:
+            return self.vertical_error * 1 #Fancy conversion equation here
+
+    def getTargetSpeed(self):
+        with self.vision_lock:
+            return self.vertical_error * 1 #Fancy coversion equation here
 
     def vision_loop(self):
+        #At the beginning of the loop, self.target_view is set to false
+        #If something useful is found, self.target_view is set to true
+        target_view = False
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
-        self.get_contours()
-        self.get_octagon()
-
-        if not self.target_polygon == None:
-            # An octagon is visible
-
-            self.get_polygon_matrix()
-            self.get_rotational_error()
-            if self.area_max > 300:
-                self.vision_sensor.rotational_error = self.rotational_error
-            else:
-                self.vision_sensor.rotational_error = False
-            if not self.should_abort:
-                if self.drawing:
-                    cv2.drawContours(self.img, [self.target_polygon], -1, (255, 0, 0), 2)
-               
-                if self.drawing:
-                    self.draw_initial_parameters()
-
-                self.get_avg_height()
-                
-                self.get_distance()
-
-                self.get_shooter_values()
-        self.print_all_values()
+        _, img = self.cap.read()
+        target_view, max_polygon = self.get_max_polygon(img)
+        with self.vision_lock:
+            self.target_view = target_view
+            if self.drawing:
+                cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
+            self.img = img
+            if self.target_view:
+                self.rotational_error, self.vertical_error = self.get_error(max_polygon)
+                #self.vertical_error = self.get_vertical_error(max_polygon)
+            self.print_all_values()
                
         time.sleep(.025)
         

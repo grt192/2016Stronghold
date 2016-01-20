@@ -1,5 +1,6 @@
 import wpilib
 from grt.core import Sensor
+import threading
 
 
 ENC_MIN = 50
@@ -14,9 +15,7 @@ class TurnTable:
         self.shooter = shooter
         self.robot_vision = shooter.robot_vision
         self.dt = shooter.dt
-        self.PID_source = self.PIDVisionSource(shooter.robot_vision)
-        self.PID_output = self.PIDVisionOutput(self)  # It is intentional that the turntable passes itself to
-                                                      # the PID output.
+        self.turntable_lock = threading.Lock()
 
         self.PID_controller = wpilib.PIDController(.0015, 0, 0, self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(50)
@@ -26,34 +25,42 @@ class TurnTable:
         #Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(0)
 
-
+    def getRotationReady(self):
+        with self.turntable_lock:
+            return self.rotation_ready
 
     def get_input(self):
-        #print("Inputing", self.robot_vision.rotational_error
-        if self.robot_vision.vision_sensor.rotational_error == False:
-            return -200
-        if abs(self.robot_vision.vision_sensor.rotational_error) < 50:
-            #self.PID_controller.disable()
-            return 0
-        else:
-            return self.robot_vision.rotational_error
+        return self.robot_vision.getRotationalError()
+        
     def set_output(self, output):
-        #print("Outputing ", output)
-        self.dt_turn(output)
+        if self.PID_controller.onTarget():
+            self.dt_turn(0)
+            with self.turntable_lock:
+                self.rotation_ready = True
+        elif self.robot_vision.getTargetView():
+            self.dt_turn(output)
+        else:
+            self.dt_turn(self.DT_NO_TARGET_TURN_RATE)
 
     def turn(self, output):
         enc_pos = self.motor.getEncPosition()
-        if enc_pos > ENC_MIN and enc_pos < ENC_MAX:
-            self.motor.set(output)
+        if output > 0:
+            if enc_pos < ENC_MAX:
+                #enc_pos < ENC_MAX:
+                self.motor.set(output)
+            else:
+                self.motor.set(0)
+        elif output < 0:
+            if enc_pos > ENC_MIN:
+                self.motor.set(output)
+            else:
+                self.motor.set(0)
         else:
             self.motor.set(0)
 
     def dt_turn(self, output):
         if self.dt:
-            if not self.PID_controller.onTarget():
-                self.dt.set_dt_output(-output, -output)
-            else:
-                self.dt.set_dt_output(0, 0)
+            self.dt.set_dt_output(-output, -output)
 
     def turn_to(self, target):
         self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
@@ -61,45 +68,10 @@ class TurnTable:
         self.motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
 
 
-    class PIDVisionSource(wpilib.interfaces.PIDSource):
-        """
-        PIDSource for turning; uses gyro angle as feedback.
-        """
-
-        def __init__(self, robot_vision):
-            super().__init__()
-            self.robot_vision = robot_vision
-            #self.setPIDSourceType(wpilib.interfaces.PIDSource.PIDSourceType.kDisplacement)
-
-        def pidGet(self):
-            print("Inputing", self.robot_vision.rotational_error)
-            return self.robot_vision.rotational_error
-
-        def __call__(self):
-            return self.pidGet()
-
-        def getPIDSourceType(self):
-            return wpilib.interfaces.PIDSource.PIDSourceType.kDisplacement
-
-
-    class PIDVisionOutput(wpilib.interfaces.PIDOutput):
-        def __init__(self, turntable):
-            super().__init__()
-            self.turntable = turntable
-
-        def __call__(self, output):
-            self.pidWrite(output)
-
-        def pidWrite(self, output):
-            # self.vision_macro.set_output
-            # self.turn_macro.dt.set_dt_output(output, -output)
-            # self.turntable.turn(output)
-            print("Outputing ", output)
-            self.turntable.dt_turn(output)
 
 class TurnTableSensor(Sensor):
     def __init__(self, turntable):
         super().__init__()
         self.turntable = turntable
     def poll(self):
-        self.rotation_ready = self.turntable.PID_controller.onTarget()
+        self.rotation_ready = self.turntable.getRotationReady()

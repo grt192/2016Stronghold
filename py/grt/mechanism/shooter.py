@@ -34,7 +34,6 @@ class Shooter:
 
         self.spindown_timer = threading.Timer(2.0, self.spindown)
 
-        self.robot_vision.vision_sensor.add_listener(self._vision_listener)
 
 
 
@@ -63,7 +62,7 @@ class Shooter:
         if state_id == "rotation_ready":
             if datum:
                 self.target_locked_rotation = True
-                #self.turntable.PID_controller.disable()
+                self.turntable.PID_controller.disable()
                 self.hood.go_to_target_angle()
                 self.flywheel.spin_to_target_speed()
             else:
@@ -107,12 +106,9 @@ class Shooter:
     def abort_automatic_shot(self):
         self.spindown()
         self.turntable.PID_controller.disable()
-        self.turntable_sensor.on_target = False
+        self.turntable_sensor.rotation_ready = False
         self.target_locked_horizontal = False
         self.target_locked_vertical = False
-        self.vision_enabled = False
-        #self.dt.dt_left.changeControlMode(CANTalon.ControlMode.PercentVbus)
-        #self.dt.dt_right.changeControlMode(CANTalon.ControlMode.PercentVbus)
 
     def start_geometric_shot(position=0):
         pass

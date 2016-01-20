@@ -9,7 +9,8 @@ class Flywheel:
         self.robot_vision = shooter.robot_vision
 
     def spin_to_target_speed(self):
-        self.rpm_speed_spin(self.robot_vision.target_speed)
+        if self.robot_vision.getTargetView():
+            self.rpm_speed_spin(self.robot_vision.getTargetSpeed())
     def spin_to_standby_speed(self):
         self.rpm_speed_spin(self.STANDBY_SPEED)
     def spindown(self):

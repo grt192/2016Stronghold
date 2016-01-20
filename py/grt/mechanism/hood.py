@@ -9,7 +9,8 @@ class Hood:
 		self.robot_vision = shooter.robot_vision
 
 	def go_to_target_angle(self):
-		self.deg_set_angle(self.robot_vision.target_angle)
+		if self.robot_vision.getTargetView():
+			self.deg_set_angle(self.robot_vision.getTargetAngle())
 
 	def raw_set_angle(self, value):
 		self.hood_motor.changeControlMode(CANTalon.ControlMode.Position)

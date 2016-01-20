@@ -51,8 +51,8 @@ class Vision:
         cv2.destroyAllWindows()
 
     def get_contours(self):
-        #_, self.img = self.cap.read()
-        self.img = cv2.imread("img.bmp")
+        _, self.img = self.cap.read()
+        #self.img = cv2.imread("img.bmp")
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
         self.thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
         cv2.imshow("Thresh", self.thresh)
@@ -176,11 +176,51 @@ class Vision:
                 self.get_shooter_values()
                 self.print_all_values()
         cv2.imshow("Image", self.img)
-        cv2.waitKey(0)   
+        #_, img_jpg = cv2.imencode("jpg", self.img)
+        #cv2.waitKey(0)   
         time.sleep(.025)
+    def get_frame(self):
+        _, img_jpg = cv2.imencode(".jpg", self.img)
+        print("Getting frame")
+        return img_jpg
 
+
+from flask import Flask, render_template, Response
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    """Video streaming home page."""
+    return render_template('index.html')
+
+
+def gen(camera):
+    """Video streaming generator function."""
+    while True:
+        frame = camera.getFrame()
+        time.sleep(.05)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+v = Vision()
+def temp_func():
+    app.run(host='0.0.0.0', debug=False, threaded=True)
+
+@app.route('/video_feed')
+def video_feed():
+    """Video streaming route. Put this in the src attribute of an img tag."""
+    return Response(gen(v),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+t2 = threading.Thread(target=temp_func)
+t2.start()
 if __name__ == "__main__":
-    v = Vision()
+    #t = threading.Thread(target=v.vision_main)
+    #t.start()
+    
     v.vision_main()
+
     #v.vision_main()
         

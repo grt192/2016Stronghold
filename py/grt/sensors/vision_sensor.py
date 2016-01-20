@@ -2,15 +2,16 @@ from grt.core import Sensor
 
 
 class VisionSensor(Sensor):
-    def __init__(self):
+    def __init__(self, robot_vision):
         super().__init__()
-        self.rotation_error = self.avg_height = self.distance = None
+        self.rotational_error = self.avg_height = self.distance = False
+        self.target_view = False
+        #False indicates that the target is not in sight
 
     # self.robot_vision = robot_vision
     def poll(self):
-        pass
-
-    # def poll(self):
-    #	if self.robot_vision.rotation_locked:
-    # Rotation
-    #	self.rotation_error
+        self.target_view = self.robot_vision.getTargetView()
+        
+        if self.target_view:
+            self.rotational_error = self.robot_vision.getRotationalError()
+            self.vertical_error = self.robot_vision.getVerticalError()
