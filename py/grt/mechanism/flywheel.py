@@ -7,6 +7,7 @@ class Flywheel:
         self.shooter = shooter
         self.flywheel_motor = shooter.flywheel_motor
         self.robot_vision = shooter.robot_vision
+        self.currentspeed = 0
 
     def spin_to_target_speed(self):
         if self.robot_vision.getTargetView():
@@ -29,6 +30,17 @@ class Flywheel:
     def rpm_speed_spin(self, speed):
         #ADD PROPER CONVERSION CONSTANTS
         self.raw_speed_spin(speed)
+    def speed_increment_function(self):
+        self.currentspeed=self.currentspeed+5
+        self.rpm_speed_spin(self.currentspeed)
+        print(self.currentspeed) 
+    def speed_decrement_function(self):
+        self.currentspeed=self.currentspeed-5
+        self.rpm_speed_spin(self.currentspeed)
+        print(self.currentspeed)
+
+        
+
     
 
 
