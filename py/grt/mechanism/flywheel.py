@@ -24,20 +24,20 @@ class Flywheel:
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Voltage)
         self.flywheel_motor.set(voltage)
     def raw_speed_spin(self, speed):
-        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-        self.flywheel_motor.setP(1)
+        #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+        #self.flywheel_motor.setP(1)
         self.flywheel_motor.set(speed)
     def rpm_speed_spin(self, speed):
         #ADD PROPER CONVERSION CONSTANTS
         self.raw_speed_spin(speed)
     def speed_increment_function(self):
-        self.currentspeed=self.currentspeed+5
+        self.currentspeed=self.currentspeed+1000
         self.rpm_speed_spin(self.currentspeed)
-        print(self.currentspeed) 
+        print("Current Set Speed: ", self.currentspeed) 
     def speed_decrement_function(self):
-        self.currentspeed=self.currentspeed-5
+        self.currentspeed=self.currentspeed-1000
         self.rpm_speed_spin(self.currentspeed)
-        print(self.currentspeed)
+        print("Current Set Speed: ", self.currentspeed)
 
         
 

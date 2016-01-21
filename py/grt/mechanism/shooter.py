@@ -18,6 +18,8 @@ class Shooter:
         self.hood_motor = hood_motor
         self.rails_actuator = rails_actuator
         self.dt = dt
+        self.target_locked_rotation = False
+        self.target_locked_vertical = False
 
         self.flywheel = Flywheel(self)
         self.turntable = TurnTable(self)
@@ -61,10 +63,10 @@ class Shooter:
     def _turntable_listener(self, sensor, state_id, datum):
         if state_id == "rotation_ready":
             if datum:
-                self.target_locked_rotation = True
+                self.target_locked_rotation = False
                 #self.turntable.PID_controller.disable()
                 self.hood.go_to_target_angle()
-                self.flywheel.spin_to_target_speed()
+                #self.flywheel.spin_to_target_speed()
             else:
                 self.target_locked_rotation = False
 
@@ -100,7 +102,8 @@ class Shooter:
         #self.dt.dt_right.reverseOutput(True)
         #self.dt.dt_right.set(0)
         #self.vision_enabled = True
-        self.flywheel.spin_to_standby_speed()
+
+        #self.flywheel.spin_to_standby_speed()
         self.turntable.PID_controller.enable()
 
     def abort_automatic_shot(self):

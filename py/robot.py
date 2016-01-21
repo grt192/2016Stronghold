@@ -28,6 +28,7 @@ class MyRobot(wpilib.SampleRobot):
       
         self.hid_sp = config.hid_sp
         self.ds = config.ds
+        self.flywheel_motor = config.flywheel_motor
         #self.prefs = Preferences.getInstance()
         #self.auto_sel = self.prefs.put("AutoSelector", 2)
         #self.vision = config.vision
@@ -41,7 +42,7 @@ class MyRobot(wpilib.SampleRobot):
     def disabled(self):
         while self.isDisabled():
             tinit = time.time()
-           
+            print("Actual flywheel Speed: ", self.flywheel_motor.get())
             self.safeSleep(tinit, .04)
             #print(self.cv2.__version__)
     
@@ -52,7 +53,7 @@ class MyRobot(wpilib.SampleRobot):
     def operatorControl(self):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
-           
+            print("Flywheel Speed: ", self.flywheel_motor.get())
             self.hid_sp.poll()
             self.safeSleep(tinit, .04)
             

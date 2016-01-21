@@ -98,7 +98,7 @@ class Vision:
     def print_all_values(self):
         if self.status_print:
             distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
-            print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
+            #print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
             #print("Vertical Error: ", self.vertical_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Rotational Error: ", self.rotational_error)

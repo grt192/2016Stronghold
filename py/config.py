@@ -45,11 +45,19 @@ dt_l2.set(3)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 
-flywheel_motor = CANTalon(5)
+flywheel_motor = CANTalon(8)
+flywheel_motor2 = CANTalon(9)
+flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+flywheel_motor.setP(.1)
+flywheel_motor.reverseOutput(True)
+
+flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
+flywheel_motor2.set(8)
+
 turntable_motor = CANTalon(7)
 hood_motor = CANTalon(6)
 rails_actuator = Solenoid(2)
-flywheel = Flywheel(shooter)
+#flywheel = Flywheel(shooter)
 
 #vision_sensor = VisionSensor()
 robot_vision = Vision()
@@ -81,7 +89,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, s
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, shooter,flywheel)
+mc = MechController(driver_stick, xbox_controller, shooter)
 
 # define DriverStation
 ds = DriverStation.getInstance()
