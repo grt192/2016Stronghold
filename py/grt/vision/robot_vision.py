@@ -97,9 +97,10 @@ class Vision:
 
     def print_all_values(self):
         if self.status_print:
-            print("Target View: ", self.target_view)
+            distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
+            print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
             #print("Vertical Error: ", self.vertical_error)
-            print("Rotational Error: ", self.rotational_error)
+            #print("Rotational Error: ", self.rotational_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Average Height: ", self.avg_height)
             #print("Distance: ", self.distance)
@@ -116,6 +117,7 @@ class Vision:
     def getRotationalError(self):
         with self.vision_lock:
             return self.rotational_error
+
     def getTargetAngle(self):
         with self.vision_lock:
             return self.vertical_error * 1 #Fancy conversion equation here
