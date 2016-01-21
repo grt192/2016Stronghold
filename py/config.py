@@ -7,6 +7,7 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
+from grt.mechanism.flywheel import Flywheel
 #from grt.sensors.gyro import Gyro
 from grt.core import SensorPoller
 from grt.mechanism.drivetrain import DriveTrain
@@ -48,6 +49,7 @@ flywheel_motor = CANTalon(5)
 turntable_motor = CANTalon(7)
 hood_motor = CANTalon(6)
 rails_actuator = Solenoid(2)
+flywheel = Flywheel(shooter)
 
 #vision_sensor = VisionSensor()
 robot_vision = Vision()
@@ -79,7 +81,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, s
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, shooter)
+mc = MechController(driver_stick, xbox_controller, shooter,flywheel)
 
 # define DriverStation
 ds = DriverStation.getInstance()
