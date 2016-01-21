@@ -26,7 +26,7 @@ class Flywheel:
     def raw_speed_spin(self, speed):
         #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
         #self.flywheel_motor.setP(1)
-        self.flywheel_motor.set(speed)
+        self.flywheel_motor.set(speed*2)
     def rpm_speed_spin(self, speed):
         #ADD PROPER CONVERSION CONSTANTS
         self.raw_speed_spin(speed)

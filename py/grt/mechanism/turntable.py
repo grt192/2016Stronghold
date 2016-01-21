@@ -22,7 +22,7 @@ class TurnTable:
     TURNTABLE_KP = .0015
     TURNTABLE_KI = 0
     TURNTABLE_KD = 0
-    TURNTABLE_ABS_TOL = 50
+    TURNTABLE_ABS_TOL = 20
     TURNTABLE_OUTPUT_RANGE = .35
 
     def __init__(self, shooter):
