@@ -42,7 +42,7 @@ class MyRobot(wpilib.SampleRobot):
     def disabled(self):
         while self.isDisabled():
             tinit = time.time()
-            print("Actual flywheel Speed: ", self.flywheel_motor.get())
+            #print("Actual flywheel Speed: ", self.flywheel_motor.get())
             self.safeSleep(tinit, .04)
             #print(self.cv2.__version__)
     

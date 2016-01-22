@@ -48,7 +48,9 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 flywheel_motor = CANTalon(8)
 flywheel_motor2 = CANTalon(9)
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setP(.1)
+flywheel_motor.setP(.26)
+flywheel_motor.setF(.1)
+#Try a TBH controller if needed
 flywheel_motor.reverseOutput(True)
 
 flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
@@ -57,6 +59,8 @@ flywheel_motor2.set(8)
 turntable_motor = CANTalon(7)
 hood_motor = CANTalon(6)
 rails_actuator = Solenoid(2)
+
+belt_roller_motor = CANTalon(10)
 #flywheel = Flywheel(shooter)
 
 #vision_sensor = VisionSensor()
@@ -89,7 +93,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, s
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, shooter)
+mc = MechController(driver_stick, xbox_controller, shooter, belt_roller_motor)
 
 # define DriverStation
 ds = DriverStation.getInstance()

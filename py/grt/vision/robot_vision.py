@@ -10,7 +10,7 @@ class Vision:
 
     GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
-    drawing = True
+    drawing = False
     status_print = True
 
     POLY_ARC_LENGTH = .015
@@ -97,8 +97,10 @@ class Vision:
 
     def print_all_values(self):
         if self.status_print:
-            distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
-            #print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
+            #Initial distance calibration
+            #distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
+            distance = .0021 * (self.vertical_error ** 2) - 1.2973 * self.vertical_error + 261.67
+            print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
             #print("Vertical Error: ", self.vertical_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Rotational Error: ", self.rotational_error)

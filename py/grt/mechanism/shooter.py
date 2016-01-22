@@ -65,6 +65,7 @@ class Shooter:
             if datum:
                 self.target_locked_rotation = False
                 #self.turntable.PID_controller.disable()
+                #self.turntable_motor.set(0)
                 self.hood.go_to_target_angle()
                 #self.flywheel.spin_to_target_speed()
             else:
@@ -107,8 +108,9 @@ class Shooter:
         self.turntable.PID_controller.enable()
 
     def abort_automatic_shot(self):
-        self.spindown()
+        #self.spindown()
         self.turntable.PID_controller.disable()
+        self.turntable_motor.set(0)
         self.turntable_sensor.rotation_ready = False
         self.target_locked_horizontal = False
         self.target_locked_vertical = False

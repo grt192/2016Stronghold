@@ -2,12 +2,12 @@ from wpilib import CANTalon
 from grt.core import Sensor
 
 class Flywheel:
-    STANDBY_SPEED = 500
+    STANDBY_SPEED = -8400
     def __init__(self, shooter):
         self.shooter = shooter
         self.flywheel_motor = shooter.flywheel_motor
         self.robot_vision = shooter.robot_vision
-        self.currentspeed = 0
+        self.currentspeed = self.STANDBY_SPEED
 
     def spin_to_target_speed(self):
         if self.robot_vision.getTargetView():
@@ -26,16 +26,16 @@ class Flywheel:
     def raw_speed_spin(self, speed):
         #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
         #self.flywheel_motor.setP(1)
-        self.flywheel_motor.set(speed*2)
+        self.flywheel_motor.set(speed)
     def rpm_speed_spin(self, speed):
         #ADD PROPER CONVERSION CONSTANTS
         self.raw_speed_spin(speed)
     def speed_increment_function(self):
-        self.currentspeed=self.currentspeed+1000
+        self.currentspeed=self.currentspeed+200
         self.rpm_speed_spin(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed) 
     def speed_decrement_function(self):
-        self.currentspeed=self.currentspeed-1000
+        self.currentspeed=self.currentspeed-200
         self.rpm_speed_spin(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed)
 
