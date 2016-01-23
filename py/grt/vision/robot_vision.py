@@ -10,7 +10,7 @@ class Vision:
 
     GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
-    drawing = False
+    drawing = True
     status_print = True
 
     POLY_ARC_LENGTH = .015
@@ -109,7 +109,7 @@ class Vision:
             #print("Target Speed: ", self.target_speed)
             #print("Target Angle: ", self.target_angle)
     def getFrame(self):
-        img_jpg = cv2.imencode(".jpg", self.img)
+        img_jpg = cv2.imencode(".jpg", self.img, (cv2.IMWRITE_JPEG_QUALITY, 20))
         print("Returning frame")
         return img_jpg
 

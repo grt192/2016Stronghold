@@ -21,7 +21,7 @@ from grt.mechanism.mechcontroller import MechController
 from grt.vision.robot_vision import Vision
 #from grt.sensors.vision_sensor import VisionSensor
 from grt.mechanism.shooter import Shooter
-using_vision_server = False
+using_vision_server = True
 
 
 #from vision.robot_vision_dynamic import Vision
