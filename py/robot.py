@@ -8,7 +8,7 @@ class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
         import config
-        self.sp = config.sp
+        # self.sp = config.sp
         self.hid_sp = config.hid_sp
         self.ds = config.ds
 
@@ -26,7 +26,7 @@ class MyRobot(wpilib.SampleRobot):
     def operatorControl(self):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
-            self.sp.poll()
+            # self.sp.poll()
             self.hid_sp.poll()
             self.safeSleep(tinit, .04)
             
