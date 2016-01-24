@@ -42,7 +42,9 @@ class TurnTable:
         #Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(0)
 
-    def getRotationReady(self):
+
+
+    def get_rotation_ready(self):
         with self.turntable_lock:
             return self.rotation_ready
 
@@ -118,5 +120,6 @@ class TurnTableSensor(Sensor):
     def __init__(self, turntable):
         super().__init__()
         self.turntable = turntable
+
     def poll(self):
         self.rotation_ready = self.turntable.PID_controller.onTarget()

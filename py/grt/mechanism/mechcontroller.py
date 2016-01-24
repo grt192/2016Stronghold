@@ -14,10 +14,10 @@ class MechController:
     def _xbox_controller_listener(self, sensor, state_id, datum):
         if state_id == "x_button":
             if datum:
-                self.shooter.flywheel.speed_increment_function()
+                self.shooter.flywheel.increment_speed()
         if state_id == "y_button":
             if datum:
-                self.shooter.flywheel.speed_decrement_function()
+                self.shooter.flywheel.decrement_speed()
         if state_id == "b_button":
             if datum:
                 self.belt_roller_motor.set(.8)

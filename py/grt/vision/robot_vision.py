@@ -81,9 +81,12 @@ class Vision:
 
     def get_error(self, target):
         moments = cv2.moments(target)
-        x_cm = int(moments['m10'] / moments['m00'])
-        vertical_error = y_cm = int(moments['m01'] / moments['m00'])
-        rotational_error = x_cm - self.x_target  # Experimental - actual
+
+        # Experimental - Actual
+        rotational_error = int(moments['m10'] / moments['m00']) - self.x_target
+
+        vertical_error = int(moments['m01'] / moments['m00'])
+
         return rotational_error, vertical_error
 
     def print_all_values(self):
@@ -120,7 +123,7 @@ class Vision:
 
     def get_target_speed(self):
         with self.vision_lock:
-            return self.vertical_error * 1  # Fancy coversion equation here
+            return self.vertical_error * 1  # Fancy conversion equation here
 
     def vision_loop(self):
         # At the beginning of the loop, self.target_view is set to false

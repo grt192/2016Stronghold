@@ -7,6 +7,16 @@ import threading
 from wpilib import CANTalon
 
 
+class ShooterNew:
+    def __init__(self, robot_vision, flywheel, turntable, hood, rails):
+        self.robot_vision = robot_vision
+        self.flywheel = flywheel
+        self.turntable = turntable
+        self.hood = hood
+        self.rails = rails
+
+    def spin_down(self):
+        self.flywheel.spindown()
 
 
 class Shooter:
