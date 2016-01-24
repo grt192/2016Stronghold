@@ -16,7 +16,7 @@ class MyRobot(wpilib.SampleRobot):
     def disabled(self):
         while self.isDisabled():
             tinit = time.time()
-            self.sp.poll()
+            # self.sp.poll()
             self.safeSleep(tinit, .04)
     
     def autonomous(self):
