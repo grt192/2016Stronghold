@@ -10,8 +10,8 @@ class VisionSensor(Sensor):
 
     # self.robot_vision = robot_vision
     def poll(self):
-        self.target_view = self.robot_vision.getTargetView()
+        self.target_view = self.robot_vision.get_target_view()
         
         if self.target_view:
-            self.rotational_error = self.robot_vision.getRotationalError()
+            self.rotational_error = self.robot_vision.get_rotational_error()
             self.vertical_error = self.robot_vision.getVerticalError()

@@ -48,8 +48,8 @@ class TurnTable:
 
     def get_input(self):
         #Make sure this checks getTargetView(), as well
-        if self.robot_vision.getTargetView():
-            self.prev_input = self.robot_vision.getRotationalError()
+        if self.robot_vision.get_target_view():
+            self.prev_input = self.robot_vision.get_rotational_error()
             return self.prev_input
         else:
             return self.prev_input
@@ -59,7 +59,7 @@ class TurnTable:
         
     def set_output(self, output):
         
-        if self.robot_vision.getTargetView():
+        if self.robot_vision.get_target_view():
             if self.PID_controller.onTarget():
                 #If the target is visible, and I'm on target, stop.
                 output = 0
