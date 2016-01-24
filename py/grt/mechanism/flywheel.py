@@ -18,7 +18,7 @@ class Flywheel:
     def spin_to_standby_speed(self):
         self.rpm_speed_spin(self.STANDBY_SPEED)
 
-    def spindown(self):
+    def spin_down(self):
         self.rpm_speed_spin(0)
 
     def vbus_spin(self, power):

@@ -8,7 +8,7 @@ from wpilib import CANTalon
 
 
 class ShooterNew:
-    def __init__(self, robot_vision, flywheel, turntable, hood, rails):
+    def __init__(self, robot_vision_sensor, flywheel_sensor, turntable_sensor, hood_sensor, rails):
         self.robot_vision = robot_vision
         self.flywheel = flywheel
         self.turntable = turntable
@@ -16,7 +16,7 @@ class ShooterNew:
         self.rails = rails
 
     def spin_down(self):
-        self.flywheel.spindown()
+        self.flywheel.spin_down()
 
 
 class Shooter:
@@ -50,7 +50,7 @@ class Shooter:
 
 
     def spindown(self):
-        self.flywheel.spindown()
+        self.flywheel.spin_down()
         #self.raw_speed_spin(speed)
         #self.launcher.set(True)
 
