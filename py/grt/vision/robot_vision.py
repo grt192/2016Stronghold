@@ -100,7 +100,7 @@ class Vision:
             #Initial distance calibration
             #distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
             distance = .0021 * (self.vertical_error ** 2) - 1.2973 * self.vertical_error + 261.67
-            print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
+            #print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
             #print("Vertical Error: ", self.vertical_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Rotational Error: ", self.rotational_error)

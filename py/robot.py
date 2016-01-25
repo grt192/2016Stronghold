@@ -42,15 +42,16 @@ class MyRobot(wpilib.SampleRobot):
 
 
     def disabled(self):
+        self.turn_macro.terminate()
         while self.isDisabled():
             tinit = time.time()
             #print("Actual flywheel Speed: ", self.flywheel_motor.get())
 
             self.hid_sp.poll()
-            print("Pitch: " , self.navx.pitch)
-            print("Roll: ", self.navx.roll)
-            print("Yaw: ", self.navx.yaw)
-            print("Compass heading: ", self.navx.compass_heading)
+            #print("Pitch: " , self.navx.pitch)
+            #print("Roll: ", self.navx.roll)
+            #print("Yaw: ", self.navx.yaw)
+            #print("Compass heading: ", self.navx.compass_heading)
             print("Fused heading: ", self.navx.fused_heading)
             self.safeSleep(tinit, .04)
             #print(self.cv2.__version__)
@@ -65,6 +66,7 @@ class MyRobot(wpilib.SampleRobot):
             self.safeSleep(tinit, .04)
     
     def operatorControl(self):
+        self.turn_macro.terminate()
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             print("Flywheel Speed: ", self.flywheel_motor.get())
