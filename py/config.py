@@ -21,6 +21,9 @@ from grt.mechanism.mechcontroller import MechController
 from grt.vision.robot_vision import Vision
 #from grt.sensors.vision_sensor import VisionSensor
 from grt.mechanism.shooter import Shooter
+from grt.sensors.navx import NavX
+from grt.macro.new_turn_macro import NewTurnMacro
+
 using_vision_server = False
 
 
@@ -30,20 +33,24 @@ using_vision_server = False
 #import cv2
 #
 
+navx = NavX()
+
 #DT Talons and Objects
 
-dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_left = CANTalon(3)
-dt_l2 = CANTalon(4)
+dt_right = CANTalon(3)
+dt_r2 = CANTalon(4)
+dt_left = CANTalon(7)
+dt_l2 = CANTalon(8)
 
 
 dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
 dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(1)
-dt_l2.set(3)
+dt_r2.set(3)
+dt_l2.set(7)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
+
+turn_macro = NewTurnMacro(90, navx, dt)
 
 flywheel_motor = CANTalon(8)
 flywheel_motor2 = CANTalon(9)
@@ -86,7 +93,7 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, rai
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick)
-hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor))  # human interface devices
+hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))  # human interface devices
 
 
 
