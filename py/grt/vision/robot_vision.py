@@ -133,8 +133,8 @@ class Vision:
             # Initial distance calibration
             # distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
             distance = .0021 * (self.vertical_error ** 2) - 1.2973 * self.vertical_error + 261.67
-            print("Target View: ", self._target_view, "   Rotational Error: ", self.rotational_error,
-                  "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
+            print("Target View: ", self._target_view, "Rotational Error: ", self._rotational_error,
+                  "Vertical Error: ", self._vertical_error, "Distance: ", distance, sep="     ")
             # print("Vertical Error: ", self.vertical_error)
             # print("Rotational Error: ", self.rotational_error)
             # print("Rotational Error: ", self.rotational_error)
@@ -147,26 +147,6 @@ class Vision:
         img_jpg = cv2.imencode(".jpg", self.img)
         print("Returning frame")
         return img_jpg
-
-
-
-            # @property
-    # def get_target_view(self):
-    #     with self.vision_lock:
-    #         return self._target_view
-
-
-    # def get_rotational_error(self):
-    #     with self.vision_lock:
-    #         return self.rotational_error
-    #
-    # def get_target_angle(self):
-    #     with self.vision_lock:
-    #         return self.vertical_error * 1  # Fancy conversion equation here
-    #
-    # def get_target_speed(self):
-    #     with self.vision_lock:
-    #         return self.vertical_error * 1  # Fancy conversion equation here
 
     def vision_loop(self):
         # At the beginning of the loop, self.target_view is set to false
