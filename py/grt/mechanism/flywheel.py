@@ -11,7 +11,7 @@ class Flywheel:
         self.currentspeed = self.STANDBY_SPEED
 
     def spin_to_target_speed(self):
-        if self.robot_vision.target_view():
+        if self.robot_vision.target_view:
             vertical_error = self.robot_vision.vertical_error
             self.rpm_speed_spin(vertical_error)
 

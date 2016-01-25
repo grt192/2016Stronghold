@@ -42,6 +42,8 @@ class TurnTable:
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
         self.PID_controller.setSetpoint(0)
 
+
+
     def get_input(self):
         # Make sure this checks getTargetView(), as well
         if self.robot_vision.target_view:
