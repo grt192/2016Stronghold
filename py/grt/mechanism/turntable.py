@@ -1,6 +1,7 @@
 import wpilib
 from grt.core import Sensor
 import threading
+import grt.mechanism.Constant
 
 
 ENC_MIN = -20000
@@ -9,12 +10,13 @@ ENC_MAX = 20000
 
 class TurnTable:
 
-    DT_NO_TARGET_TURN_RATE = .2
-    DT_KP = .0015
-    DT_KI = 0
-    DT_KD = 0
-    DT_ABS_TOL = 50
-    DT_OUTPUT_RANGE = .25
+   
+    DT_NO_TARGET_TURN_RATE = Constants.DT_NO_TARGET_TURN_RATE
+    DT_KP = Constants.DT_KP
+    DT_KI = Constant.DT_KI
+    DT_KD = Constants.DT_KD
+    DT_ABS_TOL = Constants.DT_ABS_TOL
+    DT_OUTPUT_RANGE = Constants.DT_OUTPUT_RANGE
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
@@ -25,7 +27,9 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 10
     TURNTABLE_OUTPUT_RANGE = .4
 
-    def __init__(self, shooter):
+
+
+    def __init__(self, shooter,Constants):
         self.shooter = shooter
         self.turntable_motor = shooter.turntable_motor
         self.robot_vision = shooter.robot_vision
@@ -33,6 +37,8 @@ class TurnTable:
         self.turntable_lock = threading.Lock()
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.prev_input = 0
+        self.Constants=Constants
+        self.Constants.add_listener(self.Constants_listener)
 
         self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD, self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
@@ -111,6 +117,14 @@ class TurnTable:
         self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
         self.motor.setP(1)
         self.motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
+
+    def Constants_listener(self, sensor, state_id, datum)
+        if state_id in self.__dict__.keys():
+            if datum:
+                self.__dict__[state_id]=datum 
+
+
+
 
 
 
