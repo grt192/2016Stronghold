@@ -58,6 +58,7 @@ class Vision:
 
     @target_view.setter
     def target_view(self, value):
+        # Call the vision sensor listeners
         self.vision_sensor.target_view = value
         self._target_view = value
 
@@ -69,6 +70,7 @@ class Vision:
 
     @rotational_error.setter
     def rotational_error(self, value):
+        # Call the vision sensor listeners
         self.vision_sensor.rotational_error = value
         self._rotational_error = value
 
@@ -79,6 +81,7 @@ class Vision:
 
     @vertical_error.setter
     def vertical_error(self, value):
+        # Call the vision sensor listeners
         self.vision_sensor.rotational_error = value
         self._vertical_error = value
 
