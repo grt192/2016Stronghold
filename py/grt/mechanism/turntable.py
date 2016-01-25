@@ -35,8 +35,7 @@ class TurnTable:
         self.prev_input = 0
 
 
-        self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD,
-                                                   self.get_input, self.set_output)
+        self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD, self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
 
         # TODO Workaround for wpilib bug as of 1/23/2016
