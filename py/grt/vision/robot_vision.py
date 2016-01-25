@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 import time, math, threading
+from grt.core import Sensor
+from wpilib import CANTalon
+from robotpy_ext.common_drivers.navx.ahrs import AHRS
 
 
 class Vision:
@@ -35,14 +38,49 @@ class Vision:
                 self.vision_close()
                 break
 
-    def __init__(self):
+    def __init__(self, vision_sensor):
         self.cap = cv2.VideoCapture(0)
+        self.vision_sensor = vision_sensor
 
-        self.target_view = False
-        self.rotational_error = self.vertical_error = self.DEFAULT_ERROR
+        # Properties
+        self._target_view = False
+        self._rotational_error = self._vertical_error = self.DEFAULT_ERROR
+
         self.vision_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
+
+
+    @property
+    def target_view(self):
+        with self.vision_lock:
+            return self._target_view
+
+    @target_view.setter
+    def target_view(self, value):
+        self.vision_sensor.target_view = value
+        self._target_view = value
+
+
+    @property
+    def rotational_error(self):
+        with self.vision_lock:
+            return self._rotational_error
+
+    @rotational_error.setter
+    def rotational_error(self, value):
+        self.vision_sensor.rotational_error = value
+        self._rotational_error = value
+
+    @property
+    def vertical_error(self):
+        with self.vision_lock:
+            return self._vertical_error
+
+    @vertical_error.setter
+    def vertical_error(self, value):
+        self.vision_sensor.rotational_error = value
+        self._vertical_error = value
 
     def vision_init(self):
         _, self.img = self.cap.read()
@@ -61,13 +99,10 @@ class Vision:
 
         # Get Contours
         im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        area_max = area = 0
-        max_poly = None
 
         # Get Polygon Approximation list
-        polygons = map(
-                lambda curve: cv2.approxPolyDP(curve, self.POLY_ARC_LENGTH * cv2.arcLength(curve, closed=True),
-                                               closed=True), contours)
+        polygons = map(lambda curve: cv2.approxPolyDP(curve, self.POLY_ARC_LENGTH * cv2.arcLength(curve, closed=True),
+                                                      closed=True), contours)
 
         # Filter Curves:
         polygons = filter(lambda poly: self.POLY_MIN_SIDES <= poly.shape[0] <= self.POLY_MAX_SIDES, polygons)
@@ -80,6 +115,10 @@ class Vision:
         return target_view, max_area_poly
 
     def get_error(self, target):
+        """ Get the rotational and vertical error of the camera
+        :param target:
+        :return:
+        """
         moments = cv2.moments(target)
 
         # Experimental - Actual
@@ -94,7 +133,7 @@ class Vision:
             # Initial distance calibration
             # distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
             distance = .0021 * (self.vertical_error ** 2) - 1.2973 * self.vertical_error + 261.67
-            print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error,
+            print("Target View: ", self._target_view, "   Rotational Error: ", self.rotational_error,
                   "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
             # print("Vertical Error: ", self.vertical_error)
             # print("Rotational Error: ", self.rotational_error)
@@ -109,21 +148,25 @@ class Vision:
         print("Returning frame")
         return img_jpg
 
-    def get_target_view(self):
-        with self.vision_lock:
-            return self.target_view
 
-    def get_rotational_error(self):
-        with self.vision_lock:
-            return self.rotational_error
 
-    def get_target_angle(self):
-        with self.vision_lock:
-            return self.vertical_error * 1  # Fancy conversion equation here
+            # @property
+    # def get_target_view(self):
+    #     with self.vision_lock:
+    #         return self._target_view
 
-    def get_target_speed(self):
-        with self.vision_lock:
-            return self.vertical_error * 1  # Fancy conversion equation here
+
+    # def get_rotational_error(self):
+    #     with self.vision_lock:
+    #         return self.rotational_error
+    #
+    # def get_target_angle(self):
+    #     with self.vision_lock:
+    #         return self.vertical_error * 1  # Fancy conversion equation here
+    #
+    # def get_target_speed(self):
+    #     with self.vision_lock:
+    #         return self.vertical_error * 1  # Fancy conversion equation here
 
     def vision_loop(self):
         # At the beginning of the loop, self.target_view is set to false
@@ -134,14 +177,18 @@ class Vision:
 
         _, img = self.cap.read()
         target_view, max_polygon = self.get_max_polygon(img)
+
         with self.vision_lock:
+            # Update properties
             self.target_view = target_view
-            if self.drawing:
-                cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
-            self.img = img
             if self.target_view:
                 self.rotational_error, self.vertical_error = self.get_error(max_polygon)
-                # self.vertical_error = self.get_vertical_error(max_polygon)
+
+            # Draw on image
+            if self.drawing:
+                cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
+
+            self.img = img
             self.print_all_values()
 
         time.sleep(.025)
