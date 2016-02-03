@@ -6,7 +6,6 @@ if "Linux" in platform.platform():
         exec(code)
 
 
-
 import wpilib
 import time
 import threading

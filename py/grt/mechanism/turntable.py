@@ -56,9 +56,9 @@ class TurnTable:
 
     def no_view_timeout(self):
         pass
-        
+
     def set_output(self, output):
-        
+
         if self.robot_vision.getTargetView():
             if self.PID_controller.onTarget():
                 #If the target is visible, and I'm on target, stop.
@@ -91,17 +91,17 @@ class TurnTable:
         #enc_pos = self.turntable_motor.getEncPosition()
         #if output > 0:
         #    if enc_pos < ENC_MAX:
-                #enc_pos < ENC_MAX:
+        #enc_pos < ENC_MAX:
         self.turntable_motor.set(output)
-            #else:
-             #   self.turntable_motor.set(0)
-        #elif output < 0:
-         #   if enc_pos > ENC_MIN:
-          #      self.turntable_motor.set(output)
-           # else:
-          #      self.turntable_motor.set(0)
         #else:
-         #   self.turntable_motor.set(0)
+        #   self.turntable_motor.set(0)
+        #elif output < 0:
+        #   if enc_pos > ENC_MIN:
+        #      self.turntable_motor.set(output)
+        # else:
+        #      self.turntable_motor.set(0)
+        #else:
+        #   self.turntable_motor.set(0)
 
     def dt_turn(self, output):
         if self.dt:

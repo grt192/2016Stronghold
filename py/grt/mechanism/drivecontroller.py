@@ -3,7 +3,6 @@ Module for various drivetrain control mechanisms.
 Listens to Attack3Joysticks, not wpilib.Joysticks.
 """
 
-
 class ArcadeDriveController:
     """
     Class for controlling DT in arcade drive mode, with one or two joysticks.
