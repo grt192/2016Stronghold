@@ -28,9 +28,9 @@ class MyRobot(wpilib.SampleRobot):
       
         self.hid_sp = config.hid_sp
         self.ds = config.ds
-        self.flywheel_motor = config.flywheel_motor
+        # self.flywheel_motor = config.flywheel_motor
         self.navx = config.navx
-        self.turn_macro = config.turn_macro
+        # self.turn_macro = config.turn_macro
         #self.prefs = Preferences.getInstance()
         #self.auto_sel = self.prefs.put("AutoSelector", 2)
         #self.vision = config.vision
