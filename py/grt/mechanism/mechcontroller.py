@@ -1,5 +1,4 @@
 class MechController:
-#Chela is here fxuechblaixufh
 
     def __init__(self, driver_joystick, xbox_controller, shooter, belt_roller_motor): # mechanisms belong in arguments
         # define mechanisms here
@@ -15,10 +14,10 @@ class MechController:
     def _xbox_controller_listener(self, sensor, state_id, datum):
         if state_id == "x_button":
             if datum:
-                self.shooter.flywheel.speed_increment_function()
+                self.shooter.flywheel_motor.set(-1)
         if state_id == "y_button":
             if datum:
-                self.shooter.flywheel.speed_decrement_function()
+                self.shooter.flywheel_motor.set(1)
         if state_id == "b_button":
             if datum:
                 self.belt_roller_motor.set(.8)
@@ -40,3 +39,9 @@ class MechController:
         if state_id == "button6":
             if datum:
                 self.shooter.flywheel_motor.set(0)
+
+
+    def _Button_Mapping_listener(self, sensor, state_id, datum):
+        if state_id == "rt_button":
+            #if datum:
+
