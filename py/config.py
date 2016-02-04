@@ -46,7 +46,7 @@ dt_l2 = CANTalon(8)
 
 dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
 dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(3)
+dt_r2.set(1)
 dt_l2.set(7)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)

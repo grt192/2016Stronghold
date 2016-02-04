@@ -27,8 +27,8 @@ class ArcadeDriveController:
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
             if not self.straight_macro.enabled:
-                power = -self.l_joystick.x_axis
-                turnval = self.l_joystick.y_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
+                power = -self.l_joystick.y_axis
+                turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
                 # get turn value from r_joystick if it exists, else get it from l_joystick
                 self.dt.set_dt_output(power + turnval,
                                       power - turnval)
@@ -43,6 +43,10 @@ class ArcadeDriveController:
                 self.straight_macro.enable()
             else:
                 self.straight_macro.disable()
+        elif state_id == "button7":
+            if datum:
+                self.straight_macro.disable()
+                self.dt.set_dt_output(0, 0)
 
     #def _vision_listener(self, sensor, state_id, datum):
 

@@ -14,10 +14,10 @@ class StraightMacro(GRTMacro):
     """
 
     DT_NO_TARGET_TURN_RATE = .2
-    DT_KP = .0015
+    DT_KP = .03
     DT_KI = 0
     DT_KD = 0
-    DT_ABS_TOL = 3
+    DT_ABS_TOL = 5
     DT_OUTPUT_RANGE = .25
 
     def __init__(self, dt, navx, timeout=None):
@@ -39,11 +39,11 @@ class StraightMacro(GRTMacro):
         self.pid_controller.setAbsoluteTolerance(self.DT_ABS_TOL)
         self.pid_controller.reset()
 
-        self.pid_controller.setInputRange(-180.0,  180.0)
+        self.pid_controller.setInputRange(0.0,  360.0)
         self.pid_controller.setContinuous(True)
 
 
-        self.pid_controller.setOutputRange(-.5, .5)
+        self.pid_controller.setOutputRange(-.4, .4)
         self.run_threaded()
 
 
@@ -57,6 +57,7 @@ class StraightMacro(GRTMacro):
         self.pid_controller.disable()
         self.setpoint = None
         self.enabled = False
+        self.dt.set_dt_output(0, 0)
 
     def set_output(self, output):
         """
@@ -65,7 +66,13 @@ class StraightMacro(GRTMacro):
         :return:
         """
         if self.enabled:
-            self.dt.set_dt_output(.4 + output, -(.4 +output))
+            if not self.pid_controller.onTarget():
+                self.dt.set_dt_output(.3 + output, .3 -output)
+            else:
+                self.dt.set_dt_output(.3, .3)
+            print("Setpoint: ", self.pid_controller.getSetpoint())
+            print("Output: ", output)
 
     def get_input(self):
+        print("Input: ", self.navx.fused_heading)
         return self.navx.fused_heading

@@ -1,10 +1,11 @@
 #execfile("../camscript.py")
+"""
 import platform
 if "Linux" in platform.platform():
     with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
         code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
         exec(code)
-
+"""
 
 
 import wpilib
@@ -67,8 +68,9 @@ class MyRobot(wpilib.SampleRobot):
     def operatorControl(self):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
-            print("Flywheel Speed: ", self.flywheel_motor.get())
+            #print("Flywheel Speed: ", self.flywheel_motor.get())
             self.hid_sp.poll()
+            #print("Fused heading: ", self.navx.fused_heading)
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
