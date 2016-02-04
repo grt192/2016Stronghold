@@ -1,17 +1,19 @@
 class MechController:
 
-    def __init__(self, driver_joystick, xbox_controller, shooter, belt_roller_motor): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, pickup): # mechanisms belong in arguments
         # define mechanisms here
-        self.shooter = shooter
+        
 
         self.driver_joystick = driver_joystick
         self.xbox_controller = xbox_controller
-        self.belt_roller_motor = belt_roller_motor
+        
+        self.pickup = pickup
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
 
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
+        """
         if state_id == "x_button":
             if datum:
                 self.shooter.flywheel.speed_increment_function()
@@ -26,6 +28,20 @@ class MechController:
         if state_id == "a_button":
             if datum:
                 self.shooter.flywheel.spin_to_standby_speed()
+        """
+        if state_id == "l_y_axis":
+            if datum:
+                self.pickup.angle_change(datum)
+        if state_id == "r_shoulder":
+            if datum:
+                self.pickup.roll(.8)
+        if state_id == "l_shoulder":
+            if datum:
+                self.pickup.roll(-.8)
+
+
+
+
 
 
 
