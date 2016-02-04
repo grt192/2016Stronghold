@@ -24,7 +24,8 @@ from grt.mechanism.mechcontroller import MechController
 from grt.sensors.navx import NavX
 #from grt.macro.new_turn_macro import NewTurnMacro
 from grt.macro.straight_macro import StraightMacro
-from grt.mechansim.pickup import Pickup
+from grt.mechanism.pickup import Pickup
+from grt.mechansim.manual_turntable import ManualTurntable
 
 using_vision_server = False
 
@@ -39,11 +40,15 @@ navx = NavX()
 
 #DT Talons and Objects
 
-pickup_achange_motor1 = CANTalon(9)
-pickup_achange_motor2 = CANTalon(10)
+pickup_achange_motor1 = CANTalon(8)
+pickup_achange_motor2 = CANTalon(11)
 pickup_roller_motor = CANTalon(11)
 
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
+
+turntable_motor = CANTalon(12)
+
+manual_turntable = ManualTurntable(turntable_motor)
 
 dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
@@ -108,7 +113,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, navx))  # human interface 
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, pickup)
+mc = MechController(driver_stick, xbox_controller, pickup, manual_turntable)
 
 # define DriverStation
 ds = DriverStation.getInstance()

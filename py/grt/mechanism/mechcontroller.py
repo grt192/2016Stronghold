@@ -1,6 +1,6 @@
 class MechController:
 
-    def __init__(self, driver_joystick, xbox_controller, pickup): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, pickup, manual_turntable): # mechanisms belong in arguments
         # define mechanisms here
         
 
@@ -8,6 +8,7 @@ class MechController:
         self.xbox_controller = xbox_controller
         
         self.pickup = pickup
+        self.manual_turntable = manual_turntable
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
 
@@ -38,6 +39,9 @@ class MechController:
         if state_id == "l_shoulder":
             if datum:
                 self.pickup.roll(-.8)
+        if state_id == "r_y_axis":
+            if datum:
+                self.manual_turntable.turn(datum*.3)
 
 
 
