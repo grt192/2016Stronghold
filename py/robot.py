@@ -17,10 +17,10 @@ class MyRobot(wpilib.SampleRobot):
         while self.isDisabled():
             tinit = time.time()
             self.hid_sp.poll()
-            print("Pitch: " , self.navx.pitch)
-            print("Roll: ", self.navx.roll)
-            print("Yaw: ", self.navx.yaw)
-            print("Compass heading: ", self.navx.compass_heading)
+            #print("Pitch: " , self.navx.pitch)
+            #print("Roll: ", self.navx.roll)
+            #print("Yaw: ", self.navx.yaw)
+            #print("Compass heading: ", self.navx.compass_heading)
             print("Fused heading: ", self.navx.fused_heading)
             self.safeSleep(tinit, .04)
     
