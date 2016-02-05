@@ -56,3 +56,6 @@ class FlywheelSensor(Sensor):
             self.at_speed = True
         else:
             self.at_speed = False
+
+
+
