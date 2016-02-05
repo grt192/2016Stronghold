@@ -35,15 +35,15 @@ class MechController:
                 self.pickup.angle_change(datum)
         if state_id == "r_shoulder":
             if datum:
-                self.pickup.roll(.8)
+                self.pickup.roll(1.0)
             else:
                 self.pickup.stop()
         if state_id == "l_shoulder":
             if datum:
-                self.pickup.roll(-.8)
+                self.pickup.roll(-1.0)
             else:
                 self.pickup.stop()
-        if state_id == "r_y_axis":
+        if state_id == "r_x_axis":
             if datum:
                 self.manual_shooter.turn(datum*.3)
         if state_id == "x_button":
