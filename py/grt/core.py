@@ -1,12 +1,13 @@
+__author__ = "Calvin Huang"
 import threading
 import time
+import multiprocessing
 
 
 class Sensor(object):
     """
     Abstract sensor class.
     Stores data as class attributes, updated when poll() is called.
-
     Take care to not accidentally override vital class attributes
     with update_state.
     """
@@ -39,7 +40,6 @@ class Sensor(object):
     def update_state(self, state_id, datum):
         """
         Updates the state of this sensor.
-
         Updates state state_id with data datum.
         Also notifies listeners of state change (on change, not add).
         """
@@ -47,13 +47,15 @@ class Sensor(object):
             self.__dict__[state_id] = datum
         elif self.__dict__[state_id] != datum:
             self.__dict__[state_id] = datum
-            for l in self.listeners:
+            #copy allows listeners to be removed without throwing an error
+            self.listeners_temp = self.listeners.copy()
+            for l in self.listeners_temp:
                 l(self, state_id, datum)
+            del self.listeners_temp
 
     def poll(self):
         """
         Polls the sensor, notifies any listeners if necessary.
-
         Should be overridden by all sensors.
         """
         pass
@@ -94,12 +96,10 @@ class Constants(Sensor):
     """
     Class for reading, and keeping track of, constants in a file, implemented as a singleton.
     Retrieve singleton object by calling Constants().
-
     File is read line by line, in [key],[number] format.
     Lines starting with '/' are treated as add'l constants files,
     and are read recursively.
     Blank lines, and lines starting with '#' are ignored.
-
     Behaves more or less like a sensor.
     Access datum like a dictionary.
     """
@@ -136,7 +136,6 @@ class Constants(Sensor):
         Loads file data from a file.
         If other files are listed inside this file,
         recursively loads them.
-
         (Beware of "include loops" that will cause a crash)
         """
         f = open(file_loc)
@@ -160,7 +159,6 @@ class Constants(Sensor):
 class GRTMacro(object):
     """
     Abstract macro class.
-
     daemon flag specifies whether or not it will run on its own
     in a concurrent.
     """
@@ -189,15 +187,17 @@ class GRTMacro(object):
         self.timeout = timeout
         self.poll_time = poll_time
         self.daemon = daemon
+        self.no_initialize = False
         self._disabled_flag = threading.Event()
 
-    def run(self):
+    def run_threaded(self, no_initialize=False):
         """
         Start macro in new thread.
         See execute() for more details on macro execution.
         """
-        self.thread = threading.Thread(target=self.execute)
-        self.thread.start()
+        self.no_initialize = no_initialize
+        self.process = threading.Thread(target=self.run_linear)
+        self.process.start()
 
     def _wait(self, duration):
         """
@@ -210,39 +210,42 @@ class GRTMacro(object):
         if not self.running:
             raise StopIteration()
 
-    def execute(self):
+    def run_linear(self):
         """
         Starts macro in current thread.
         First calls initialize(), then calls perform()
         periodically until timeout or completion.
         After completion, calls die().
         """
-        if not self.started:
-            self.started = True
-            self.running = True
+        #if not self.started:
+        self.started = True
+        self.running = True
 
-            def _timeout():
-                self.timed_out = True
-                self.kill()
+        def _timeout():
+            self.timed_out = True
+            self.terminate()
 
-            if self.timeout:
-                timeout_timer = threading.Timer(self.timeout, _timeout)
-                timeout_timer.start()
-            else:
-                timeout_timer = None
+        if self.timeout:
+            timeout_timer = threading.Timer(self.timeout, _timeout)
+            timeout_timer.start()
+        else:
+            timeout_timer = None
 
-            try:
-                self.initialize()
-                while self.running:
-                    self.perform()
-                    time.sleep(self.poll_time)
-            except StopIteration:
-                pass
+        try:
+            if not self.no_initialize:
+                self.macro_initialize()
+            while self.running:
+                self.macro_periodic()
+                time.sleep(self.poll_time)
+        except StopIteration:
+            pass
 
-            self.running = False
-            if timeout_timer:
-                timeout_timer.cancel()
-            self.die()
+        self.running = False
+        if timeout_timer:
+            timeout_timer.cancel()
+        self.macro_stop()
+        print("Thread ending")
+        print("Running threads: ",threading.active_count())
 
     def reset(self):
         """
@@ -250,27 +253,36 @@ class GRTMacro(object):
         """
         self.running = self.started = self.timed_out = False
 
-    def initialize(self):
+    def macro_initialize(self):
         """
         Run once, at the beginning of macro execution.
         """
         pass
 
-    def perform(self):
+    def macro_periodic(self):
         """
         Macro execution body, run periodically.
         """
         pass
 
-    def die(self):
+    def macro_stop(self):
         """
         Cleanup after macro execution.
         """
         pass
 
-    def kill(self):
+    def terminate(self):
         """
         Stop macro execution.
         """
         if self.running:
             self.running = False
+        self.macro_stop()
+
+    def emergency_stop(self):
+        """
+        To be called only to stop a runaway macro.
+        Will possibly leak large amounts of memory.
+        """
+        self.terminate()
+        self.process.terminate()

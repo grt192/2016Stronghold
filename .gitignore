@@ -1,6 +1,8 @@
 *.py[cod]
 .idea
 
+*.bmp
+
 # C extensions
 *.so
 
