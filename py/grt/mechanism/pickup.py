@@ -11,3 +11,5 @@ class Pickup:
 
 	def roll(self, power):
 		self.roller_motor.set(power)
+	def stop(self):
+		self.roller_motor.set(0)

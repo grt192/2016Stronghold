@@ -25,10 +25,12 @@ from grt.sensors.navx import NavX
 #from grt.macro.new_turn_macro import NewTurnMacro
 from grt.macro.straight_macro import StraightMacro
 from grt.mechanism.pickup import Pickup
-from grt.mechansim.manual_turntable import ManualTurntable
+from grt.mechanism.manual_shooter import ManualShooter
 
 using_vision_server = False
 
+c = Compressor()
+c.start()
 
 #from vision.robot_vision_dynamic import Vision
 
@@ -40,26 +42,34 @@ navx = NavX()
 
 #DT Talons and Objects
 
-pickup_achange_motor1 = CANTalon(8)
-pickup_achange_motor2 = CANTalon(11)
-pickup_roller_motor = CANTalon(11)
+pickup_achange_motor1 = CANTalon(11)
+pickup_achange_motor2 = CANTalon(7)
+pickup_roller_motor = CANTalon(8)
 
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
+flywheel_motor = CANTalon(10)
+shooter_act = Solenoid(1)
 turntable_motor = CANTalon(12)
 
-manual_turntable = ManualTurntable(turntable_motor)
+manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
 
 dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_left = CANTalon(7)
-dt_l2 = CANTalon(8)
+#dt_r2 = CANTalon(2)
+#dt_r3 = CANTalon(3)
+dt_left = CANTalon(4)
+#dt_l2 = CANTalon(5)
+#dt_l3 = CANTalon(6)
 
 
-dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(1)
-dt_l2.set(7)
+#dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
+#dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
+#dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
+#dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
+#dt_r2.set(1)
+#dt_r3.set(1)
+#dt_l2.set(4)
+#dt_l3.set(4)
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 
@@ -113,7 +123,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, navx))  # human interface 
 # Mech Talons, objects, and controller
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, pickup, manual_turntable)
+mc = MechController(driver_stick, xbox_controller, pickup, manual_shooter)
 
 # define DriverStation
 ds = DriverStation.getInstance()
