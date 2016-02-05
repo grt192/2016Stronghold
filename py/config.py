@@ -2,12 +2,10 @@
 Config File for Robot
 """
 
-#@dhruv_rajan is editing config.py
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
-from grt.sensors.gyro import Gyro
 from grt.core import SensorPoller
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
@@ -47,7 +45,6 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 
 
 #Skeleton sensor poller
-gyro = Gyro(1)
 # define sensor poller
 # sp = SensorPoller()
 
