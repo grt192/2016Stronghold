@@ -66,6 +66,8 @@ class MechController:
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):
+        pass
+        """
         if state_id == "button4":
             if datum:
                 self.shooter.start_automatic_shot()
@@ -75,3 +77,4 @@ class MechController:
         if state_id == "button6":
             if datum:
                 self.shooter.flywheel_motor.set(0)
+        """
