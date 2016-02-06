@@ -48,10 +48,15 @@ class MechController:
                 self.manual_shooter.turn(datum*.3)
         if state_id == "x_button":
             if datum:
-                self.manual_shooter.spin_flywheel(1.0)
+                #self.manual_shooter.spin_flywheel(1.0)
+                self.manual_shooter.speed_increment_function()
         if state_id == "y_button":
             if datum:
-                self.manual_shooter.spin_flywheel(0)
+                #self.manual_shooter.spin_flywheel(0)
+                self.manual_shooter.speed_decrement_function()
+        if state_id == "a_button":
+            if datum:
+                self.manual_shooter.spin_flywheel()
         if state_id == "b_button":
             if datum:
                 self.manual_shooter.shooter_down()

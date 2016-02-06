@@ -2,7 +2,7 @@
 Config File for Robot
 """
 
-from wpilib import Solenoid, Compressor, DriverStation, CANTalon
+from wpilib import Solenoid, Compressor, DriverStation, CANTalon, AnalogInput
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -21,6 +21,8 @@ from grt.mechanism.manual_shooter import ManualShooter
 c = Compressor()
 c.start()
 
+turntable_pot = AnalogInput(0)
+
 #Manual pickup Talons and Objects
 
 pickup_achange_motor1 = CANTalon(11)
@@ -36,6 +38,9 @@ shooter_act = Solenoid(1)
 turntable_motor = CANTalon(12)
 manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
 
+flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+flywheel_motor.setP(.26)
+flywheel_motor.setF(.29)
 
 #DT Talons and Objects
 
