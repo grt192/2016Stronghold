@@ -36,6 +36,15 @@ class Shooter:
 
         self.spindown_timer = threading.Timer(2.0, self.spindown)
 
+    def turn(self, power):
+        self.turntable.turntable_motor.set(power)
+
+    
+    def shooter_down(self):
+        self.rails.shooter_act.set(True)
+    def shooter_up(self):
+        self.rails.shooter_act.set(False)
+
 
 
 

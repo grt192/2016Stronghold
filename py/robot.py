@@ -1,3 +1,9 @@
+import platform
+if "Linux" in platform.platform():
+    with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
+        code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
+        exec(code)
+
 import wpilib
 import time
 import threading
@@ -13,7 +19,8 @@ class MyRobot(wpilib.SampleRobot):
         self.navx = config.navx
         self.flywheel_motor = config.flywheel_motor
         self.turntable_pot = config.turntable_pot
-        self.manual_shooter = config.manual_shooter
+        self.shooter = config.shooter
+        self.robot_vision = config.robot_vision
 
 
     def disabled(self):
@@ -27,6 +34,7 @@ class MyRobot(wpilib.SampleRobot):
             #print("Fused heading: ", self.navx.fused_heading)
             print("Flywheel speed: ", self.flywheel_motor.getEncVelocity())
             print("Potentiometer position: ", self.turntable_pot.getVoltage())
+            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             self.safeSleep(tinit, .04)
     
     def autonomous(self):
@@ -37,7 +45,8 @@ class MyRobot(wpilib.SampleRobot):
             tinit = time.time()
             self.hid_sp.poll()
             print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity())
-            print("Flywheel set speed: ", self.manual_shooter.current_speed)
+            print("Flywheel set speed: ", self.shooter.flywheel.currentspeed)
+            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):

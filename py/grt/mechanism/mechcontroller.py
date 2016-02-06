@@ -1,6 +1,6 @@
 class MechController:
 
-    def __init__(self, driver_joystick, xbox_controller, pickup, manual_shooter): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, pickup, shooter): # mechanisms belong in arguments
         # define mechanisms here
         
 
@@ -8,7 +8,7 @@ class MechController:
         self.xbox_controller = xbox_controller
         
         self.pickup = pickup
-        self.manual_shooter = manual_shooter
+        self.shooter = shooter
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
 
@@ -45,23 +45,23 @@ class MechController:
                 self.pickup.stop()
         if state_id == "r_x_axis":
             if datum:
-                self.manual_shooter.turn(datum*.3)
+                self.shooter.turntable.turn(datum*.3)
         if state_id == "x_button":
             if datum:
                 #self.manual_shooter.spin_flywheel(1.0)
-                self.manual_shooter.speed_increment_function()
+                self.shooter.flywheel.speed_increment_function()
         if state_id == "y_button":
             if datum:
                 #self.manual_shooter.spin_flywheel(0)
-                self.manual_shooter.speed_decrement_function()
+                self.shooter.flywheel.speed_decrement_function()
         if state_id == "a_button":
             if datum:
-                self.manual_shooter.spin_flywheel()
+                self.shooter.flywheel.spin_flywheel(0)
         if state_id == "b_button":
             if datum:
-                self.manual_shooter.shooter_down()
+                self.shooter.shooter_down()
             else:
-                self.manual_shooter.shooter_up()
+                self.shooter.shooter_up()
         
 
 
@@ -71,15 +71,25 @@ class MechController:
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):
-        pass
-        """
         if state_id == "button4":
             if datum:
                 self.shooter.start_automatic_shot()
         if state_id == "button5":
             if datum:
                 self.shooter.abort_automatic_shot()
-        if state_id == "button6":
+        if state_id == "button2":
             if datum:
-                self.shooter.flywheel_motor.set(0)
-        """
+                self.shooter.flywheel.flywheel_motor.set(1600)
+            else:
+                self.shooter.flywheel.flywheel_motor.set(0)
+        if state_id == "button3":
+            if datum:
+                self.shooter.flywheel.flywheel_motor.set(3200)
+            else:
+                self.shooter.flywheel.flywheel_motor.set(0)
+        if state_id == "button8":
+            if datum:
+                self.shooter.flywheel.flywheel_motor.set(-1600)
+            else:
+                self.shooter.flywheel.flywheel_motor.set(0)
+        

@@ -18,12 +18,12 @@ class TurnTable:
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
-    TURNTABLE_NO_TARGET_TURN_RATE = .2
-    TURNTABLE_KP = .0015
+    TURNTABLE_NO_TARGET_TURN_RATE = .1
+    TURNTABLE_KP = .009
     TURNTABLE_KI = 0
     TURNTABLE_KD = 0
     TURNTABLE_ABS_TOL = 20
-    TURNTABLE_OUTPUT_RANGE = .4
+    TURNTABLE_OUTPUT_RANGE = .12
 
     def __init__(self, shooter):
         self.shooter = shooter

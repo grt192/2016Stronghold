@@ -15,7 +15,11 @@ from grt.sensors.navx import NavX
 from grt.macro.straight_macro import StraightMacro
 from grt.mechanism.pickup import Pickup
 from grt.mechanism.manual_shooter import ManualShooter
+from grt.vision.robot_vision import Vision
+from grt.mechanism.shooter import Shooter
 
+
+using_vision_server = True
 #Compressor initialization
 
 c = Compressor()
@@ -25,24 +29,7 @@ turntable_pot = AnalogInput(0)
 
 #Manual pickup Talons and Objects
 
-pickup_achange_motor1 = CANTalon(11)
-pickup_achange_motor2 = CANTalon(7)
-pickup_roller_motor = CANTalon(8)
-pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
-
-#Manual shooter Talons and Objects
-
-flywheel_motor = CANTalon(10)
-shooter_act = Solenoid(1)
-turntable_motor = CANTalon(12)
-manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
-
-flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setP(.26)
-flywheel_motor.setF(.29)
-
-#DT Talons and Objects
 
 
 dt_right = CANTalon(1)
@@ -65,6 +52,32 @@ dt_l3.set(4)
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
+#Manual shooter Talons and Objects
+
+flywheel_motor = CANTalon(10)
+shooter_act = Solenoid(1)
+turntable_motor = CANTalon(12)
+hood_motor = CANTalon(33)
+robot_vision = Vision()
+if using_vision_server:
+	import grt.vision.vision_server
+	grt.vision.vision_server.prepare_module(robot_vision)
+shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act, dt)
+#manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
+
+flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+flywheel_motor.setP(.26)
+flywheel_motor.setF(.29)
+
+pickup_achange_motor1 = CANTalon(11)
+pickup_achange_motor2 = CANTalon(7)
+pickup_roller_motor = CANTalon(8)
+pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor, flywheel_motor)
+#DT Talons and Objects
+
+
+
+
 
 #Straight macro initialization
 
@@ -77,13 +90,13 @@ straight_macro = StraightMacro(dt, navx)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
-hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
+hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
 
 
 
 # define MechController
 
-mc = MechController(driver_stick, xbox_controller, pickup, manual_shooter)
+mc = MechController(driver_stick, xbox_controller, pickup, shooter)
 
 # define DriverStation
 ds = DriverStation.getInstance()

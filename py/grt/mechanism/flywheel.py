@@ -17,6 +17,9 @@ class Flywheel:
     def spindown(self):
         self.rpm_speed_spin(0)
 
+    def spin_flywheel(self, power):
+        self.flywheel_motor.set(0)
+
     def vbus_spin(self, power):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVBus)
         self.flywheel_motor.set(power)

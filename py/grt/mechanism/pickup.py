@@ -1,9 +1,10 @@
 class Pickup:
 
-	def __init__(self, achange_motor_1, achange_motor_2, roller_motor):
+	def __init__(self, achange_motor_1, achange_motor_2, roller_motor, flywheel_motor):
 		self.achange_motor_1 = achange_motor_1
 		self.achange_motor_2 = achange_motor_2
 		self.roller_motor = roller_motor
+		self.flywheel_motor = flywheel_motor
 
 	def angle_change(self, power):
 		self.achange_motor_1.set(power)
@@ -13,3 +14,5 @@ class Pickup:
 		self.roller_motor.set(power)
 	def stop(self):
 		self.roller_motor.set(0)
+
+	#Pass this the actual flywheel class, eventually.

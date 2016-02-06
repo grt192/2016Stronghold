@@ -3,6 +3,7 @@ class Rails:
 	def __init__(self, shooter):
 		self.shooter = shooter
 		self.rails_actuator = shooter.rails_actuator
+		self.shooter_act = self.rails_actuator
 
 	def rails_up(self):
 		self.rails_actuator.set(False)
