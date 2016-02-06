@@ -19,7 +19,7 @@ class TurnTable:
     INITIAL_NO_TARGET_TURN_RATE = 0
 
     TURNTABLE_NO_TARGET_TURN_RATE = .1
-    TURNTABLE_KP = .009
+    TURNTABLE_KP = .004
     TURNTABLE_KI = 0
     TURNTABLE_KD = 0
     TURNTABLE_ABS_TOL = 20
@@ -38,7 +38,7 @@ class TurnTable:
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
         self.PID_controller.reset()
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
-        #self.PID_controller.setInputRange(-300, 300)
+        self.PID_controller.setInputRange(-300, 300)
         #Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(0)
 
