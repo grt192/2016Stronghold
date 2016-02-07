@@ -17,6 +17,8 @@ from grt.mechanism.pickup import Pickup
 from grt.mechanism.manual_shooter import ManualShooter
 from grt.vision.robot_vision import Vision
 from grt.mechanism.shooter import Shooter
+from grt.mechanism.operation_manager import OperationManager
+from grt.sensors.switch_panel import SwitchPanel
 
 
 using_vision_server = True
@@ -89,14 +91,15 @@ straight_macro = StraightMacro(dt, navx)
 # Drive Controllers and sensor pollers
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
-ac = ArcadeDriveController(dt, driver_stick, straight_macro)
-hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
+switch_panel = SwitchPanel(2)
+ac = ArcadeDriveController(dt, driver_stick)
+hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
 
-
+operation_manager = OperationManager(shooter, pickup)
 
 # define MechController
 
-mc = MechController(driver_stick, xbox_controller, pickup, shooter)
+mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager)
 
 # define DriverStation
 ds = DriverStation.getInstance()

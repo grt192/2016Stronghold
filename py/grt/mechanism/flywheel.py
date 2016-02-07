@@ -39,6 +39,8 @@ class Flywheel:
         self.flywheel_motor.set(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed)
 
+
+
         
 
     

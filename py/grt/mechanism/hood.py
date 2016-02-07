@@ -10,16 +10,33 @@ class Hood:
 
 	def go_to_target_angle(self):
 		if self.robot_vision.getTargetView():
-			self.deg_set_angle(self.robot_vision.getTargetAngle())
+			self.auto_set(self.robot_vision.getTargetAngle())
 
-	def raw_set_angle(self, value):
+	def go_to_standby_angle(self):
+		self.auto_set(1000)
+
+	def go_to_frame_angle(self):
+		self.auto_set(0)
+
+	def auto_set(self, angle):
+		if self.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+			return
+		else:
+			self.hood_motor.set(angle)
+
+	def rotate(self, power):
+		if self.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+			self.hood_motor.set(power)
+		else:
+			print("Hood motor not in PercentVbus control mode!")
+
+	def enable_automatic_control(self):
 		self.hood_motor.changeControlMode(CANTalon.ControlMode.Position)
-		self.hood_motor.setP(1)
-		self.hood_motor.set(value)
-	def deg_set_angle(self, angle):
-		#ADD PROPER CONVERSION CONSTANTS
-		self.raw_set_angle(angle)
-		#self.hood_motor.set(angle)
+		self.hood_motor.setP(.01)
+
+	def disable_automatic_control(self):
+		self.hood_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+
 
 class HoodSensor(Sensor):
 	ANGLE_TOLERANCE = 5
@@ -29,7 +46,13 @@ class HoodSensor(Sensor):
 		self.hood = hood
 
 	def poll(self):
-		if self.hood.hood_motor.getClosedLoopError() < self.ANGLE_TOLERANCE:
+		if self.hood.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
 			self.vertical_ready = True
 		else:
-			self.vertical_ready = False
+			if self.hood.hood_motor.getClosedLoopError() < self.ANGLE_TOLERANCE:
+				self.vertical_ready = True
+			else:
+				self.vertical_ready = False
+
+
+

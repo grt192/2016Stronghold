@@ -9,7 +9,7 @@ class ArcadeDriveController:
     Class for controlling DT in arcade drive mode, with one or two joysticks.
     """
 
-    def __init__(self, dt, l_joystick, straight_macro=None, r_joystick=None):
+    def __init__(self, dt, l_joystick, r_joystick=None):
         """
         Initialize arcade drive controller with a DT and up to two joysticks.
         """
@@ -20,9 +20,7 @@ class ArcadeDriveController:
         if self.r_joystick:
             self.r_joystick.add_listener(self._joylistener)
 
-        self.straight_macro = straight_macro
 
-        #self.engage()
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
@@ -38,26 +36,6 @@ class ArcadeDriveController:
             else:
                 self.dt.downshift()
 
-        elif sensor == self.l_joystick and state_id == "button6":
-            if datum:
-                self.straight_macro.enable()
-            else:
-                self.straight_macro.disable()
-        elif state_id == "button7":
-            if datum:
-                self.straight_macro.disable()
-                self.dt.set_dt_output(0, 0)
-
-    #def _vision_listener(self, sensor, state_id, datum):
-
-
-    #def engage(self):
-            
-
-    #def disengage(self):
-    #        self.l_joystick.remove_listener(self._joylistener)
-    #        if self.r_joystick:
-    #            self.r_joystick.remove_listener(self._joylistener)
 
 class TankDriveController:
     """

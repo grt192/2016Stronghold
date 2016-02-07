@@ -36,6 +36,10 @@ class MechController:
             if state_id == "r_x_axis":
                 if datum:
                     self.shooter.turntable.turn(datum*.3)
+        if self.hood_override:
+            if state_id == "r_y_axis":
+                if datum:
+                    self.shooter.hood.turn(datum*.3)
 
         if state_id == "l_trigger":
             if datum < .5:
@@ -67,7 +71,45 @@ class MechController:
         
 
     def _switch_panel_listener(self, sensor, state_id, datum):
-        pass
+        if state_id == "switch1":
+            if datum:
+                self.vt_override = True
+            else:
+                self.vt_override = False
+        if state_id == "switch2":
+            if datum:
+                self.tt_override = True
+                self.shooter.turntable.disable_front_lock()
+            else:
+                self.tt_override = False
+                self.shooter.turntable.enable_front_lock()
+        if state_id == "switch3":
+            if datum:
+                self.hood_override = True
+                self.shooter.hood.disable_automatic_control()
+            else:
+                self.hood_override = False
+                self.shooter.hood.enable_automatic_control()
+        if state_id == "switch4":
+            if datum:
+                pass
+                #Flywheel override not yet implemented
+
+        if state_id == "switch8":
+            if datum:
+                self.shooter.rails.rails_down()
+            else:
+                self.shooter.rails.rails_up()
+        if state_id == "switch9":
+            if datum:
+                self.pickup_override = True
+            else:
+                self.pickup_override = False
+        if state_id == "switch10":
+            if datum:
+                self.master_fault = True
+            else:
+                self.master_fault = False
 
 
 
@@ -105,4 +147,9 @@ class MechController:
                 self.operation_manager.chival_cross()
             else:
                 self.operation_manager.chival_cross_abort()
+        if state_id == "button9":
+            if datum:
+                self.operation_manager.straight_cross()
+            else:
+                self.operation_manager.straight_cross_abort()
         

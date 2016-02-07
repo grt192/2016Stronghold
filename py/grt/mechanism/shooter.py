@@ -115,6 +115,7 @@ class Shooter:
         #self.spindown()
         self.turntable.PID_controller.disable()
         self.rails.rails_up()
+        self.hood.go_to_frame_angle()
         #self.turntable.turntable_motor.set(0)
         self.turntable.enable_front_lock()
         self.dt.enable_manual_control()

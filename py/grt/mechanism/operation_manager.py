@@ -1,9 +1,10 @@
 
 
 class OperationManager:
-	def __init__(self, shooter):
+	def __init__(self, shooter, pickup):
 		self.op_lock = False
 		self.shooter = shooter
+		self.pickup = pickup
 		self.shooter.op_lock = self.op_lock
 		self.pickup.op_lock = self.op_lock
 
@@ -58,19 +59,21 @@ class OperationManager:
 		self.shooter.abort_automatic_shot()
 		#Check that more specialized logic is not needed
 
+	@operation
 	def chival_cross(self):
 		pass
 		#Run recorded chival de fris cross operation
 
-	def chival_cross_finished(self):
-		pass
+	def chival_cross_abort(self):
+		self.op_lock = False
 		#Called when recorded cross finished or aborted
 
+	@operation
 	def straight_cross(self):
 		pass
 		#Call a straight macro
-	def straight_cross_finished(self):
-		pass
+	def straight_cross_abort(self):
+		self.op_lock = False
 		#Called when straight macro aborted (won't finish on its own)
 
 #op_finished methods should not actually disable the op_lock.
