@@ -22,11 +22,11 @@ class XboxJoystick(Sensor):
     a_button = b_button = x_button = y_button = False
     l_shoulder = r_shoulder = back_button = start_button = False
 
-    def __init__(self, port):
+    def __init__(self, process_stack, port):
         """
         Initializes the joystick with some USB port.
         """
-        super().__init__()
+        super().__init__(process_stack=process_stack)
         self.j = Joystick(port)
 
     def poll(self):
