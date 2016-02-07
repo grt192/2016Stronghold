@@ -87,7 +87,7 @@ class TurnTable:
         #if output > 0:
         #    if enc_pos < ENC_MAX:
                 #enc_pos < ENC_MAX:
-        if self.turntable_motor.getControlMode == CANTalon.ControlMode.PercentVbus:
+        if self.turntable_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
             self.turntable_motor.set(output)
         else:
             print("Turntable motor not in PercentVbus control mode!")
@@ -107,13 +107,13 @@ class TurnTable:
 
     
     def enable_front_lock(self):
-        self.turntable_motor.changeCotnrolMode(CANTalon.ControlMode.Position)
+        self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
         #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
         self.turntable_motor.setP(1)
         self.turntable_motor.set(0)
 
     def disable_front_lock(self):
-        self.turntable_motor.changeCotnrolMode(CANTalon.ControlMode.PercentVbus)
+        self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.turntable_motor.set(0)
 
 

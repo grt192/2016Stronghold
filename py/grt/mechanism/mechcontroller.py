@@ -1,4 +1,5 @@
 class MechController:
+    pickup_override = tt_override = vt_override = hood_override = False
 
     def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager): # mechanisms belong in arguments
         # define mechanisms here
@@ -10,6 +11,8 @@ class MechController:
         self.pickup = pickup
         self.shooter = shooter
         self.operation_manager = operation_manager
+
+
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
         switch_panel.add_listener(self._switch_panel_listener)

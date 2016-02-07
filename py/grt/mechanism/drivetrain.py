@@ -33,6 +33,7 @@ class DriveTrain:
         right_output *= self.power
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
+    
 
     def set_right_motor(self, power):
         self.right_motor.set(power)

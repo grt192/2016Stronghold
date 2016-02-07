@@ -54,6 +54,11 @@ dt_l3.set(4)
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
+driver_stick = Attack3Joystick(0)
+xbox_controller = XboxJoystick(1)
+switch_panel = SwitchPanel(2)
+ac = ArcadeDriveController(dt, driver_stick)
+
 #Manual shooter Talons and Objects
 
 flywheel_motor = CANTalon(10)
@@ -64,9 +69,7 @@ robot_vision = Vision()
 if using_vision_server:
 	import grt.vision.vision_server
 	grt.vision.vision_server.prepare_module(robot_vision)
-shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act, dt)
-#manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
-
+shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act, ac, dt)
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
 flywheel_motor.setP(.26)
 flywheel_motor.setF(.29)
@@ -75,6 +78,11 @@ pickup_achange_motor1 = CANTalon(11)
 pickup_achange_motor2 = CANTalon(7)
 pickup_roller_motor = CANTalon(8)
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor, flywheel_motor)
+operation_manager = OperationManager(shooter, pickup)
+
+#manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
+
+
 #DT Talons and Objects
 
 
@@ -88,14 +96,10 @@ navx = NavX()
 straight_macro = StraightMacro(dt, navx)
 
 
-# Drive Controllers and sensor pollers
-driver_stick = Attack3Joystick(0)
-xbox_controller = XboxJoystick(1)
-switch_panel = SwitchPanel(2)
-ac = ArcadeDriveController(dt, driver_stick)
+# Drive Controllers
+
 hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
 
-operation_manager = OperationManager(shooter, pickup)
 
 # define MechController
 

@@ -3,17 +3,35 @@
 class OperationManager:
 	def __init__(self, shooter, pickup):
 		self.op_lock = False
+		self.current_op = "None"
 		self.shooter = shooter
 		self.pickup = pickup
-		self.shooter.op_lock = self.op_lock
-		self.pickup.op_lock = self.op_lock
+		self.shooter.operation_manager = self
+		self.pickup.operation_manager = self
 
-	def operation(self, func):
-		if self.op_lock:
-			return
-		else:
-			self.op_lock = True
-			return func(self)
+	def operation(func):
+		def self_enable(self):
+			if self.op_lock:
+				print("Operation bounced!")
+				return
+			else:
+				self.op_lock = True
+				self.current_op = func.__name__
+				return func(self)
+		return self_enable
+
+	def op_abort(func):
+		def self_enable(self):
+			if "cross" in self.current_op and "cross" in func.__name__:
+				return func(self)
+			elif "pickup" in self.current_op and "pickup" in func.__name__:
+				return func(self)
+			elif "shot" in self.current_op and "shot" in func.__name__:
+				return func(self)
+			else:
+				print("Abort bounced")
+				return
+		return self_enable
 
 		#If TT override --> control TT anyway
 		#If hood override --> assume hood ready
@@ -24,13 +42,14 @@ class OperationManager:
 	@operation
 	def vt_automatic_shot(self):
 		self.op_lock = True
-		self.shooter.start_automatic_shot()
+		self.shooter.vt_automatic_shot()
 
 	@operation	
 	def geo_automatic_shot(self):
 		self.op_lock = True
-		self.shooter.start_geometric_shot()
+		self.shooter.geo_automatic_shot()
 
+	@op_abort
 	def automatic_pickup_shot_abort(self):
 		self.pickup.abort_automatic_pickup()
 		self.shooter.abort_automatic_shot()
@@ -55,6 +74,7 @@ class OperationManager:
 		#Delay before doing this
 		self.pickup.go_to_frame_position()
 
+	@op_abort
 	def cross_abort(self):
 		self.shooter.abort_automatic_shot()
 		#Check that more specialized logic is not needed
@@ -64,6 +84,7 @@ class OperationManager:
 		pass
 		#Run recorded chival de fris cross operation
 
+	@op_abort
 	def chival_cross_abort(self):
 		self.op_lock = False
 		#Called when recorded cross finished or aborted
@@ -72,6 +93,8 @@ class OperationManager:
 	def straight_cross(self):
 		pass
 		#Call a straight macro
+
+	@op_abort
 	def straight_cross_abort(self):
 		self.op_lock = False
 		#Called when straight macro aborted (won't finish on its own)

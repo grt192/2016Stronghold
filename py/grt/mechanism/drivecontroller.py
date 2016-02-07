@@ -16,6 +16,7 @@ class ArcadeDriveController:
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
+        self.manual_control_enabled = True
         self.l_joystick.add_listener(self._joylistener)
         if self.r_joystick:
             self.r_joystick.add_listener(self._joylistener)
@@ -24,7 +25,7 @@ class ArcadeDriveController:
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            if not self.straight_macro.enabled:
+            if self.manual_control_enabled:
                 power = self.l_joystick.y_axis
                 turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
                 # get turn value from r_joystick if it exists, else get it from l_joystick
@@ -35,6 +36,11 @@ class ArcadeDriveController:
                 self.dt.upshift()
             else:
                 self.dt.downshift()
+
+    def enable_manual_control(self):
+        self.manual_control_enabled = True
+    def disable_manual_control(self):
+        self.manual_control_enabled = False
 
 
 class TankDriveController:

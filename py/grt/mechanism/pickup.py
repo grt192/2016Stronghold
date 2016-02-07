@@ -1,7 +1,7 @@
 class Pickup:
 
 	def __init__(self, achange_motor_1, achange_motor_2, roller_motor, flywheel_motor):
-		self.op_lock = None
+		self.operation_manager = None
 		self.achange_motor_1 = achange_motor_1
 		self.achange_motor_2 = achange_motor_2
 		self.roller_motor = roller_motor
