@@ -15,9 +15,10 @@ from grt.sensors.navx import NavX
 from grt.macro.straight_macro import StraightMacro
 from grt.mechanism.pickup import Pickup
 from grt.mechanism.manual_shooter import ManualShooter
+from queue import Queue
 
 #Compressor initialization
-
+listener_stack = Queue()
 process_stack = []
 c = Compressor()
 c.start()
@@ -42,22 +43,22 @@ manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
 
 
 dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
+# dt_r2 = CANTalon(2)
+# dt_r3 = CANTalon(3)
 dt_left = CANTalon(4)
-dt_l2 = CANTalon(5)
-dt_l3 = CANTalon(6)
+# dt_l2 = CANTalon(5)
+# dt_l3 = CANTalon(6)
 dt_shifter = Solenoid(0)
 
 
-dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(1)
-dt_r3.set(1)
-dt_l2.set(4)
-dt_l3.set(4)
+# dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_r2.set(1)
+# dt_r3.set(1)
+# dt_l2.set(4)
+# dt_l3.set(4)
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 

@@ -1,7 +1,8 @@
-__author__ = "Calvin Huang"
 import threading
 import time
-import multiprocessing
+import config
+
+__author__ = "Calvin Huang"
 
 
 class Sensor(object):
@@ -48,10 +49,10 @@ class Sensor(object):
             self.__dict__[state_id] = datum
         elif self.__dict__[state_id] != datum:
             self.__dict__[state_id] = datum
-            #copy allows listeners to be removed without throwing an error
+            # copy allows listeners to be removed without throwing an error
             self.listeners_temp = self.listeners.copy()
             for l in self.listeners_temp:
-                self.process_stack.append(l)
+                config.listener_stack.put((self, l, state_id, datum))
             del self.listeners_temp
 
     def poll(self):
