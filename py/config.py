@@ -74,7 +74,7 @@ xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
 hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
 
-
+process_stack = []
 
 # define MechController
 
