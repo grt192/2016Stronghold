@@ -15,7 +15,7 @@ class Encoder(Sensor):
     distance = rate = 0
     stopped = direction = True
 
-    def __init__(self, channel_a, channel_b, pulse_dist=1.0,
+    def __init__(self, process_stack, channel_a, channel_b, pulse_dist=1.0,
                  reverse=False, modnum=1, cpr=128,
                  enctype=CounterBase.EncodingType.k4X):
         """
@@ -23,7 +23,7 @@ class Encoder(Sensor):
         distance per pulse (usu. feet, default 1), no reversing,
         on module number 1, 128 CPR, and with 4x counting.
         """
-        super().__init__()
+        super().__init__(process_stack=process_stack)
         self.e = WEncoder(channel_a, channel_b, reverse, enctype)
         self.cpr = cpr
         self.e.setDistancePerPulse(pulse_dist)
