@@ -13,34 +13,30 @@ class Flywheel:
         if self.robot_vision.getTargetView():
             #self.rpm_speed_spin(self.robot_vision.getTargetSpeed())
             self.flywheel_motor.set(2600)
+
     def spin_to_standby_speed(self):
-        self.rpm_speed_spin(self.STANDBY_SPEED)
+        self.flywheel_motor.set(self.STANDBY_SPEED)
+
+    def spin_to_geo_speed(self):
+        self.flywheel_motor.set(2600)
+
+    def spin_to_pickup_speed(self):
+        self.flywheel_motor.set(2000)
+
+    def spin_to_reverse_speed(self):
+        self.flywheel_motor.set(-1000)
+
     def spindown(self):
-        self.rpm_speed_spin(0)
-
-    def spin_flywheel(self, power):
         self.flywheel_motor.set(0)
-
-    def vbus_spin(self, power):
-        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVBus)
-        self.flywheel_motor.set(power)
-    def voltage_spin(self, voltage):
-        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Voltage)
-        self.flywheel_motor.set(voltage)
-    def raw_speed_spin(self, speed):
-        #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-        #self.flywheel_motor.setP(1)
-        self.flywheel_motor.set(speed)
-    def rpm_speed_spin(self, speed):
-        #ADD PROPER CONVERSION CONSTANTS
-        self.raw_speed_spin(speed)
+    
+    
     def speed_increment_function(self):
         self.currentspeed=self.currentspeed+200
-        self.rpm_speed_spin(self.currentspeed)
+        self.flywheel_motor.set(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed) 
     def speed_decrement_function(self):
         self.currentspeed=self.currentspeed-200
-        self.rpm_speed_spin(self.currentspeed)
+        self.flywheel_motor.set(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed)
 
         

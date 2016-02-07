@@ -1,20 +1,16 @@
 import wpilib
 from grt.core import Sensor
 import threading
+from wpilib import CANTalon
 
 
-ENC_MIN = -20000
-ENC_MAX = 20000
+
 
 
 class TurnTable:
 
-    DT_NO_TARGET_TURN_RATE = .2
-    DT_KP = .0015
-    DT_KI = 0
-    DT_KD = 0
-    DT_ABS_TOL = 50
-    DT_OUTPUT_RANGE = .25
+    ENC_MIN = -20000
+    ENC_MAX = 20000
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
@@ -43,20 +39,19 @@ class TurnTable:
         self.PID_controller.setSetpoint(0)
 
     def getRotationReady(self):
+        #If an additional check is needed beyond PIDController.onTarget() for determining whether
+        #the rotation is ready, use this function
         with self.turntable_lock:
-            return self.rotation_ready
+            return self.PID_controller.onTarget()
 
     def get_input(self):
-        #Make sure this checks getTargetView(), as well
         if self.robot_vision.getTargetView():
             self.prev_input = self.robot_vision.getRotationalError()
             return self.prev_input
         else:
             return self.prev_input
 
-    def no_view_timeout(self):
-        pass
-        
+   
     def set_output(self, output):
         
         if self.robot_vision.getTargetView():
@@ -92,7 +87,10 @@ class TurnTable:
         #if output > 0:
         #    if enc_pos < ENC_MAX:
                 #enc_pos < ENC_MAX:
-        self.turntable_motor.set(output)
+        if self.turntable_motor.getControlMode == CANTalon.ControlMode.PercentVbus:
+            self.turntable_motor.set(output)
+        else:
+            print("Turntable motor not in PercentVbus control mode!")
             #else:
              #   self.turntable_motor.set(0)
         #elif output < 0:
@@ -107,10 +105,16 @@ class TurnTable:
         if self.dt:
             self.dt.set_dt_output(-output, -output)
 
-    def turn_to(self, target):
-        self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
-        self.motor.setP(1)
-        self.motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
+    
+    def enable_front_lock(self):
+        self.turntable_motor.changeCotnrolMode(CANTalon.ControlMode.Position)
+        #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
+        self.turntable_motor.setP(1)
+        self.turntable_motor.set(0)
+
+    def disable_front_lock(self):
+        self.turntable_motor.changeCotnrolMode(CANTalon.ControlMode.PercentVbus)
+        self.turntable_motor.set(0)
 
 
 
