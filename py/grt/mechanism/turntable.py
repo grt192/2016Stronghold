@@ -32,19 +32,18 @@ class TurnTable:
         self.last_input = 0
 
         self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD,
-                                                   self.get_input, self.set_output)
+                                                   self.pid_input, self.pid_output)
+
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
 
-        # TODO Workaround for wpilib bug as of 1/23/2016
+        # TODO: Workaround for wpilib/robotpy bug as of 1/23/2016
         self.PID_controller.reset()
 
         # Be sure to use tolerance buffer
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
         self.PID_controller.setSetpoint(0)
 
-
-
-    def get_input(self):
+    def pid_input(self):
         # Make sure this checks getTargetView(), as well
         if self.robot_vision.target_view:
             self.last_input = self.robot_vision.rotational_error
@@ -55,7 +54,7 @@ class TurnTable:
     def no_view_timeout(self):  # TODO: Implement
         pass
 
-    def set_output(self, output):
+    def pid_output(self, output):
 
         if self.robot_vision.target_view():
             if self.PID_controller.onTarget():
