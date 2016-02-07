@@ -18,7 +18,7 @@ class Hood:
         self.hood_motor.set(value)
 
     def deg_set_angle(self, angle):
-        # ADD PROPER CONVERSION CONSTANTS
+        # TODO: ADD PROPER CONVERSION CONSTANTS
         self.raw_set_angle(angle)
 
     # self.hood_motor.set(angle)

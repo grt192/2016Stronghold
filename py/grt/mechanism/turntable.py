@@ -31,17 +31,17 @@ class TurnTable:
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.last_input = 0
 
-        self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD,
+        self.pid_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD,
                                                    self.pid_input, self.pid_output)
 
-        self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
+        self.pid_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
 
         # TODO: Workaround for wpilib/robotpy bug as of 1/23/2016
-        self.PID_controller.reset()
+        self.pid_controller.reset()
 
         # Be sure to use tolerance buffer
-        self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
-        self.PID_controller.setSetpoint(0)
+        self.pid_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
+        self.pid_controller.setSetpoint(0)
 
     def pid_input(self):
         # Make sure this checks getTargetView(), as well
@@ -57,7 +57,7 @@ class TurnTable:
     def pid_output(self, output):
 
         if self.robot_vision.target_view():
-            if self.PID_controller.onTarget():
+            if self.pid_controller.onTarget():
                 # If the target is visible, and I'm on target, stop.
                 output = 0
                 # self.dt_turn(output)
@@ -98,6 +98,17 @@ class TurnTable:
         self.motor.setP(1)
         self.motor.set(target)  # TODO: WILL NOT CHANGE CONTROL MODE BACK
 
+    def _turntable_listener(self, sensor, state_id, datum):
+        if state_id == "rotation_ready":
+            if datum:
+                self.target_locked_rotation = False
+                # self.turntable.PID_controller.disable()
+                # self.turntable_motor.set(0)
+                self.hood.go_to_target_angle()
+                # self.flywheel.spin_to_target_speed()
+            else:
+                self.target_locked_rotation = False
+
 
 class TurnTableSensor(Sensor):
     def __init__(self, turntable):
@@ -105,4 +116,4 @@ class TurnTableSensor(Sensor):
         self.turntable = turntable
 
     def poll(self):
-        self.rotation_ready = self.turntable.PID_controller.onTarget()
+        self.rotation_ready = self.turntable.pid_controller.onTarget()

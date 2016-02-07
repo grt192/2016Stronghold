@@ -1,6 +1,6 @@
 
 from wpilib import Talon
-
+from wpilib import PIDController
 class DriveTrain:
     """
     Standard 6-motor drivetrain, with standard tankdrive.
@@ -24,6 +24,9 @@ class DriveTrain:
         self.right_encoder = right_encoder
         self.dt_left = self.left_motor
         self.dt_right = self.right_motor
+
+        self.straight_pid_controller = PIDController()
+
 
     def set_dt_output(self, left_output, right_output):
         """

@@ -2,6 +2,7 @@ import wpilib
 from grt.mechanism.flywheel import Flywheel, FlywheelSensor
 from grt.mechanism.turntable import TurnTable, TurnTableSensor
 from grt.mechanism.hood import Hood, HoodSensor
+from grt.core import Sensor
 from grt.mechanism.rails import Rails
 import threading
 from wpilib import CANTalon
@@ -9,7 +10,7 @@ from wpilib import CANTalon
 
 # THIS IS THE SAME AS THE VISION MECH CLASS
 class ShooterNew:
-    def __init__(self, robot_vision, flywheel, turntable, hood, rails):
+    def __init__(self, robot_vision, vision_sensor, flywheel, turntable, hood, rails):
         self.robot_vision = robot_vision
         self.flywheel = flywheel
         self.turntable = turntable
@@ -19,6 +20,12 @@ class ShooterNew:
     def spin_down(self):
         self.flywheel.spin_down()
 
+
+class VisionSensor(Sensor):
+    def __init__(self):
+        super().__init__()
+        self.rotational_error = self.vertical_error = 0
+        self.target_view = False
 
 class Shooter:
     def __init__(self, robot_vision, flywheel, turntable, hood, rails):
@@ -61,16 +68,7 @@ class Shooter:
                     self.rails.rails_down()
                     self.finish_automatic_shot()
 
-    def _turntable_listener(self, sensor, state_id, datum):
-        if state_id == "rotation_ready":
-            if datum:
-                self.target_locked_rotation = False
-                # self.turntable.PID_controller.disable()
-                # self.turntable_motor.set(0)
-                self.hood.go_to_target_angle()
-                # self.flywheel.spin_to_target_speed()
-            else:
-                self.target_locked_rotation = False
+
 
     def finish_automatic_shot(self):
         self.turntable.PID_controller.disable()

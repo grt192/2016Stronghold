@@ -14,7 +14,7 @@ class VisionMechanism:
         # print("Listener running")
         # print(state_id)
         if self.vision_enabled:
-            self.turntable.PID_controller.enable()
+            self.turntable.pid_controller.enable()
             if state_id == "rotational_error":
                 if datum:
                     print("Rotational error: ", datum)
@@ -26,5 +26,5 @@ class VisionMechanism:
                 if datum:
                     print("Distance: ", datum)
         else:
-            self.turntable.PID_controller.disable()
+            self.turntable.pid_controller.disable()
             self.turntable.disable()
