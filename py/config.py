@@ -19,7 +19,6 @@ from queue import Queue
 
 #Compressor initialization
 listener_queue = Queue()
-process_stack = []
 c = Compressor()
 c.start()
 
@@ -66,13 +65,13 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 #Straight macro initialization
 
 
-navx = NavX(process_stack)
+navx = NavX()
 straight_macro = StraightMacro(dt, navx)
 
 
 # Drive Controllers and sensor pollers
-driver_stick = Attack3Joystick(process_stack, 0)
-xbox_controller = XboxJoystick(process_stack, 1)
+driver_stick = Attack3Joystick(0)
+xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
 hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
 
