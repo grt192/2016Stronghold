@@ -28,11 +28,11 @@ class ButtonBoard(Sensor):
         button7 = button8 = l_toggle = r_toggle = \
         orange_button = green_button = False
 
-    def __init__(self):
+    def __init__(self, process_stack):
         """
         Constructs a new ButtonBoard. Only one should be instantiated.
         """
-        super().__init__()
+        super().__init__(process_stack=process_stack)
         for name, pin in BUTTON_TABLE:
             IOBOARD.getDigitalConfig(pin, IOBOARD.tDigitalConfig.kInputPullUp)
 
