@@ -12,11 +12,11 @@ class Gyro(Sensor):
     """
     angle = 0
 
-    def __init__(self, process_stack, channel):
+    def __init__(self, channel):
         """
         Initializes the gyroscope on some analog channel.
         """
-        super().__init__(process_stack=process_stack)
+        super().__init__()
         self.g = WGyro(channel)
 
     def poll(self):

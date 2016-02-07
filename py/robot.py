@@ -13,7 +13,7 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
-        self.listener_stack = config.listener_stack
+        self.listener_queue = config.listener_queue
 
     def disabled(self):
         while self.isDisabled():
@@ -36,7 +36,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isOperatorControl() and self.isEnabled():
             try:
                 # listener, state_id, datum = self.process_stack.pop()
-                sensor, listener, state_id, datum = self.listener_stack.get()
+                sensor, listener, state_id, datum = self.listener_queue.get()
                 print(state_id, datum)
                 listener(sensor, state_id, datum)
             except IndexError:

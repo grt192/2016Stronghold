@@ -18,7 +18,7 @@ from grt.mechanism.manual_shooter import ManualShooter
 from queue import Queue
 
 #Compressor initialization
-listener_stack = Queue()
+listener_queue = Queue()
 process_stack = []
 c = Compressor()
 c.start()

@@ -12,9 +12,8 @@ class Sensor(object):
     Take care to not accidentally override vital class attributes
     with update_state.
     """
-    def __init__(self, process_stack):
+    def __init__(self):
         self.listeners = set()  # set of listeners
-        self.process_stack = process_stack
 
     def get(self, name):
         """
@@ -52,7 +51,7 @@ class Sensor(object):
             # copy allows listeners to be removed without throwing an error
             self.listeners_temp = self.listeners.copy()
             for l in self.listeners_temp:
-                config.listener_stack.put((self, l, state_id, datum))
+                config.listener_queue.put((self, l, state_id, datum))
             del self.listeners_temp
 
     def poll(self):

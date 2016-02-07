@@ -17,12 +17,12 @@ class Switch(Sensor):
 
     pressed = False
 
-    def __init__(self, process_stack, channel, module=1, reverse=False):
+    def __init__(self, channel, module=1, reverse=False):
         """
         Initializes the switch on some digital channel and module.
         Normally assumes switches are active low.
         """
-        super().__init__(process_stack=process_stack)
+        super().__init__()
         self.s = DigitalInput(channel)
         self.reverse = reverse
 
