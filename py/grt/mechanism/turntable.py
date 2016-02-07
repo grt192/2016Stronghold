@@ -19,10 +19,10 @@ class TurnTable:
     INITIAL_NO_TARGET_TURN_RATE = 0
 
     TURNTABLE_NO_TARGET_TURN_RATE = .1
-    TURNTABLE_KP = .004
+    TURNTABLE_KP = .001
     TURNTABLE_KI = 0
     TURNTABLE_KD = 0
-    TURNTABLE_ABS_TOL = 20
+    TURNTABLE_ABS_TOL = 50
     TURNTABLE_OUTPUT_RANGE = .12
 
     def __init__(self, shooter):

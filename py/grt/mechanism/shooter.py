@@ -62,7 +62,8 @@ class Shooter:
                     self.target_locked_vertical = False
 
     def _flywheel_listener(self, sensor, state_id, datum):
-        if self.target_locked_vertical:
+        #if self.target_locked_vertical:
+        if self.target_locked_rotation:
             if state_id == "at_speed":
                 if datum:
                     self.rails.rails_down()
@@ -72,11 +73,11 @@ class Shooter:
     def _turntable_listener(self, sensor, state_id, datum):
         if state_id == "rotation_ready":
             if datum:
-                self.target_locked_rotation = False
+                self.target_locked_rotation = True
                 #self.turntable.PID_controller.disable()
                 #self.turntable_motor.set(0)
-                self.hood.go_to_target_angle()
-                #self.flywheel.spin_to_target_speed()
+                #self.hood.go_to_target_angle()
+                self.flywheel.spin_to_target_speed()
             else:
                 self.target_locked_rotation = False
 
@@ -97,9 +98,10 @@ class Shooter:
 
     def finish_automatic_shot(self):
         self.turntable.PID_controller.disable()
-        self.turntable.turntable_sensor.on_target = False
+        self.turntable_motor.set(0)
+        self.turntable_sensor.rotation_ready = False
+        self.target_locked_horizontal = False
         self.target_locked_vertical = False
-        self.target_locked_rotation = False
         self.spindown_timer.start()
 
     def start_automatic_shot(self):
