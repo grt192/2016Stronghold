@@ -9,8 +9,8 @@ class Ticker(Sensor):
     Do something every now and then.
     """
 
-    def __init__(self, duration):
-        super().__init__()
+    def __init__(self, process_stack, duration):
+        super().__init__(process_stack=process_stack)
         self.time = time.time()
         self.duration = duration
 
