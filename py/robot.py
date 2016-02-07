@@ -7,7 +7,9 @@ from wpilib import Preferences
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
+        listener_stack = []
         import config
+        self.process_stack = config.process_stack
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
@@ -28,6 +30,12 @@ class MyRobot(wpilib.SampleRobot):
         pass
     
     def operatorControl(self):
+        poll_thread = threading.Thread(target=self.loop)
+        while self.isOperatorControl() and self.isEnabled():
+            listener = self.process_stack.pop()
+            listener()
+
+    def loop(self):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
