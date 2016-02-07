@@ -4,8 +4,8 @@ from grt.core import Sensor
 try:
     from robotpy_ext.common_drivers.navx.ahrs import AHRS
     class NavX(Sensor):
-        def __init__(self):
-            super().__init__()
+        def __init__(self, process_stack):
+            super().__init__(process_stack=process_stack)
 
             self.ahrs = AHRS.create_spi()
 
@@ -28,8 +28,8 @@ try:
 
 except ImportError:
     class NavX(Sensor):
-        def __init__(self):
-            super().__init__()
+        def __init__(self, process_stack):
+            super().__init__(process_stack=process_stack)
 
             self.ahrs = None
 
