@@ -21,6 +21,11 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 50
     TURNTABLE_OUTPUT_RANGE = .12
 
+    POT_TURN_KP = .01
+    POT_TURN_KI = 0
+    POT_TURN_KD = 0
+    POT_TURN_OUTPUT_RANGE = .5
+
     def __init__(self, shooter):
         self.shooter = shooter
         self.turntable_motor = shooter.turntable_motor
@@ -109,7 +114,7 @@ class TurnTable:
     def enable_front_lock(self):
         self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
         #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
-        self.turntable_motor.setP(1)
+        self.turntable_motor.setP(self.POT_TURN_KP)
         self.turntable_motor.set(0)
 
     def disable_front_lock(self):

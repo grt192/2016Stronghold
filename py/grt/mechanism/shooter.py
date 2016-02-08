@@ -10,16 +10,16 @@ from wpilib import CANTalon
 
 
 class Shooter:
-    def __init__(self, robot_vision, flywheel_motor, turntable_motor, hood_motor, rails_actuator, drivecontroller, dt):
+    def __init__(self, robot_vision, flywheel_motor, turntable_motor, hood_motor, rails_actuator):
         self.operation_manager = None
+        self.dt = None
+        self.drivecontroller = None
         self.vision_enabled = False
         self.robot_vision = robot_vision
         self.flywheel_motor = flywheel_motor
         self.turntable_motor = turntable_motor
         self.hood_motor = hood_motor
         self.rails_actuator = rails_actuator
-        self.drivecontroller = drivecontroller
-        self.dt = dt
         self.target_locked_rotation = False
         self.target_locked_vertical = False
         self.geo_automatic = False
@@ -40,9 +40,6 @@ class Shooter:
         self.hood_sensor.add_listener(self._vt_hood_listener)
         self.hood_sensor.add_listener(self._geo_hood_listener)
 
-        self.abort_timer = threading.Timer(2.0, self.abort_automatic_shot)
-        self.reverse_timer = threading.Timer(1.0, self.reverse_func)
-        self.final_stop_timer = threading.Timer(1.0, self.final_stop_func)
 
 
 
@@ -80,8 +77,10 @@ class Shooter:
                     #self.turntable_motor.set(0)
                     self.hood.go_to_target_angle()
                     self.flywheel.spin_to_target_speed()
-                    self.drivecontroller.disable_manual_control()
-                    self.dt.set_dt_output(0, 0)
+                    if not self.drivecontroller == None:
+                        self.drivecontroller.disable_manual_control()
+                    if not self.dt == None:
+                        self.dt.set_dt_output(0, 0)
                 else:
                     self.target_locked_rotation = False
 
@@ -120,7 +119,8 @@ class Shooter:
         self.hood.go_to_frame_angle()
         #self.turntable.turntable_motor.set(0)
         self.turntable.enable_front_lock()
-        self.drivecontroller.enable_manual_control()
+        if not self.drivecontroller == None:
+            self.drivecontroller.enable_manual_control()
         self.flywheel.spindown()
         threading.Timer(1.0, self.reverse_func).start()
         self.target_locked_rotation = False

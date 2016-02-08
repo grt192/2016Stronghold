@@ -9,13 +9,16 @@ class ArcadeDriveController:
     Class for controlling DT in arcade drive mode, with one or two joysticks.
     """
 
-    def __init__(self, dt, l_joystick, r_joystick=None):
+    def __init__(self, dt, l_joystick, record_macro, operation_manager, r_joystick=None):
         """
         Initialize arcade drive controller with a DT and up to two joysticks.
         """
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
+        self.record_macro = record_macro
+        operation_manager.shooter.drivecontroller = self
+        operation_manager.shooter.dt = self.dt
         self.manual_control_enabled = True
         self.l_joystick.add_listener(self._joylistener)
         if self.r_joystick:
@@ -33,9 +36,18 @@ class ArcadeDriveController:
                                       power - turnval)
         elif sensor == self.l_joystick and state_id == 'trigger':
             if datum:
-                self.dt.upshift()
-            else:
                 self.dt.downshift()
+                self.dt.enable_protective_measures()
+            else:
+                self.dt.upshift()
+                self.dt.disable_protective_measures()
+
+        elif state_id == "button7":
+            if datum:
+                self.record_macro.start_record()
+        if state_id == "button8":
+            if datum:
+                self.record_macro.stop_record()
 
     def enable_manual_control(self):
         self.manual_control_enabled = True

@@ -19,6 +19,7 @@ from grt.vision.robot_vision import Vision
 from grt.mechanism.shooter import Shooter
 from grt.mechanism.operation_manager import OperationManager
 from grt.sensors.switch_panel import SwitchPanel
+from grt.macro.record_macro import RecordMacro
 
 
 using_vision_server = True
@@ -57,7 +58,6 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 switch_panel = SwitchPanel(2)
-ac = ArcadeDriveController(dt, driver_stick)
 
 #Manual shooter Talons and Objects
 
@@ -69,7 +69,7 @@ robot_vision = Vision()
 if using_vision_server:
 	import grt.vision.vision_server
 	grt.vision.vision_server.prepare_module(robot_vision)
-shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act, ac, dt)
+shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act)
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
 flywheel_motor.setP(.26)
 flywheel_motor.setF(.29)
@@ -78,7 +78,14 @@ pickup_achange_motor1 = CANTalon(11)
 pickup_achange_motor2 = CANTalon(7)
 pickup_roller_motor = CANTalon(8)
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor, flywheel_motor)
-operation_manager = OperationManager(shooter, pickup)
+
+navx = NavX()
+straight_macro = StraightMacro(dt, navx)
+
+talon_arr = [dt_left, dt_right, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
+record_macro = RecordMacro(talon_arr)
+
+operation_manager = OperationManager(shooter, pickup, straight_macro)
 
 #manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
 
@@ -92,8 +99,7 @@ operation_manager = OperationManager(shooter, pickup)
 #Straight macro initialization
 
 
-navx = NavX()
-straight_macro = StraightMacro(dt, navx)
+
 
 
 # Drive Controllers
@@ -102,6 +108,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flyw
 
 
 # define MechController
+ac = ArcadeDriveController(dt, driver_stick, record_macro, operation_manager)
 
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager)
 

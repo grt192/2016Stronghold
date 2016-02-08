@@ -1,13 +1,15 @@
 
 
 class OperationManager:
-	def __init__(self, shooter, pickup):
+	def __init__(self, shooter, pickup, straight_macro):
 		self.op_lock = False
 		self.current_op = "None"
 		self.shooter = shooter
 		self.pickup = pickup
 		self.shooter.operation_manager = self
 		self.pickup.operation_manager = self
+		self.straight_macro = straight_macro
+		self.straight_macro.operation_manager = self
 
 	def operation(func):
 		def self_enable(self):
@@ -91,11 +93,17 @@ class OperationManager:
 
 	@operation
 	def straight_cross(self):
-		pass
+		self.op_lock = True
+		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
+		self.shooter.rails.rails_down()
+		self.straight_macro.enable()
 		#Call a straight macro
 
 	@op_abort
 	def straight_cross_abort(self):
+		self.straight_macro.disable()
+		self.shooter.drivecontroller.enable_manual_control()
+		self.shooter.abort_automatic_shot()
 		self.op_lock = False
 		#Called when straight macro aborted (won't finish on its own)
 
@@ -105,7 +113,7 @@ class OperationManager:
 #or by the 
 
 
-#op_finished mehtods should not actually disable the op_lcok
+#op_finished mehtods should not actually disable the op_lock
 #the op_finished methods should really be op_abort methods that pass
 #control to the necessary mechanism abort functions
 #the proper mechanism finished functions (called in both the abort and normal sequences)

@@ -113,6 +113,11 @@ class MechController:
                 self.master_fault = True
             else:
                 self.master_fault = False
+        if state_id == "switch11":
+            if datum:
+                self.power_conserve = True
+            else:
+                self.power_conserve = False
 
 
 
