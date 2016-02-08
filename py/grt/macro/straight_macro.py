@@ -19,6 +19,7 @@ class StraightMacro(GRTMacro):
     DT_KD = 0
     DT_ABS_TOL = 5
     DT_OUTPUT_RANGE = .25
+    POWER = -.7
 
     def __init__(self, dt, navx, timeout=None):
         """
@@ -67,9 +68,9 @@ class StraightMacro(GRTMacro):
         """
         if self.enabled:
             if not self.pid_controller.onTarget():
-                self.dt.set_dt_output(.3 + output, .3 -output)
+                self.dt.set_dt_output(self.POWER + output, self.POWER -output)
             else:
-                self.dt.set_dt_output(.3, .3)
+                self.dt.set_dt_output(self.POWER, self.POWER)
             print("Setpoint: ", self.pid_controller.getSetpoint())
             print("Output: ", output)
 

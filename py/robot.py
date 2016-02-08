@@ -1,76 +1,51 @@
-#execfile("../camscript.py")
-"""
-import platform
-if "Linux" in platform.platform():
-    with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
-        code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
-        exec(code)
-"""
-
-
 import wpilib
 import time
 import threading
+from queue import Queue
 from wpilib import Preferences
-#camera = wpilib.USBCamera()
-#camera.startCapture()
-#camera.setExposureAuto() #-1 old
-#camera.setBrightness(20)
-#camera.stopCapture()
-#camera.setSize(camera.width / 2, camera.height / 2)
-#camera.setFPS(15)
-#cameraServer = wpilib.CameraServer()
-#cameraServer.startAutomaticCapture(camera)
+
 
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
+
         import config
-      
         self.hid_sp = config.hid_sp
         self.ds = config.ds
-        # self.flywheel_motor = config.flywheel_motor
         self.navx = config.navx
-        # self.turn_macro = config.turn_macro
-        #self.prefs = Preferences.getInstance()
-        #self.auto_sel = self.prefs.put("AutoSelector", 2)
-        #self.vision = config.vision
-        
-        #self.vision = config.vision
-        #self.vision_thread = threading.Thread(target=self.vision.vision_main)
-        #self.vision_thread.start()
-        #self.cv2 = config.cv2
-
+        self.listener_queue = config.listener_queue
 
     def disabled(self):
         while self.isDisabled():
             tinit = time.time()
-            #print("Actual flywheel Speed: ", self.flywheel_motor.get())
-
             self.hid_sp.poll()
-            print("Pitch: " , self.navx.pitch)
-            print("Roll: ", self.navx.roll)
-            print("Yaw: ", self.navx.yaw)
-            print("Compass heading: ", self.navx.compass_heading)
-            print("Fused heading: ", self.navx.fused_heading)
+            # print("Pitch: " , self.navx.pitch)
+            # print("Roll: ", self.navx.roll)
+            # print("Yaw: ", self.navx.yaw)
+            # print("Compass heading: ", self.navx.compass_heading)
+            # print("Fused heading: ", self.navx.fused_heading)
             self.safeSleep(tinit, .04)
-            #print(self.cv2.__version__)
     
     def autonomous(self):
-        # define auto here
-
-        self.turn_macro.run_threaded()
-        while self.isAutonomous() and self.isEnabled():
-            tinit = time.time()
-            self.hid_sp.poll()
-            self.safeSleep(tinit, .04)
+        pass
     
     def operatorControl(self):
+        poll_thread = threading.Thread(target=self.loop)
+        poll_thread.start()
+
+        while self.isOperatorControl() and self.isEnabled():
+            try:
+                # listener, state_id, datum = self.process_stack.pop()
+                sensor, listener, state_id, datum = self.listener_queue.get()
+                print(state_id, datum)
+                listener(sensor, state_id, datum)
+            except IndexError:
+                pass
+
+    def loop(self):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
-            #print("Flywheel Speed: ", self.flywheel_motor.get())
             self.hid_sp.poll()
-            #print("Fused heading: ", self.navx.fused_heading)
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
