@@ -23,18 +23,17 @@ from grt.macro.record_macro import RecordMacro
 
 
 using_vision_server = True
-#Compressor initialization
 
+#Compressor initialization
 c = Compressor()
 c.start()
 
 turntable_pot = AnalogInput(0)
 
-#Manual pickup Talons and Objects
 
 
 
-
+#DT talons and objects
 dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
 dt_r3 = CANTalon(3)
@@ -55,12 +54,13 @@ dt_l3.set(4)
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
+#Joysticks
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 switch_panel = SwitchPanel(2)
 
-#Manual shooter Talons and Objects
 
+#Shooter Talons and Objects
 flywheel_motor = CANTalon(10)
 shooter_act = Solenoid(1)
 turntable_motor = CANTalon(12)
@@ -74,42 +74,26 @@ flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
 flywheel_motor.setP(.26)
 flywheel_motor.setF(.29)
 
+
+#Pickup Talons and Objects
 pickup_achange_motor1 = CANTalon(11)
 pickup_achange_motor2 = CANTalon(7)
 pickup_roller_motor = CANTalon(8)
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor, flywheel_motor)
 
+
+#Straight macro initialization
 navx = NavX()
 straight_macro = StraightMacro(dt, navx)
 
+#Record macro initialization
 talon_arr = [dt_left, dt_right, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
 record_macro = RecordMacro(talon_arr)
 
+#Operation manager, controllers, and sensor pollers
 operation_manager = OperationManager(shooter, pickup, straight_macro)
-
-#manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
-
-
-#DT Talons and Objects
-
-
-
-
-
-#Straight macro initialization
-
-
-
-
-
-# Drive Controllers
-
 hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
-
-
-# define MechController
 ac = ArcadeDriveController(dt, driver_stick, record_macro, operation_manager)
-
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager)
 
 # define DriverStation
