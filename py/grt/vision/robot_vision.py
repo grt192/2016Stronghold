@@ -9,8 +9,8 @@ from robotpy_ext.common_drivers.navx.ahrs import AHRS
 class Vision:
     GREEN_LOWER = np.array([0, 100, 0], 'uint8')
     GREEN_UPPER = np.array([200, 255, 100], 'uint8')
-    # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
-    # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
+    # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') # Computer
+    # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') # Computer
 
     GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
@@ -118,7 +118,7 @@ class Vision:
     def get_error(self, target):
         """ Get the rotational and vertical error of the camera
         :param target:
-        :return:
+        :return: (rotational_error, vertical_error)
         """
         moments = cv2.moments(target)
 
@@ -152,7 +152,8 @@ class Vision:
     def vision_loop(self):
         # At the beginning of the loop, self.target_view is set to false
         # If something useful is found, self.target_view is set to true
-        target_view = False
+
+        self.target_view = False
 
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
 
