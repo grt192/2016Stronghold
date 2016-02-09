@@ -1,12 +1,12 @@
 import wpilib
 from grt.core import Sensor
-import threading
 
-ENC_MIN = -20000
-ENC_MAX = 20000
+POT_MIN = -20000
+POT_MAX = 20000
 
 
 class TurnTable:
+
     DT_NO_TARGET_TURN_RATE = .2
     DT_KP = .0015
     DT_KI = 0
@@ -44,7 +44,7 @@ class TurnTable:
         self.pid_controller.setSetpoint(0)
 
     def pid_input(self):
-        # Make sure this checks getTargetView(), as well
+        # Make sure this checks target_view, as well
         if self.robot_vision.target_view:
             self.last_input = self.robot_vision.rotational_error
             return self.last_input
@@ -84,6 +84,7 @@ class TurnTable:
                 print("Last_output error!")
 
             self.turn(output)
+
         self.last_output = output
 
     def turn(self, output):
@@ -94,26 +95,6 @@ class TurnTable:
             self.dt.set_dt_output(-output, -output)
 
     def turn_to(self, target):
-        self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
-        self.motor.setP(1)
-        self.motor.set(target)  # TODO: WILL NOT CHANGE CONTROL MODE BACK
-
-    def _turntable_listener(self, sensor, state_id, datum):
-        if state_id == "rotation_ready":
-            if datum:
-                self.target_locked_rotation = False
-                # self.turntable.PID_controller.disable()
-                # self.turntable_motor.set(0)
-                self.hood.go_to_target_angle()
-                # self.flywheel.spin_to_target_speed()
-            else:
-                self.target_locked_rotation = False
-
-
-class TurnTableSensor(Sensor):
-    def __init__(self, turntable):
-        super().__init__()
-        self.turntable = turntable
-
-    def poll(self):
-        self.rotation_ready = self.turntable.pid_controller.onTarget()
+        self.turntable_motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
+        self.turntable_motor.setP(1)
+        self.turntable_motor.set(target)  # TODO: WILL NOT CHANGE CONTROL MODE BACK

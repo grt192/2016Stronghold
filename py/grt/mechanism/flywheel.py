@@ -47,17 +47,3 @@ class Flywheel:
         self.currentspeed -= 200
         self.rpm_speed_spin(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed)
-
-
-class FlywheelSensor(Sensor):
-    SPEED_TOLERANCE = 50
-
-    def __init__(self, flywheel):
-        super().__init__()
-        self.flywheel = flywheel
-
-    def poll(self):
-        if self.flywheel.flywheel_motor.getClosedLoopError() < self.SPEED_TOLERANCE:
-            self.at_speed = True
-        else:
-            self.at_speed = False
