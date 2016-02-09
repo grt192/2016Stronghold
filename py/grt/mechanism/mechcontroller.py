@@ -10,6 +10,7 @@ class MechController:
         xbox_controller.add_listener(self._xbox_controller_listener)
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
+
         if state_id == "x_button":
             if datum:
                 self.shooter.flywheel.increment_speed()

@@ -29,15 +29,6 @@ class Vision:
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
 
-    def vision_main(self):
-        self.vision_init()
-        while True:
-            try:
-                self.vision_loop()
-            except KeyboardInterrupt:
-                self.vision_close()
-                break
-
     def __init__(self, vision_sensor):
         self.cap = cv2.VideoCapture(0)
         self.vision_sensor = vision_sensor
@@ -50,6 +41,14 @@ class Vision:
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
+    def vision_main(self):
+        self.vision_init()
+        while True:
+            try:
+                self.vision_loop()
+            except KeyboardInterrupt:
+                self.vision_close()
+                break
 
     @property
     def target_view(self):
@@ -61,7 +60,6 @@ class Vision:
         # Call the vision sensor listeners
         self.vision_sensor.target_view = value
         self._target_view = value
-
 
     @property
     def rotational_error(self):
