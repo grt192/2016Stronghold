@@ -3,7 +3,7 @@ import threading
 
 # THIS IS THE SAME AS THE 'VISION_MECH' CLASS
 
-class ShooterNew:
+class Shooter:
     def __init__(self, robot_vision, vision_sensor, flywheel, turntable, hood, rails, vision_enabled=False):
         self.robot_vision = robot_vision
         self.flywheel = flywheel
