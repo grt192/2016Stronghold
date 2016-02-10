@@ -48,15 +48,21 @@ class MechController:
                 self.manual_shooter.turn(datum*.3)
         if state_id == "x_button":
             if datum:
-                self.manual_shooter.spin_flywheel(1.0)
+                #self.manual_shooter.spin_flywheel(1.0)
+                self.pickup.zero()
         if state_id == "y_button":
             if datum:
-                self.manual_shooter.spin_flywheel(0)
+                self.pickup.go_to_zero()
+                #self.manual_shooter.spin_flywheel(0)
         if state_id == "b_button":
             if datum:
-                self.manual_shooter.shooter_down()
+                #self.manual_shooter.shooter_down()
+                self.pickup.go_back()
             else:
-                self.manual_shooter.shooter_up()
+                #self.manual_shooter.shooter_up()
+        if state_id == "a_button":
+            if datum:
+                self.pickup.go_to_portcullis()
         
 
 
