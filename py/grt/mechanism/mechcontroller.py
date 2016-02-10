@@ -33,6 +33,7 @@ class MechController:
         if state_id == "l_y_axis":
             if datum:
                 self.pickup.angle_change(datum)
+
         if state_id == "r_shoulder":
             if datum:
                 self.pickup.roll(1.0)
@@ -57,11 +58,14 @@ class MechController:
         if state_id == "b_button":
             if datum:
                 #self.manual_shooter.shooter_down()
+                print("Going Back")
                 self.pickup.go_back()
-            else:
+            # else:
+            #     pass
                 #self.manual_shooter.shooter_up()
         if state_id == "a_button":
             if datum:
+                print("Going to Portcullis")
                 self.pickup.go_to_portcullis()
         
 

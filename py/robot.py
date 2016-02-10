@@ -11,7 +11,7 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
-        self.achange_motor = config.pickup_achange_motor_2
+        self.achange_motor = config.pickup_achange_motor2
 
 
     def disabled(self):
@@ -32,7 +32,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
-            print(self.achange_motor.getEncPosition())
+            print("Enc: ", self.achange_motor.getEncPosition(), "Setpoint: ", self.achange_motor.getSetpoint())
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
