@@ -18,6 +18,9 @@ def gen(camera):
     """Video streaming generator function."""
     while True:
         frame = camera.getFrame()[1]
+
+        line1 = cv2.line(frame,(0,0),(511,511),(255,0,0),5)
+
         #print(frame)
         time.sleep(1)
         to_print = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + np.ndarray.tostring(frame) + b'\r\n'

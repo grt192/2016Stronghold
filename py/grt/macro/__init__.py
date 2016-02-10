@@ -14,7 +14,7 @@ class Challoopa:
         self.challoopa_motor1.set(-1)
         self.challoopa_motor2.set(-1)
 
-    def spin_foreward(self):
+    def spin_forward(self):
         self.roller_motor.set(1)
 
     def spin_backwards(self):

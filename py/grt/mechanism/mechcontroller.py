@@ -1,4 +1,4 @@
-__author__ = 'Chela and Neelima cuz wr faboo'
+__author__ = "Chelay and Neelimay"
 
 from _init_.py import Challoopa
 from turntable.py import TurnTable
@@ -40,7 +40,7 @@ class MechController:
                 self.rails_actuator.set(True)
         if state_id == "r_button":
             if datum:
-                self.spin_foreward(datum)
+                self.spin_forward(datum)
         if state_id == "l_button":
             if datum:
                  self.spin_backwards(datum)
