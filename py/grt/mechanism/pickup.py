@@ -13,3 +13,31 @@ class Pickup:
 		self.roller_motor.set(power)
 	def stop(self):
 		self.roller_motor.set(0)
+
+	def set_automatic(self):
+		self.achange_motor_1.changeControlMode(CANTalon.ControlMode.Position)
+		self.achange_motor_2.changeControlMode(CANTalon.ControlMode.Position)
+
+	def set_manual(self):
+		self.achange_motor_1.changeControlMode(CANTalon.ControlMode.PercentVbus)
+		self.achange_motor_2.changeControlMode(CANTalon.ControlMode.PercentVbus)
+
+	def zero(self):
+		set_automatic()
+		self.achange_motor_1.setSensorPosition(0)
+		self.achange_motor_2.setSensorPosition(0)
+
+	def go_to_zero(self):
+		set_automatic()
+		self.achange_motor_1.set(0)
+		self.achange_motor_2.set(0)
+
+	def go_back(self):
+		set_automatic()
+		self.achange_motor_1.set(2700)
+		self.achange_motor_2.set(-2700)
+
+	def go_to_portcullis(self):
+		set_automatic()
+		self.achange_motor_1.set(500)
+		self.achange_motor_2.set(-500)
