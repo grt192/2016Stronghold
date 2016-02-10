@@ -6,7 +6,7 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.core import SensorPoller
 from grt.macro.straight_macro import StraightMacro
-from grt.vision.robot_vision import Vision
+# from grt.vision.robot_vision import Vision
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
