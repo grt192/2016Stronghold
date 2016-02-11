@@ -35,7 +35,7 @@ class MyRobot(wpilib.SampleRobot):
 
         while self.isOperatorControl() and self.isEnabled():
             try:
-                # listener, state_id, datum = self.process_stack.pop()
+                # listene, state_id, datum = self.process_stack.pop()
                 sensor, listener, state_id, datum = self.listener_queue.get()
                 print(state_id, datum)
                 listener(sensor, state_id, datum)

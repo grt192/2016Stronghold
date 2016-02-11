@@ -37,9 +37,10 @@ class Vision:
         self._target_view = False
         self._rotational_error = self._vertical_error = self.DEFAULT_ERROR
 
-        self.vision_lock = threading.Lock()
-        self.vision_thread = threading.Thread(target=self.vision_main)
-        self.vision_thread.start()
+        # self.vision_lock = threading.Lock()
+        # self.vision_thread = threading.Thread(target=self.vision_main)
+        # self.vision_thread.start()
+        self.vision_main()
 
     def vision_main(self):
         self.vision_init()
@@ -52,8 +53,8 @@ class Vision:
 
     @property
     def target_view(self):
-        with self.vision_lock:
-            return self._target_view
+        # with self.vision_lock:
+        return self._target_view
 
     @target_view.setter
     def target_view(self, value):
@@ -63,8 +64,8 @@ class Vision:
 
     @property
     def rotational_error(self):
-        with self.vision_lock:
-            return self._rotational_error
+        # with self.vision_lock:
+        return self._rotational_error
 
     @rotational_error.setter
     def rotational_error(self, value):
@@ -74,8 +75,8 @@ class Vision:
 
     @property
     def vertical_error(self):
-        with self.vision_lock:
-            return self._vertical_error
+        # with self.vision_lock:
+        return self._vertical_error
 
     @vertical_error.setter
     def vertical_error(self, value):
@@ -99,7 +100,7 @@ class Vision:
         thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
 
         # Get Contours
-        im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Get Polygon Approximation list
         polygons = map(lambda curve: cv2.approxPolyDP(curve, self.POLY_ARC_LENGTH * cv2.arcLength(curve, closed=True),
@@ -108,10 +109,16 @@ class Vision:
         # Filter Curves:
         polygons = filter(lambda poly: self.POLY_MIN_SIDES <= poly.shape[0] <= self.POLY_MAX_SIDES, polygons)
 
-        # Get Maximum-Area Polygon
-        max_area_poly = max(polygons, key=cv2.contourArea)
+        target_view = False
+        try:
+            # Get Maximum-Area Polygon
+            max_area_poly = max(polygons, key=cv2.contourArea)
+            print("Max Area Poly", )
 
-        target_view = bool(max_area_poly)
+            target_view = True
+        except:
+            target_view = False
+            max_area_poly = None
 
         return target_view, max_area_poly
 
@@ -160,17 +167,18 @@ class Vision:
         _, img = self.cap.read()
         target_view, max_polygon = self.get_max_polygon(img)
 
-        with self.vision_lock:
-            # Update properties
-            self.target_view = target_view
-            if self.target_view:
-                self.rotational_error, self.vertical_error = self.get_error(max_polygon)
+        # with self.vision_lock:
+        # Update properties
+        self.target_view = target_view
+        if self.target_view:
+            self.rotational_error, self.vertical_error = self.get_error(max_polygon)
 
-            # Draw on image
-            if self.drawing:
-                cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
+        # Draw on image
+        if self.drawing:
+            cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
 
-            self.img = img
-            self.print_all_values()
-
+        self.img = img
+        cv2.imshow("Image", self.img)
+        self.print_all_values()
+        cv2.waitkey(25)
         time.sleep(.025)
