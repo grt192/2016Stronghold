@@ -1,11 +1,10 @@
 class Pickup:
 
-	def __init__(self, achange_motor_1, achange_motor_2, roller_motor, flywheel_motor):
+	def __init__(self, achange_motor_1, achange_motor_2, roller_motor):
 		self.operation_manager = None
 		self.achange_motor_1 = achange_motor_1
 		self.achange_motor_2 = achange_motor_2
 		self.roller_motor = roller_motor
-		self.flywheel_motor = flywheel_motor
 
 	def angle_change(self, power):
 		self.achange_motor_1.set(power)

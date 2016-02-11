@@ -62,6 +62,11 @@ switch_panel = SwitchPanel(2)
 
 #Shooter Talons and Objects
 flywheel_motor = CANTalon(10)
+
+flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+flywheel_motor.setP(.26)
+flywheel_motor.setF(.29)
+
 shooter_act = Solenoid(1)
 turntable_motor = CANTalon(12)
 hood_motor = CANTalon(33)
@@ -70,16 +75,14 @@ if using_vision_server:
 	import grt.vision.vision_server
 	grt.vision.vision_server.prepare_module(robot_vision)
 shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act)
-flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setP(.26)
-flywheel_motor.setF(.29)
+
 
 
 #Pickup Talons and Objects
 pickup_achange_motor1 = CANTalon(11)
 pickup_achange_motor2 = CANTalon(7)
 pickup_roller_motor = CANTalon(8)
-pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor, flywheel_motor)
+pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
 
 #Straight macro initialization
