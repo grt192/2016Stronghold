@@ -23,7 +23,7 @@ class Attack3Joystick(Sensor):
         button7 = button8 = button9 = \
         button10 = button11 = False
 
-    def __init__(self, port):
+    def __init__(self,port):
         """
         Initializes the joystick with some USB port.
         """
