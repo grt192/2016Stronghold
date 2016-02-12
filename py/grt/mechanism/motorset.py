@@ -25,7 +25,7 @@ class Motorset:
 
         lead_motor = motors[0]
 
-        for i, motor in enumerate(motors):
+        for i, motor in enumerate(motors[1:]):
             motor.changeControlMode(CANTalon.ControlMode.Follower)
             motor.set(lead_motor.getDeviceID())
             if scalefactors[i] < 0:
