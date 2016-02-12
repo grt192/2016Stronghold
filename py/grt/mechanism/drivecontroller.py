@@ -26,6 +26,7 @@ class ArcadeDriveController:
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
+            print(state_id, datum)
             if not self.straight_macro.enabled:
                 power = self.l_joystick.y_axis
                 turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
@@ -48,16 +49,6 @@ class ArcadeDriveController:
                 self.straight_macro.disable()
                 self.dt.set_dt_output(0, 0)
 
-    #def _vision_listener(self, sensor, state_id, datum):
-
-
-    #def engage(self):
-            
-
-    #def disengage(self):
-    #        self.l_joystick.remove_listener(self._joylistener)
-    #        if self.r_joystick:
-    #            self.r_joystick.remove_listener(self._joylistener)
 
 class TankDriveController:
     """

@@ -17,11 +17,11 @@ class Motorset:
         """
         num_motors = len(motors)
 
-        if num_motors != len(scalefactors):
-            raise ValueError("Scalefactors must have the same number of elements as motors")
-
         if not scalefactors:
             scalefactors = (1,) * num_motors
+
+        if num_motors != len(scalefactors):
+            raise ValueError("Scalefactors must have the same number of elements as motors")
 
         lead_motor = motors[0]
 
