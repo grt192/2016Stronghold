@@ -18,11 +18,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isDisabled():
             tinit = time.time()
             self.hid_sp.poll()
-            # print("Pitch: " , self.navx.pitch)
-            # print("Roll: ", self.navx.roll)
-            # print("Yaw: ", self.navx.yaw)
-            # print("Compass heading: ", self.navx.compass_heading)
-            # print("Fused heading: ", self.navx.fused_heading)
+            print("Pitch: " , self.navx.pitch, "Roll: ", self.navx.roll, "Yaw: ", self.navx.yaw, "Compass heading: ", self.navx.compass_heading, "Fused heading: ", self.navx.fused_heading)
             self.safeSleep(tinit, .04)
     
     def autonomous(self):
@@ -32,7 +28,6 @@ class MyRobot(wpilib.SampleRobot):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
-            print("Enc: ", self.achange_motor.getEncPosition(), "Setpoint: ", self.achange_motor.getSetpoint())
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
