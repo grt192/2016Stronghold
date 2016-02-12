@@ -10,7 +10,7 @@ class MechController:
         self.pickup = pickup
         self.manual_shooter = manual_shooter
         # driver_joystick.add_listener(self._driver_joystick_listener)
-        # xbox_controller.add_listener(self._xbox_controller_listener)
+        xbox_controller.add_listener(self._xbox_controller_listener)
 
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
@@ -38,13 +38,13 @@ class MechController:
         if state_id == "r_shoulder":
             if datum:
                 self.pickup.roll(1.0)
-        #     else:
-        #         self.pickup.stop()
-        # if state_id == "l_shoulder":
-        #     if datum:
-        #         self.pickup.roll(-1.0)
-        #     else:
-        #         self.pickup.stop()
+            else:
+                self.pickup.stop()
+        if state_id == "l_shoulder":
+            if datum:
+                self.pickup.roll(-1.0)
+            else:
+                self.pickup.stop()
         # if state_id == "r_x_axis":
         #     if datum:
         #         self.manual_shooter.turn(datum*.3)

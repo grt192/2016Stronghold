@@ -19,7 +19,7 @@ class StraightMacro(GRTMacro):
     DT_KD = 0
     DT_ABS_TOL = 5
     DT_OUTPUT_RANGE = .25
-    POWER = -.3
+    POWER = -.7
 
     def __init__(self, dt, navx, timeout=None):
         """
