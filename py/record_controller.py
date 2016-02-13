@@ -3,33 +3,52 @@ import time
 from collections import OrderedDict
 from grt.core import GRTMacro
 from wpilib import CANTalon
+
 try:
     import wpilib
 except ImportError:
     from pyfrc import wpilib
 
-class RecordMacro(GRTMacro):
 
+class RecordMacro(GRTMacro):
     def __init__(self, obj_list, timeout=None):
         super().__init__(timeout)
-        self.obj_list = obj_list #list of objects to record
-        #self.running = False
-        self.instructions = OrderedDict() #dictionary of instructions to save
+        self.obj_list = obj_list  # list of objects to record
+        # self.running = False
+        self.instructions = OrderedDict()  # dictionary of instructions to save
         self.enabled = False
         """
         This ridiculous for loop sets up a dictionary containing the objects passed in, and their output values.
         It may be easier to replace it with a 2D list.
         """
         for i in range(len(self.obj_list)):
-
             traj_pt = CANTalon.TrajectoryPoint()
             traj_pt.position = self.obj_list[i].getEncPosition()
             traj_pt.velocity = self.obj_list[i].getEncVelocity()
             traj_pt.timeDurMs = 100
             traj_pt.zeroPos = True
+            traj_attr = RecordMacro.trajectory2attr(traj_pt)
 
-            self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID() , type(self.obj_list[i]))] = [traj_pt]
+            self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID(), type(self.obj_list[i]))] = [traj_attr]
         self.run_threaded()
+
+
+    @staticmethod
+    def trajectory2attr(traj_pt: CANTalon.TrajectoryPoint):
+        return {"position": traj_pt.position,
+                "velocity": traj_pt.velocity,
+                "timeDurMs": traj_pt.timeDurMs,
+                "zeroPos": traj_pt.zeroPos}
+
+    @staticmethod
+    def attr2trajectory(attr_dict):
+        traj_pt = CANTalon.TrajectoryPoint()
+        traj_pt.position = attr_dict["position"]
+        traj_pt.velocity = attr_dict["velocity"]
+        traj_pt.timeDurMs = attr_dict["timeDurMs"]
+        traj_pt.zeroPos = attr_dict["zeroPos"]
+
+        return traj_pt
 
 
     def engage(self):
@@ -37,25 +56,48 @@ class RecordMacro(GRTMacro):
         Called in a higher level controller.
         Starts recording in a separate thread.
         """
-        #self.running = True
+        # self.running = True
         self.thread = threading.Thread(target=self.run_record)
         self.thread.start()
-   
+
     def disengage(self):
         """
         Signals recording thread to stop.
         """
-        #self.running = False
+        # self.running = False
 
     def start_record(self):
-        self.instructions = OrderedDict()
+        # for i in range(len(self.obj_list)):
+        #     traj_pt = CANTalon.TrajectoryPoint()
+        #     traj_pt.position = self.obj_list[i].getEncPosition()
+        #     traj_pt.velocity = self.obj_list[i].getEncVelocity()
+        #     traj_pt.timeDurMs = 100
+        #     traj_pt.zeroPos = True
+        #     traj_attr = RecordMacro.trajectory2attr(traj_pt)
         for i in range(len(self.obj_list)):
-            self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID() , type(self.obj_list[i]))] = [(self.obj_list[i].getEncPosition(), self.obj_list[i].getEncVelocity(), 0, 100, 0, 0, 1)]
+            self.instructions[i] = []
+
+
+
+            # self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID(), type(self.obj_list[i]))] = [traj_attr]
+        # self.instructions = OrderedDict()
+        # for i in range(len(self.obj_list)):
+        #     traj_pt = CANTalon.TrajectoryPoint()
+        #     traj_pt.position = self.obj_list[i].getEncPosition()
+        #     traj_pt.velocity = self.obj_list[i].getEncVelocity()
+        #     traj_pt.timeDurMs = 100
+        #
+        #     traj_attr = RecordMacro.trajectory2attr(traj_pt)
+        #
+        #     # self.instructions[
+
+            # self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID(), type(self.obj_list[i]))] = [
+            #     (self.obj_list[i].getEncPosition(), self.obj_list[i].getEncVelocity(), 0, 100, 0, 0, 1)]
         self.enabled = True
 
     def stop_record(self):
         self.enabled = False
-        print(self.instructions)
+        # print(self.instructions)
         self.save("/home/lvuser/py/instructions.py")
         return self.instructions
 
@@ -64,60 +106,77 @@ class RecordMacro(GRTMacro):
         Appends the output values of all the objects passed into __init__
         to the instructions dictionary. Sample rate is currently hard-coded.
         """
-        #while self.running:
-        #print("Operating")
+        # while self.running:
+        # print("Operating")
         if self.enabled:
             i = 0
             tinit = time.time()
-            for key in self.instructions:
+
+            for i, talon in enumerate(self.obj_list):
                 traj_pt = CANTalon.TrajectoryPoint()
                 traj_pt.position = self.obj_list[i].getEncPosition()
                 traj_pt.velocity = self.obj_list[i].getEncVelocity()
                 traj_pt.timeDurMs = 100
 
-                self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID() , type(self.obj_list[i]))] = [traj_pt]
-                #print(self.obj_list[i].Get())
-                i += 1
-            #wpilib.Wait(.1)
+                traj_attr = RecordMacro.trajectory2attr(traj_pt)
+                self.instructions[i].append(traj_attr)
+
+
+            # for key in self.instructions:
+            #     traj_pt = CANTalon.TrajectoryPoint()
+            #     traj_pt.position = self.obj_list[i].getEncPosition()
+            #     traj_pt.velocity = self.obj_list[i].getEncVelocity()
+            #     traj_pt.timeDurMs = 100
+            #
+            #     traj_attr = RecordMacro.trajectory2attr(traj_pt)
+            #
+            #     self.instructions[key].append(traj_attr)
+            #     # self.instructions[key].append(traj_attr)
+            #     # self.instructions["{0}, {1}".format(self.obj_list[i].getDeviceID(), type(self.obj_list[i]))].append(traj_attr)
+            #     # print(self.obj_list[i].Get())
+            #     i += 1
+            # wpilib.Wait(.1)
             time.sleep(.1 - (time.time() - tinit))
+
     def save(self, file_name):
         with open(file_name, 'a') as f:
-            f.write(str(self.instructions) + "\n") 
+            f.write(str(self.instructions) + "\n")
+
 
 class PlaybackMacro(GRTMacro):
-
     def __init__(self, instructions, talon_arr_obj, revert_controller=None, timeout=None):
         super().__init__(timeout)
-        self.instructions = instructions #instructions to output
+        self.instructions = instructions  # instructions to output
 
-        self.talon_arr_obj = talon_arr_obj #talons to output instructions to
-        self.revert_controller = revert_controller #drive controller to revert control to when finished
-        
-        #self.running = False
+        self.talon_arr_obj = talon_arr_obj  # talons to output instructions to
+        self.revert_controller = revert_controller  # drive controller to revert control to when finished
+
+        # self.running = False
         self.enabled = False
         self.i = 0
-        #parsing the dictionary into talon and solenoid components.
-        self.parse() #THIS LINE HAS BEEN COMMENTED OUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
-        #self.run_threaded(no_initialize=True)
-        #self.playback()
+        # parsing the dictionary into talon and solenoid components.
+        self.parse()  # THIS LINE HAS BEEN COMMENTED OUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        self.run_threaded(no_initialize=True)
+        # self.playback()
+
     def load(self, file_name):
-        #assumes we have a python file (*.py)
+        # assumes we have a python file (*.py)
         with open(file_name, 'r') as f:
             for line in f:
                 self.instructions = eval(line.replace("\n", ""))
-                #print(line)
-        #self.instructions = instructions
+                # print(line)
+                # self.instructions = instructions
 
     def parse(self):
-        self.talon_arr = [] #lists that the dictionary will be parsed into
+        self.talon_arr = []  # lists that the dictionary will be parsed into
         self.solenoid_arr = []
         for key in self.instructions:
             i = int(key.split(',')[0])
             print(i)
             if "Talon" in key or "Macro" in key:
                 self.talon_arr.append(self.instructions[key])
-                #print(self.instructions[key])
+                # print(self.instructions[key])
                 print(self.talon_arr)
             if "Solenoid" in key:
                 self.solenoid_arr[i] = self.instructions[key]
@@ -132,7 +191,7 @@ class PlaybackMacro(GRTMacro):
         self.thread.start()
 
     def start_playback(self, instructions=None):
-        #self.enabled = True
+        # self.enabled = True
         if instructions:
             self.instructions = instructions
         self.parse()
@@ -145,49 +204,50 @@ class PlaybackMacro(GRTMacro):
         """
         To be called only to use this LINEARLY in auto.
         """
-        #pass
-        #self.enabled = True
+        # pass
+        # self.enabled = True
         print("Began playback")
-        #self.process.join(timeout = 2)
-        #print("Ended join")
-        #self.terminate()
+        # self.process.join(timeout = 2)
+        # print("Ended join")
+        # self.terminate()
 
     def macro_stop(self):
         """
         Signals playback thread to stop.
         Also zeros all motor outputs.
         """
-        #self.running = False
+        # self.running = False
         self.enabled = False
         for talon in self.talon_arr_obj:
             if str(type(talon)) == "<class 'wpilib.cantalon.CANTalon'>":
                 talon.set(0)
 
-        #self.revert_controller.engage()
+                # self.revert_controller.engage()
 
     def macro_periodic(self):
         """
         Iterates through the provided instruction dictionary.
         Disengages itself when finished.
         """
-        #for i in range(len(self.talon_arr[0])):
-        print("Enabled")
+        # for i in range(len(self.talon_arr[0])):
+        # print("Enabled")
         tinit = time.time()
         try:
-            print(str(range(len(self.talon_arr[0]))))
-            for j in range(len(self.talon_arr)):   ###IMPORTANT NOTE!!! 
-            #THIS WAS CHANGED FROM len(self.talon_arr) to len(self.talon_arr_obj)
-            #IT SHOULD STILL WORK, but be sure to change it back at some point.
-                self.talon_arr_obj[j].pushMotionProfileTrajectory(self.talon_arr[j][self.i])
+            # print(str(range(len(self.talon_arr[0]))))
+            for j in range(len(self.talon_arr)):  ###IMPORTANT NOTE!!!
+                # THIS WAS CHANGED FROM len(self.talon_arr) to len(self.talon_arr_obj)
+                # IT SHOULD STILL WORK, but be sure to change it back at some point.
+                attr_dict = self.talon_arr[j][self.i]
+                self.talon_arr_obj[j].pushMotionProfileTrajectory(RecordMacro.attr2trajectory(attr_dict))
                 print(self.talon_arr[j][self.i])
                 print("J: " + str(j))
                 print(self.i)
             self.i += 1
-            #wpilib.Wait(.1)
+            # wpilib.Wait(.1)
             time.sleep(.1 - (time.time() - tinit))
         except IndexError:
             self.enabled = False
             self.i = 0
             self.macro_stop()
             self.terminate()
-            #self.disengage()
+            # self.disengage()
