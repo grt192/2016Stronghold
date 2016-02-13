@@ -17,9 +17,6 @@ from grt.mechanism.pickup import Pickup
 from grt.mechanism.manual_shooter import ManualShooter
 from queue import Queue
 
-# Robot Listener Queue
-listener_queue = Queue()
-
 #Compressor initialization
 c = Compressor()
 c.start()

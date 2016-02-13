@@ -51,8 +51,7 @@ class Sensor(object):
             # copy allows listeners to be removed without throwing an error
             self.listeners_temp = self.listeners.copy()
             for l in self.listeners_temp:
-                config.listener_queue.put((self, l, state_id, datum))
-            del self.listeners_temp
+                l(self, state_id, datum)
 
     def poll(self):
         """
