@@ -3,8 +3,8 @@ import numpy as np
 import time, math, threading
 
 class Vision:
-    GREEN_LOWER = np.array([0, 100, 0], 'uint8')
-    GREEN_UPPER = np.array([200, 255, 100], 'uint8')
+    #GREEN_LOWER = np.array([0, 100, 0], 'uint8')   #Computer
+    #GREEN_UPPER = np.array([200, 255, 100], 'uint8')    #Computer
     # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
     # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
 
@@ -36,6 +36,7 @@ class Vision:
         self.target_view = False
         self.rotational_error = self.vertical_error = self.DEFAULT_ERROR
         self.vision_lock = threading.Lock()
+        self.threshold_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
@@ -51,7 +52,8 @@ class Vision:
 
     def get_max_contour(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
+        with self.threshold_lock:
+            thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
         im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         area_max = area = 0
         max_contour = None
@@ -127,6 +129,20 @@ class Vision:
     def getTargetSpeed(self):
         with self.vision_lock:
             return self.vertical_error * 1 #Fancy coversion equation here
+
+    def setThreshold(self, lower_threshold, upper_threshold):
+        with self.threshold_lock:
+            self.GREEN_LOWER_HSV = lower_threshold
+            self.GREEN_UPPER_HSV = upper_threshold
+
+    def getLowerThreshold(self):
+        with self.threshold_lock:
+            return self.GREEN_LOWER_HSV
+
+    def getUpperThreshold(self):
+        with self.threshold_lock:
+            return self.GREEN_UPPER_HSV
+
 
 
 

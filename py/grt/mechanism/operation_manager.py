@@ -107,6 +107,12 @@ class OperationManager:
 		self.op_lock = False
 		#Called when straight macro aborted (won't finish on its own)
 
+	def twirly_cross(self):
+		pass
+
+	def twirly_cross_abort(self):
+		pass
+
 #op_finished methods should not actually disable the op_lock.
 #That should be done by the final mechanism method to run for the operation.
 #op_finished methods should be called either in abort portions of the mech controller
