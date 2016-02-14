@@ -112,14 +112,17 @@ class RecordMacro(GRTMacro):
             i = 0
             tinit = time.time()
 
-            for i, talon in enumerate(self.obj_list):
+            #for i, talon in enumerate(self.obj_list):
+            for key in self.instructions:
                 traj_pt = CANTalon.TrajectoryPoint()
                 traj_pt.position = self.obj_list[i].getEncPosition()
                 traj_pt.velocity = self.obj_list[i].getEncVelocity()
                 traj_pt.timeDurMs = 100
 
                 traj_attr = RecordMacro.trajectory2attr(traj_pt)
-                self.instructions[i].append(traj_attr)
+                self.instructions[key].append(traj_attr)
+
+                i += 1
 
 
             # for key in self.instructions:
@@ -172,7 +175,7 @@ class PlaybackMacro(GRTMacro):
         self.talon_arr = []  # lists that the dictionary will be parsed into
         self.solenoid_arr = []
         for key in self.instructions:
-            i = int(key.split(',')[0])
+            #i = int(key.split(',')[0])
             print(i)
             if "Talon" in key or "Macro" in key:
                 self.talon_arr.append(self.instructions[key])
@@ -251,3 +254,114 @@ class PlaybackMacro(GRTMacro):
             self.macro_stop()
             self.terminate()
             # self.disengage()
+
+
+class Playback(GRTMacro):
+
+    def __init__(self, instructions, talon_arr_obj, timeout=None):
+
+        super().__init__(timeout)
+        self.instructions = instructions
+        self.talon_arr_obj = talon_arr_obj
+
+        self.parse()
+
+        self.enabled = False
+        self.i = 0
+
+        #self.run_threaded(no_initialize=True)
+
+        
+        
+    def load(self, file_name):
+        # assumes we have a python file (*.py)
+        with open(file_name, 'r') as f:
+            for line in f:
+                self.instructions = eval(line.replace("\n", ""))
+                # print(line)
+                # self.instructions = instructions
+
+    def parse(self):
+        self.talon_arr = []  # lists that the dictionary will be parsed into
+        self.solenoid_arr = []
+        for key in self.instructions:
+            #i = int(key.split(',')[0])
+            print(key)
+            # print(i)
+            if "Talon" in key or "Macro" in key:
+                self.talon_arr.append(self.instructions[key])
+                # print(self.instructions[key])
+                # print(self.talon_arr)
+            if "Solenoid" in key:
+                self.solenoid_arr[i] = self.instructions[key]
+
+    def engage(self):
+        """
+        Called in a higher level controller.
+        Starts playback in a separate thread.
+        """
+        self.running = True
+        self.thread = threading.Thread(target=self.run_playback)
+        self.thread.start()
+
+    def start_playback(self, instructions=None):
+        # self.enabled = True
+        if instructions:
+            self.instructions = instructions
+        self.parse()
+        self.run_threaded()
+
+        self.run_playback()
+
+
+    def stop_playback(self):
+        self.terminate()
+
+    def macro_initialize(self):
+        """
+        To be called only to use this LINEARLY in auto.
+        """
+        # pass
+        # self.enabled = True
+        print("Began playback")
+        # self.process.join(timeout = 2)
+        # print("Ended join")
+        # self.terminate()
+
+    def macro_stop(self):
+        """
+        Signals playback thread to stop.
+        Also zeros all motor outputs.
+        """
+        # self.running = False
+        self.enabled = False
+        for talon in self.talon_arr_obj:
+            if str(type(talon)) == "<class 'wpilib.cantalon.CANTalon'>":
+                talon.set(0)
+
+    def run_playback(self): 
+
+        #disable motion profile talons before
+        for talon in self.talon_arr_obj:
+            talon.set(CANTalon.SetValueMotionProfile.Disable)
+
+
+            for j in range(len(self.talon_arr)):  ###IMPORTANT NOTE!!!
+                # THIS WAS CHANGED FROM len(self.talon_arr) to len(self.talon_arr_obj)
+                # IT SHOULD STILL WORK, but be sure to change it back at some point.
+                attr_dict = self.talon_arr[j][self.i]
+                self.talon_arr_obj[j].pushMotionProfileTrajectory(RecordMacro.attr2trajectory(attr_dict))
+                # print(self.talon_arr[j][self.i])
+                # print("J: " + str(j))
+                # print(self.i)
+
+            talon.set(CANTalon.SetValueMotionProfile.Enable)
+
+            time.sleep(.1*len(self.talon_arr))
+
+            talon.set(CANTalon.SetValueMotionProfile.Disable)
+
+
+
+
+
