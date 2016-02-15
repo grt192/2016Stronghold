@@ -42,6 +42,9 @@ class OperationManager:
 		#If pickup override --> assume pickup ready
 
 	@operation
+
+	#Add logic to check that the pickup arm is down and the elevator rails are raised!
+
 	def vt_automatic_shot(self):
 		self.op_lock = True
 		self.shooter.vt_automatic_shot()

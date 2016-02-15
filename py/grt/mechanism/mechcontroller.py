@@ -160,4 +160,41 @@ class MechController:
                 self.operation_manager.straight_cross()
             else:
                 self.operation_manager.straight_cross_abort()
+
+
+
+
+#Requested Xbox controller mappings
+#Presets:
+
+#Right trigger (RT) -- get vision tracking to lock onto the goal, spin the flywheel to the correct speed, and lower the elevator to shoot (vt_automatic_shot)
+#Right shoulder (RB) -- spin chalupa for intake
+#Left shoulder (LB) -- spin chalupa in reverse for portcullis
+#Left trigger (LT) -- abort failsafe
+#Y -- up increment shooter power
+#X -- down increment shooter power
+#B -- bring chalupa out for pickup
+#A -- bring chalupa arm in (decide how much later)
+
+#Manual:
+
+#Right joystick left-right -- rotate the turntable
+#Right joystick front-back -- rotate the hood
+#Left joystick front-back -- rotate the pickup angle-change
+
+#Switches:
+#9 switches arranged in a 3x3 grid on the mech control side
+
+#Also add another display on the mech control
+
+
+
+#Cameras:
+
+#One vision-tracking camera mounted in the center of the turret facing forward
+#One debugging camera mounted in the center of the turret facing down
+#One red dot camera next to the vision-tracking camera facing forward
+#Possibly one additonal camera on the drive base
+
+
         
