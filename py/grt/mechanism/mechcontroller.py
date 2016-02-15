@@ -1,5 +1,8 @@
 class MechController:
     pickup_override = tt_override = vt_override = hood_override = False
+    pickup_override = True
+    tt_override = True
+    vt_override = True
 
     def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager): # mechanisms belong in arguments
         # define mechanisms here
@@ -11,6 +14,8 @@ class MechController:
         self.pickup = pickup
         self.shooter = shooter
         self.operation_manager = operation_manager
+
+        self.shooter.turntable.tt_override = self.tt_override
 
 
         driver_joystick.add_listener(self._driver_joystick_listener)
@@ -61,10 +66,10 @@ class MechController:
 
         if state_id == "x_button":
             if datum:
-                self.shooter.flywheel.speed_increment_function()
+                self.shooter.flywheel.power_increment_function()
         if state_id == "y_button":
             if datum:
-                self.shooter.flywheel.speed_decrement_function()
+                self.shooter.flywheel.power_decrement_function()
 
 
         if state_id == "a_button":

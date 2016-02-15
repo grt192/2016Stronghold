@@ -119,6 +119,7 @@ class Shooter:
             self.turntable.turntable_motor.set(0)
             self.turntable.PID_controller.enable()
             self.vt_automatic = True
+    
 
     def geo_automatic_shot():
         if self.rails.get_position() == "down":
@@ -126,6 +127,7 @@ class Shooter:
             self.geo_reverse_func()
         else:
             self.geo_forward_func()
+
 
 
     def geo_forward_func(self):

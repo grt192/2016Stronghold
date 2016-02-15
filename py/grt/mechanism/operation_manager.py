@@ -70,7 +70,7 @@ class OperationManager:
 		self.shooter.turntable.enable_front_lock()
 		self.shooter.rails.rails_up()
 		self.pickup.roll(1.0)
-		self.shooter.flywheel.spin_to_pickup_speed()
+		self.shooter.flywheel.spin_to_pickup_power()
 
 	@op_abort
 	def manual_pickup_abort(self):

@@ -39,6 +39,5 @@ class XboxJoystick(Sensor):
         self.l_y_axis = self.j.getY()
         self.r_x_axis = self.j.getRawAxis(4)
         self.r_y_axis = self.j.getRawAxis(5)
-        self.trigger_pos = self.l_trigger = self.j.getZ()
-        self.r_trigger = self.j.getX()
+        self.l_trigger = self.j.getZ()
         self.keypad_pos = self.j.getRawAxis(6)

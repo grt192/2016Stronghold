@@ -8,6 +8,7 @@ class Flywheel:
         self.flywheel_motor = shooter.flywheel_motor
         self.robot_vision = shooter.robot_vision
         self.currentspeed = self.STANDBY_SPEED
+        self.current_power = 0
 
     def spin_to_target_speed(self):
         if self.robot_vision.getTargetView():
@@ -38,6 +39,21 @@ class Flywheel:
         self.currentspeed=self.currentspeed-200
         self.flywheel_motor.set(self.currentspeed)
         print("Current Set Speed: ", self.currentspeed)
+
+    def power_increment_function(self):
+        self.current_power += .1
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(self.current_power)
+
+    def power_decrement_function(self):
+        self.current_power -= .1
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(self.current_power)
+
+    def spin_to_pickup_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(.5)
+
 
 
 

@@ -8,6 +8,7 @@ from wpilib import CANTalon
 
 
 class TurnTable:
+    tt_override = False
 
     ENC_MIN = -20000
     ENC_MAX = 20000
@@ -112,10 +113,11 @@ class TurnTable:
 
     
     def enable_front_lock(self):
-        self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
-        #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
-        self.turntable_motor.setP(self.POT_TURN_KP)
-        self.turntable_motor.set(0)
+        if not self.tt_override:
+            self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
+            #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
+            self.turntable_motor.setP(self.POT_TURN_KP)
+            self.turntable_motor.set(0)
 
     def disable_front_lock(self):
         self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)

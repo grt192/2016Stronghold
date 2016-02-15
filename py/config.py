@@ -34,7 +34,7 @@ turntable_pot = AnalogInput(0)
 
 
 #DT talons and objects
-dt_left = dt_right = CANTalon(1)
+dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
 dt_r3 = CANTalon(3)
 dt_left = CANTalon(4)
