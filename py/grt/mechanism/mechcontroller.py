@@ -161,7 +161,27 @@ class MechController:
             else:
                 self.operation_manager.straight_cross_abort()
 
+#Requested driver joystick mappings
 
+#Don't worry about pickup -- just have the Xbox controller move it in if necessary
+#Trigger -- shifting
+#Button 2 -- straight macro cross using the gyro, does not move the pickup (lower priority on the field-centric obstacle cross alignment)
+#Higher priority on the low gear protection ramp rate and on testing the daylight vision settings with non-daylight conditions
+
+#Mess around with multiplicative vs. additive arcade (lower priority)
+
+#Chival macro (raise, forward, down, go)
+
+#Change the default shooter position to down
+#When you're ready to pickup or shoot, run the backdrive
+#Button 6 -- chival macro
+#Button 7 -- portcullis macro
+
+#Button 10 -- recording
+#Button 11 -- playback
+#Buttons 8 and 9 -- random debugging
+
+#3 switches in a row
 
 
 #Requested Xbox controller mappings
