@@ -24,7 +24,7 @@ class Flywheel:
         self.flywheel_motor.set(2000)
 
     def spin_to_reverse_speed(self):
-        self.flywheel_motor.set(-1000)
+        self.flywheel_motor.set(1000)
 
     def spindown(self):
         self.flywheel_motor.set(0)

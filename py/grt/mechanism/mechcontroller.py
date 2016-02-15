@@ -24,16 +24,6 @@ class MechController:
                 if datum:
                     self.pickup.angle_change(datum)
 
-        if state_id == "r_shoulder":
-            if datum:
-                self.pickup.roll(1.0)
-            else:
-                self.pickup.stop()
-        if state_id == "l_shoulder":
-            if datum:
-                self.pickup.roll(-1.0)
-            else:
-                self.pickup.stop()
 
         if self.tt_override:
             if state_id == "r_x_axis":
@@ -44,16 +34,29 @@ class MechController:
                 if datum:
                     self.shooter.hood.turn(datum*.3)
 
+        if state_id == "r_shoulder":
+            if datum:
+                self.operation_manager.manual_pickup()
+            else:
+                self.operation_manager.manual_pickup_abort()
+        if state_id == "l_shoulder":
+            if datum:
+                self.pickup.roll(-1.0)
+            else:
+                self.pickup.roll(0)
+
+        
+
         if state_id == "l_trigger":
+            if datum < .5:
+                self.operation_manager.shot_abort()
+
+        if state_id == "r_trigger":
             if datum < .5:
                 if self.vt_override:
                     self.operation_manager.geo_automatic_shot()
                 else:
                     self.operation_manager.vt_automatic_shot()
-
-        if state_id == "r_trigger":
-            if datum < .5:
-                self.operation_manager.automatic_pickup()
 
 
         if state_id == "x_button":
@@ -70,7 +73,7 @@ class MechController:
 
         if state_id == "b_button":
             if datum:
-                self.operation_manager.automatic_pickup_shot_abort()
+                self.pickup.go_to_pickup_position()
         
 
     def _switch_panel_listener(self, sensor, state_id, datum):
@@ -127,16 +130,11 @@ class MechController:
     def _driver_joystick_listener(self, sensor, state_id, datum):
         if state_id == "button2":
             if datum:
-                self.operation_manager.cross_pickup_in()
+                self.operation_manager.straight_cross()
             else:
-                self.operation_manager.cross_abort()
+                self.operation_manager.straight_cross_abort()
 
-        if state_id == "button3":
-            if datum:
-                self.operation_manager.cross_pickup_out()
-            else:
-                self.operation_manager.cross_abort()
-
+        
 
         if state_id == "button4":
             if datum:
@@ -144,22 +142,33 @@ class MechController:
                     self.operation_manager.geo_automatic_shot()
                 else:
                     self.operation_manager.vt_automatic_shot()
+
         if state_id == "button5":
             if datum:
-                self.shooter.abort_automatic_pickup_shot()
+                self.operation_manager.shot_abort()
+
+        if state_id == "button6":
+            if datum:
+                self.operation_manager.chival_cross()
+            else:
+                self.operation_manager.chival_cross_abort()
+
+        if state_id == "button7":
+            if datum:
+                self.operation_manager.portcullis_cross()
+            else:
+                self.operation_manager.portcullis_cross_abort()
 
         
 
         if state_id == "button8":
             if datum:
-                self.operation_manager.chival_cross()
-            else:
-                self.operation_manager.chival_cross_abort()
+                self.shooter.rails.rails_down()
+            
         if state_id == "button9":
             if datum:
-                self.operation_manager.straight_cross()
-            else:
-                self.operation_manager.straight_cross_abort()
+                self.shooter.rails.rails_up()
+            
 
 #Requested driver joystick mappings
 

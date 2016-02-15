@@ -5,6 +5,7 @@ class Pickup:
 		self.achange_motor_1 = achange_motor_1
 		self.achange_motor_2 = achange_motor_2
 		self.roller_motor = roller_motor
+		self.current_position = "frame"
 
 	def angle_change(self, power):
 		self.achange_motor_1.set(power)
@@ -23,9 +24,13 @@ class Pickup:
 		self.roll(0)
 
 	def go_to_pickup_position(self):
-		pass
+		self.current_position = "pickup"
 
 	def go_to_frame_position(self):
-		pass
+		self.current_position = "frame"
+
+	def get_position(self):
+		return self.current_position
+
 
 	#Pass this the actual flywheel class, eventually.

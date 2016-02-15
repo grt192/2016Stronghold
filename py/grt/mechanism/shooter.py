@@ -24,6 +24,8 @@ class Shooter:
         self.target_locked_vertical = False
         self.geo_automatic = False
         self.vt_automatic = False
+        self.shooter_timers_running = False
+        self.is_shooting = False
 
 
         self.flywheel = Flywheel(self)
@@ -64,8 +66,9 @@ class Shooter:
             if state_id == "at_speed":
                 if datum:
                     self.rails.rails_down()
+                    self.is_shooting = True
                     # self.abort_timer.start() #Run the abort function after a specified timeout
-                    threading.Timer(2.0, self.abort_automatic_shot).start()
+                    threading.Timer(2.0, self.finish_automatic_shot).start()
     
 
     def _vt_turntable_listener(self, sensor, state_id, datum):
@@ -99,46 +102,92 @@ class Shooter:
         #self.dt.dt_right.reverseOutput(True)
         #self.dt.dt_right.set(0)
         #self.vision_enabled = True
+        #threading.Timer(1.0, self.reverse_func).start()
+        self.shooter_timers_running = True
+        if self.rails.get_position() == "down":
+            self.rails.rails_up()
+            self.vt_reverse_func()
+        else:
+            self.vt_forward_func()
 
-        self.flywheel.spin_to_standby_speed()
-        self.hood.go_to_standby_angle()
-        self.turntable.disable_front_lock()
-        self.turntable.turntable_motor.set(0)
-        self.turntable.PID_controller.enable()
-        self.vt_automatic = True
+    def vt_forward_func(self):
+        if self.shooter_timers_running:
+
+            self.flywheel.spin_to_standby_speed()
+            self.hood.go_to_standby_angle()
+            self.turntable.disable_front_lock()
+            self.turntable.turntable_motor.set(0)
+            self.turntable.PID_controller.enable()
+            self.vt_automatic = True
 
     def geo_automatic_shot():
-        self.flywheel.spin_to_geo_speed()
-        self.hood.go_to_geo_angle()
-        self.geo_automatic = True
+        if self.rails.get_position() == "down":
+            self.rails.rails_up()
+            self.geo_reverse_func()
+        else:
+            self.geo_forward_func()
 
-    def abort_automatic_shot(self):   #Also aborts automatic pickup and automatic cross
-        #self.spindown()
+
+    def geo_forward_func(self):
+        if self.shooter_timers_running:
+            self.flywheel.spin_to_geo_speed()
+            self.hood.go_to_geo_angle()
+            self.geo_automatic = True
+
+    def finish_automatic_shot(self):
+        self.shooter_timers_running = False
         self.turntable.PID_controller.disable()
-        self.rails.rails_up()
+        self.turntable.enable_front_lock()
+        #self.rails.rails_up()
+        self.flywheel.spindown()
+        #self.rails.rails_down()
         self.hood.go_to_frame_angle()
         #self.turntable.turntable_motor.set(0)
-        self.turntable.enable_front_lock()
         if not self.drivecontroller == None:
             self.drivecontroller.enable_manual_control()
-        self.flywheel.spindown()
-        threading.Timer(1.0, self.reverse_func).start()
         self.target_locked_rotation = False
         self.target_locked_vertical = False
         self.geo_automatic = False
         self.vt_automatic = False
+        self.is_shooting = False
+
+        self.operation_manager.op_lock = False
+
+    def abort_automatic_shot(self):   #Also aborts automatic pickup and automatic cross
+        #self.spindown()
+        if not self.is_shooting:
+            self.shooter_timers_running = False
+            self.turntable.PID_controller.disable()
+            self.turntable.enable_front_lock()
+            #self.rails.rails_up()
+            self.flywheel.spindown()
+            #self.rails.rails_down()
+            self.hood.go_to_frame_angle()
+            #self.turntable.turntable_motor.set(0)
+            if not self.drivecontroller == None:
+                self.drivecontroller.enable_manual_control()
+            self.target_locked_rotation = False
+            self.target_locked_vertical = False
+            self.geo_automatic = False
+            self.vt_automatic = False
+
+            self.operation_manager.op_lock = False
          #Last item to be called in automatic shot operation
                                  #Flywheel reverse component of the operation will continue past the official operation end time.
 
-    def reverse_func(self):
+    def vt_reverse_func(self):
         self.flywheel.spin_to_reverse_speed()
-        threading.Timer(1.0, self.final_stop_func).start()
+        threading.Timer(1.0, self.vt_forward_func).start()
+
+    def geo_reverse_func(self):
+        self.flywheel.spin_to_reverse_speed()
+        threading.Timer(1.0, self.geo_forward_func).start()
 
     def final_stop_func(self):
         self.flywheel.spindown()
-        if not self.operation_manager == None:
-            print("Op lock:", self.operation_manager.op_lock)
-            self.operation_manager.op_lock = False
+        #if not self.operation_manager == None:
+        #    print("Op lock:", self.operation_manager.op_lock)
+        #    self.operation_manager.op_lock = False
 
     def automatic_pickup(self):
         self.rails.rails_up()

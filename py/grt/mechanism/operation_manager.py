@@ -1,8 +1,9 @@
-
+import threading
 
 class OperationManager:
 	def __init__(self, shooter, pickup, straight_macro):
 		self.op_lock = False
+		self.chival_timers_running = False
 		self.current_op = "None"
 		self.shooter = shooter
 		self.pickup = pickup
@@ -10,6 +11,7 @@ class OperationManager:
 		self.pickup.operation_manager = self
 		self.straight_macro = straight_macro
 		self.straight_macro.operation_manager = self
+		self.original_straight_macro_power = self.straight_macro.POWER
 
 	def operation(func):
 		def self_enable(self):
@@ -24,11 +26,15 @@ class OperationManager:
 
 	def op_abort(func):
 		def self_enable(self):
-			if "cross" in self.current_op and "cross" in func.__name__:
+			if "portcullis" in self.current_op and "portcullis" in func.__name__:
+				return func(self)
+			elif "chival" in self.current_op and "chival" in func.__name__:
+				return func(self)
+			elif "straight" in self.current_op and "straight" in func.__name__:
 				return func(self)
 			elif "pickup" in self.current_op and "pickup" in func.__name__:
 				return func(self)
-			elif "shot" in self.current_op and "shot" in func.__name__:
+			elif "shot" in func.__name__:
 				return func(self)
 			else:
 				print("Abort bounced")
@@ -55,50 +61,91 @@ class OperationManager:
 		self.shooter.geo_automatic_shot()
 
 	@op_abort
-	def automatic_pickup_shot_abort(self):
-		self.pickup.abort_automatic_pickup()
+	def shot_abort(self):
 		self.shooter.abort_automatic_shot()
 
 	@operation
-	def automatic_pickup(self):
+	def manual_pickup(self):
 		self.op_lock = True
-		self.pickup.automatic_pickup()
-		self.shooter.automatic_pickup()
-
-
-	@operation
-	def cross_pickup_out(self):
-		self.op_lock = True
-		self.pickup.go_to_pickup_position()
-		self.shooter.rails.rails_down()
-
-	@operation
-	def cross_pickup_in(self):
-		self.op_lock = True
-		self.shooter.rails.rails_down()
-		#Delay before doing this
-		self.pickup.go_to_frame_position()
+		self.shooter.turntable.enable_front_lock()
+		self.shooter.rails.rails_up()
+		self.pickup.roll(1.0)
+		self.shooter.flywheel.spin_to_pickup_speed()
 
 	@op_abort
-	def cross_abort(self):
-		self.shooter.abort_automatic_shot()
-		#Check that more specialized logic is not needed
+	def manual_pickup_abort(self):
+		#Directly controls mechanism functions for manual control mode
+		#Will need the mechanism itself to control these functions for automatic pickup
+		self.pickup.roll(0)
+		self.shooter.flywheel.spindown()
+		self.op_lock = False
+
 
 	@operation
 	def chival_cross(self):
-		pass
+		self.op_lock = True
+		self.chival_timers_running = True
+		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
+		self.shooter.rails.rails_down()
+		self.shooter.hood.go_to_frame_angle()
+		self.shooter.flywheel.spindown()
+		self.shooter.turntable.enable_front_lock()
+		self.pickup.go_to_frame_position()
+		threading.Timer(0.5, self.chival_forward_motion).start()
 		#Run recorded chival de fris cross operation
+
+	def chival_forward_motion(self):
+		if self.chival_timers_running:
+			self.straight_macro.enable()
+			threading.Timer(0.2, self.chival_down_motion).start()
+
+	def chival_down_motion(self):
+		if self.chival_timers_running:
+			self.straight_macro.disable()
+			self.pickup.go_to_pickup_position()
+			threading.Timer(0.5, self.chival_finish_motion).start()
+
+	def chival_finish_motion(self):
+		if self.chival_timers_running:
+			self.straight_macro.enable()
+
 
 	@op_abort
 	def chival_cross_abort(self):
+		self.straight_macro.disable()
+		self.chival_timers_running = False
 		self.op_lock = False
 		#Called when recorded cross finished or aborted
+
+	@operation
+	def portcullis_cross(self):
+		self.op_lock = True
+		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
+		self.shooter.rails.rails_down()
+		self.shooter.hood.go_to_frame_angle()
+		self.shooter.flywheel.spindown()
+		self.shooter.turntable.enable_front_lock()
+		self.pickup.roll(-1.0)
+		self.straight_macro.POWER = -.4
+		self.straight_macro.enable()
+
+	@op_abort
+	def portcullis_cross_abort(self):
+		self.straight_macro.disable()
+		self.straight_macro.POWER = self.original_straight_macro_power
+		self.shooter.drivecontroller.enable_manual_control()
+		self.pickup.roll(0)
+		self.op_lock = False
+
 
 	@operation
 	def straight_cross(self):
 		self.op_lock = True
 		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
 		self.shooter.rails.rails_down()
+		self.shooter.hood.go_to_frame_angle()
+		self.shooter.flywheel.spindown()
+		self.shooter.turntable.enable_front_lock()
 		self.straight_macro.enable()
 		#Call a straight macro
 
@@ -106,7 +153,8 @@ class OperationManager:
 	def straight_cross_abort(self):
 		self.straight_macro.disable()
 		self.shooter.drivecontroller.enable_manual_control()
-		self.shooter.abort_automatic_shot()
+		#self.shooter.drivecontroller.enable_manual_control()
+		#self.shooter.abort_automatic_shot()
 		self.op_lock = False
 		#Called when straight macro aborted (won't finish on its own)
 
