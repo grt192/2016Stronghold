@@ -1,13 +1,21 @@
 class MechController:
-    def __init__(self, driver_joystick, xbox_controller, shooter, belt_roller_motor):  # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, shooter, belt_roller_motor, robot_vision, dummy_vision=False):  # mechanisms belong in arguments
         # define mechanisms here
         self.shooter = shooter
 
         self.driver_joystick = driver_joystick
         self.xbox_controller = xbox_controller
         self.belt_roller_motor = belt_roller_motor
+        self.robot_vision = robot_vision
+        self.dummy_vision = dummy_vision
+
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
+
+    def _dummy_vision_listener(self, sensor, state_id, datum):
+        if self.dummy_vision:
+            if state_id == "button2":
+                self.robot_vision.target_view = datum
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
 

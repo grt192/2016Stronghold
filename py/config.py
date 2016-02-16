@@ -6,12 +6,12 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.core import SensorPoller
 from grt.macro.straight_macro import StraightMacro
-# from grt.vision.robot_vision import Vision
+from grt.vision.robot_vision import Vision
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
 from grt.sensors.navx import NavX
-# from grt.sensors.vision_sensor import VisionSensor
+from grt.sensors.vision_sensor import VisionSensor
 
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
@@ -23,10 +23,7 @@ from grt.mechanism.rails import Rails
 from grt.mechanism.turntable import TurnTable
 from grt.mechanism.hood import Hood
 from grt.mechanism.motorset import Motorset
-from queue import Queue
 
-# Initializing Listener Queue
-listener_queue = Queue()
 
 # Compressor initialization
 c = Compressor()
@@ -49,29 +46,29 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 
 
 # Vision
-# vision_sensor = VisionSensor()
-# robot_vision = Vision(vision_sensor)
+vision_sensor = VisionSensor()
+robot_vision = Vision(vision_sensor)
 
 # Manual Pickup
 
-# pickup_angle_change_motor1 = CANTalon(11)
-# pickup_angle_change_motor2 = CANTalon(7)
-# pickup_roller_motor = CANTalon(8)
-# pickup = Pickup(pickup_angle_change_motor1, pickup_angle_change_motor2, pickup_roller_motor)
+pickup_angle_change_motor1 = CANTalon(11)
+pickup_angle_change_motor2 = CANTalon(7)
+pickup_roller_motor = CANTalon(8)
+pickup = Pickup(pickup_angle_change_motor1, pickup_angle_change_motor2, pickup_roller_motor)
 
 # Manual shooter Talons and Objects
 
 rails_actuator = Solenoid(1)
-# flywheel_motor = CANTalon(10)
-# turntable_motor = CANTalon(12)
-# hood_motor = CANTalon(9)
+flywheel_motor = CANTalon(10)
+turntable_motor = CANTalon(12)
+hood_motor = CANTalon(9)
 
-# turntable = TurnTable(robot_vision, turntable_motor, dt)
-# rails = Rails(rails_actuator)
-# flywheel = Flywheel(robot_vision, flywheel_motor)
-# hood = Hood(robot_vision, hood_motor)
-#
-# shooter = Shooter(robot_vision, vision_sensor, flywheel, turntable, hood, rails, vision_enabled=False)
+turntable = TurnTable(robot_vision, turntable_motor, dt)
+rails = Rails(rails_actuator)
+flywheel = Flywheel(robot_vision, flywheel_motor)
+hood = Hood(robot_vision, hood_motor)
+
+shooter = Shooter(robot_vision, vision_sensor, flywheel, turntable, hood, rails, vision_enabled=False)
 
 # Gyro/Accelerometer NavX Board
 navx = NavX()
@@ -87,7 +84,7 @@ ac = ArcadeDriveController(dt, driver_stick, straight_macro)
 hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, None, None)#pickup , shooter)
+mc = MechController(driver_stick, xbox_controller, pickup, shooter, robot_vision)
 
 # define DriverStation
 ds = DriverStation.getInstance()

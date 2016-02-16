@@ -49,8 +49,8 @@ class Sensor(object):
         elif self.__dict__[state_id] != datum:
             self.__dict__[state_id] = datum
             # copy allows listeners to be removed without throwing an error
-            self.listeners_temp = self.listeners.copy()
-            for l in self.listeners_temp:
+            listeners_temp = self.listeners.copy()
+            for l in listeners_temp:
                 l(self, state_id, datum)
 
     def poll(self):
