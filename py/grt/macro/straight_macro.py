@@ -4,7 +4,8 @@ from grt.core import GRTMacro
 import wpilib
 import threading
 
-#constants = Constants()
+
+# constants = Constants()
 
 
 class StraightMacro(GRTMacro):
@@ -29,10 +30,7 @@ class StraightMacro(GRTMacro):
         self.dt = dt
         self.enabled = False
         self.navx = navx
-
         self.setpoint = None
-
-
 
         self.pid_controller = wpilib.PIDController(self.DT_KP, self.DT_KI,
                                                    self.DT_KD, self.get_input,
@@ -40,13 +38,11 @@ class StraightMacro(GRTMacro):
         self.pid_controller.setAbsoluteTolerance(self.DT_ABS_TOL)
         self.pid_controller.reset()
 
-        self.pid_controller.setInputRange(0.0,  360.0)
+        self.pid_controller.setInputRange(0.0, 360.0)
         self.pid_controller.setContinuous(True)
-
 
         self.pid_controller.setOutputRange(-.4, .4)
         self.run_threaded()
-
 
     def enable(self):
         self.setpoint = self.navx.fused_heading
@@ -61,18 +57,11 @@ class StraightMacro(GRTMacro):
         self.dt.set_dt_output(0, 0)
 
     def set_output(self, output):
-        """
-
-        :param output: (-.5, .5)
-        :return:
-        """
         if self.enabled:
             if not self.pid_controller.onTarget():
-                self.dt.set_dt_output(self.POWER + output, self.POWER -output)
+                self.dt.set_dt_output(self.POWER + output, self.POWER - output)
             else:
                 self.dt.set_dt_output(self.POWER, self.POWER)
-            print("Setpoint: ", self.pid_controller.getSetpoint())
-            print("Output: ", output)
 
     def get_input(self):
         print("Input: ", self.navx.fused_heading)
