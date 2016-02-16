@@ -10,12 +10,20 @@ from grt.core import SensorPoller
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
 from grt.sensors.encoder import Encoder
+from grt.sensors.dummy import Dummy
+from grt.sensors.ticker import Ticker
 from grt.mechanism.mechcontroller import MechController
 from grt.sensors.navx import NavX
 from grt.macro.straight_macro import StraightMacro
 from grt.mechanism.pickup import Pickup
 from grt.mechanism.manual_shooter import ManualShooter
 from queue import Queue
+
+dummy = Dummy(lambda x: 10*x)
+
+ticker = Ticker(.5)
+ticker.tick = lambda: print("Dummy Value", dummy.value)
+
 
 #Compressor initialization
 c = Compressor()
@@ -77,7 +85,7 @@ straight_macro = StraightMacro(dt, navx)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
-hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
+hid_sp = SensorPoller((driver_stick, xbox_controller, navx, ticker, dummy))
 
 
 # define MechController
