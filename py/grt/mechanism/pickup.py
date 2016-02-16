@@ -1,16 +1,14 @@
 from wpilib import CANTalon
 
-
 class Pickup:
-    def __init__(self, achange_motor_1, achange_motor_2: CANTalon, roller_motor):
-        self.achange_motor_1 = achange_motor_1
-        self.achange_motor_2 = achange_motor_2
+    def __init__(self, achange_motor1, achange_motor2, roller_motor):
+        self.achange_motor1 = achange_motor1
+        self.achange_motor2 = achange_motor2
         self.roller_motor = roller_motor
 
-    def angle_change(self, power):
-        # self.achange_motor_1.set(power)
-        self.set_manual()
-        self.achange_motor_2.set(power)
+	def angle_change(self, power):
+		self.achange_motor1.set(power)
+		self.achange_motor2.set(-power)
 
     def roll(self, power):
         self.roller_motor.set(power)

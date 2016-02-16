@@ -1,12 +1,12 @@
-
 from wpilib import Talon
+from wpilib import PIDController
+
 
 class DriveTrain:
     """
     Standard 6-motor drivetrain, with standard tankdrive.
     """
     power = 1.0
-
 
     def __init__(self,
                  left_motor, right_motor,
@@ -25,6 +25,7 @@ class DriveTrain:
         self.dt_left = self.left_motor
         self.dt_right = self.right_motor
 
+
     def set_dt_output(self, left_output, right_output):
         """
         Sets the DT output values; should be between -1 and 1.
@@ -36,9 +37,9 @@ class DriveTrain:
 
     def set_right_motor(self, power):
         self.right_motor.set(power)
+
     def set_left_motor(self, power):
         self.left_motor.set(power)
-
 
     def set_power(self, power):
         """

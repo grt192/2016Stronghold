@@ -4,98 +4,90 @@ Config File for Robot
 
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
+from grt.core import SensorPoller
+from grt.macro.straight_macro import StraightMacro
+# from grt.vision.robot_vision import Vision
+
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
-from grt.core import SensorPoller
+from grt.sensors.navx import NavX
+# from grt.sensors.vision_sensor import VisionSensor
+
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
-from grt.sensors.encoder import Encoder
-from grt.sensors.dummy import Dummy
-from grt.sensors.ticker import Ticker
 from grt.mechanism.mechcontroller import MechController
-from grt.sensors.navx import NavX
-from grt.macro.straight_macro import StraightMacro
+from grt.mechanism.shooter import Shooter
 from grt.mechanism.pickup import Pickup
-from grt.mechanism.manual_shooter import ManualShooter
+from grt.mechanism.flywheel import Flywheel
+from grt.mechanism.rails import Rails
+from grt.mechanism.turntable import TurnTable
+from grt.mechanism.hood import Hood
+from grt.mechanism.motorset import Motorset
 from queue import Queue
 
-dummy = Dummy(lambda x: 10*x)
+# Initializing Listener Queue
+listener_queue = Queue()
 
-ticker = Ticker(.5)
-ticker.tick = lambda: print("Dummy Value", dummy.value)
-
-
-#Compressor initialization
+# Compressor initialization
 c = Compressor()
 c.start()
 
-#Manual pickup Talons and Objects
-
-pickup_achange_motor1 = CANTalon(9)
-pickup_achange_motor2 = CANTalon(10)
-
-pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Follower)
-pickup_achange_motor1.set(10)
-pickup_achange_motor1.reverseOutput(True)
-
-pickup_roller_motor = CANTalon(8)
-pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
-
-
-#Manual shooter Talons and Objects
-
-flywheel_motor = CANTalon(7)
-shooter_act = Solenoid(1)
-turntable_motor = CANTalon(12)
-manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
-
-
-#DT Talons and Objects
-
-
+# Drive Train
 dt_right = CANTalon(1)
-# dt_r2 = CANTalon(2)
-# dt_r3 = CANTalon(3)
+dt_r2 = CANTalon(2)
+dt_r3 = CANTalon(3)
 dt_left = CANTalon(4)
-# dt_l2 = CANTalon(5)
-# dt_l3 = CANTalon(6)
+dt_l2 = CANTalon(5)
+dt_l3 = CANTalon(6)
 dt_shifter = Solenoid(0)
 
+Motorset.group((dt_right, dt_r2, dt_r3))
+Motorset.group((dt_left, dt_l2, dt_l3))
 
-# dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
-# dt_r2.set(1)
-# dt_r3.set(1)
-# dt_l2.set(4)
-# dt_l3.set(4)
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
 
-#Straight macro initialization
+# Vision
+# vision_sensor = VisionSensor()
+# robot_vision = Vision(vision_sensor)
 
+# Manual Pickup
 
+# pickup_angle_change_motor1 = CANTalon(11)
+# pickup_angle_change_motor2 = CANTalon(7)
+# pickup_roller_motor = CANTalon(8)
+# pickup = Pickup(pickup_angle_change_motor1, pickup_angle_change_motor2, pickup_roller_motor)
+
+# Manual shooter Talons and Objects
+
+rails_actuator = Solenoid(1)
+# flywheel_motor = CANTalon(10)
+# turntable_motor = CANTalon(12)
+# hood_motor = CANTalon(9)
+
+# turntable = TurnTable(robot_vision, turntable_motor, dt)
+# rails = Rails(rails_actuator)
+# flywheel = Flywheel(robot_vision, flywheel_motor)
+# hood = Hood(robot_vision, hood_motor)
+#
+# shooter = Shooter(robot_vision, vision_sensor, flywheel, turntable, hood, rails, vision_enabled=False)
+
+# Gyro/Accelerometer NavX Board
 navx = NavX()
-straight_macro = StraightMacro(dt, navx)
 
+# Straight macro initialization
+straight_macro = StraightMacro(dt, navx)
 
 # Drive Controllers and sensor pollers
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
-hid_sp = SensorPoller((driver_stick, xbox_controller, navx, ticker, dummy))
 
+hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
 
 # define MechController
-
-mc = MechController(driver_stick, xbox_controller, pickup, manual_shooter)
+mc = MechController(driver_stick, xbox_controller, None, None)#pickup , shooter)
 
 # define DriverStation
 ds = DriverStation.getInstance()
-
-
-
-
-
