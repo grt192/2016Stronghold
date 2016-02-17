@@ -6,7 +6,7 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.core import SensorPoller
 from grt.macro.straight_macro import StraightMacro
-# from grt.vision.robot_vision import Vision
+from grt.vision.robot_vision import Vision
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -33,14 +33,14 @@ c.start()
 # Drive Train
 dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
-dt_left = CANTalon(4)
-dt_l2 = CANTalon(5)
-dt_l3 = CANTalon(6)
+# dt_r3 = CANTalon(3)
+dt_left = CANTalon(7)
+dt_l2 = CANTalon(8)
+# dt_l3 = CANTalon(6)
 dt_shifter = Solenoid(0)
 
-Motorset.group((dt_right, dt_r2, dt_r3))
-Motorset.group((dt_left, dt_l2, dt_l3))
+# Motorset.group((dt_right, dt_r2, dt_r3))
+# Motorset.group((dt_left, dt_l2, dt_l3))
 
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
@@ -48,8 +48,8 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 
 # Vision
 vision_sensor = VisionSensor()
-robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0)
-# robot_vision = Vision(vision_sensor)
+# robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0)
+robot_vision = Vision(vision_sensor)
 
 # Manual Pickup
 
@@ -70,6 +70,7 @@ rails = Rails(rails_actuator)
 flywheel = Flywheel(robot_vision, flywheel_motor)
 hood = Hood(robot_vision, hood_motor)
 
+# shooter = Shooter(robot_vision, vision_sensor, flywheel, turntable, hood, rails, vision_enabled=False)
 shooter = Shooter(robot_vision, vision_sensor, flywheel, turntable, hood, rails, vision_enabled=False)
 
 # Gyro/Accelerometer NavX Board
@@ -83,10 +84,10 @@ driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
 
-hid_sp = SensorPoller((driver_stick, xbox_controller, navx))
+hid_sp = SensorPoller((driver_stick, xbox_controller, navx, vision_sensor))
 
 # define MechController
-mc = MechController(driver_stick, xbox_controller, pickup, shooter, robot_vision)
+mc = MechController(driver_stick, xbox_controller, shooter, robot_vision)
 
 # define DriverStation
 ds = DriverStation.getInstance()

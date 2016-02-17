@@ -55,35 +55,33 @@ class TurnTable:
         pass
 
     def pid_output(self, output):
-
-        if self.robot_vision.target_view():
+        if self.robot_vision.target_view:
             if self.pid_controller.onTarget():
                 # If the target is visible, and I'm on target, stop.
                 output = 0
-                # self.dt_turn(output)
-                self.turn(output)
-
+                self.dt_turn(output)
+                # self.turn(output)
             else:
                 # If the target is visible, and I'm not on target, keep going.
-                # self.dt_turn(output)
-                self.turn(output)
+                self.dt_turn(output)
+                # self.turn(output)
         else:
             if self.last_output > 0:
                 # If the target is not visible, and I was moving forward, keep moving forward.
-                output = self.TURNTABLE_NO_TARGET_TURN_RATE
-
+                # output = self.TURNTABLE_NO_TARGET_TURN_RATE
+                output = self.DT_NO_TARGET_TURN_RATE
             elif self.last_output < 0:
                 # If the target is not visible, and I was moving backward, keep moving backward.
-                output = -self.TURNTABLE_NO_TARGET_TURN_RATE
-
+                # output = -self.TURNTABLE_NO_TARGET_TURN_RATE
+                output = -self.DT_NO_TARGET_TURN_RATE
             elif self.last_output == 0:
                 # If the target is not visible, but I was just on target, stay put.
                 output = 0
-
             else:
                 print("Last_output error!")
 
-            self.turn(output)
+            # self.turn(output)
+            self.dt_turn(output)
 
         self.last_output = output
 
@@ -92,7 +90,7 @@ class TurnTable:
 
     def dt_turn(self, output):
         if self.dt:
-            self.dt.set_dt_output(-output, -output)
+            self.dt.set_dt_output(-output + .2, -output + .2)
 
     def turn_to(self, target):
         self.turntable_motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)

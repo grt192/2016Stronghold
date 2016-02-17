@@ -3,7 +3,12 @@ import time
 import threading
 from queue import Queue
 from wpilib import Preferences
+import platform
 
+if "Linux" in platform.platform():
+    with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
+        code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
+        exec(code)
 
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
@@ -13,6 +18,8 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
+        self.vision_sensor = config.vision_sensor
+        self.robot_vision = config.robot_vision
 
     def disabled(self):
         while self.isDisabled():
@@ -32,9 +39,11 @@ class MyRobot(wpilib.SampleRobot):
         self.loop()
 
     def loop(self):
+        count = 0
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
+
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):

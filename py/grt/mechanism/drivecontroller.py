@@ -16,7 +16,7 @@ class ArcadeDriveController:
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
-        self.l_joystick.add_listener(self._joylistener)
+        # self.l_joystick.add_listener(self._joylistener)
         if self.r_joystick:
             self.r_joystick.add_listener(self._joylistener)
 
@@ -25,9 +25,7 @@ class ArcadeDriveController:
         #self.engage()
 
     def _joylistener(self, sensor, state_id, datum):
-        print(state_id)
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            print(state_id, datum)
             if not self.straight_macro.enabled:
                 self.straight_macro.disable()
                 power = self.l_joystick.y_axis
