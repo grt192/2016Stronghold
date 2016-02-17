@@ -6,12 +6,13 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 
 from grt.core import SensorPoller
 from grt.macro.straight_macro import StraightMacro
-from grt.vision.robot_vision import Vision
+# from grt.vision.robot_vision import Vision
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
 from grt.sensors.navx import NavX
 from grt.sensors.vision_sensor import VisionSensor
+from grt.sensors.dummy import Mimic
 
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
@@ -47,7 +48,8 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 
 # Vision
 vision_sensor = VisionSensor()
-robot_vision = Vision(vision_sensor)
+robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0)
+# robot_vision = Vision(vision_sensor)
 
 # Manual Pickup
 

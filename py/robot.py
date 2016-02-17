@@ -13,7 +13,6 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
-        self.listener_queue = config.listener_queue
 
     def disabled(self):
         while self.isDisabled():

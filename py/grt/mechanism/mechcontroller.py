@@ -13,9 +13,7 @@ class MechController:
         xbox_controller.add_listener(self._xbox_controller_listener)
 
     def _dummy_vision_listener(self, sensor, state_id, datum):
-        if self.dummy_vision:
-            if state_id == "button2":
-                self.robot_vision.target_view = datum
+        print(type(self.robot_vision))
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
 
