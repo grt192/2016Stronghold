@@ -85,6 +85,7 @@ class Vision:
         self._vertical_error = value
 
     def vision_init(self):
+        self.cap = cv2.VideoCapture(0)
         _, self.img = self.cap.read()
         self.height, self.width, channels = self.img.shape
         self.x_target = int(self.width / 2)
