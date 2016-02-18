@@ -16,7 +16,7 @@ class ArcadeDriveController:
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
-        # self.l_joystick.add_listener(self._joylistener)
+        self.l_joystick.add_listener(self._joylistener)
         if self.r_joystick:
             self.r_joystick.add_listener(self._joylistener)
 
