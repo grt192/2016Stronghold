@@ -58,7 +58,7 @@ class TurnTable:
         pass
         
     def set_output(self, output):
-        
+        self.enc_pos = self.turntable_motor.getEncPosition()
         if self.robot_vision.getTargetView():
             if self.PID_controller.onTarget():
                 #If the target is visible, and I'm on target, stop.
@@ -66,9 +66,15 @@ class TurnTable:
                 #self.dt_turn(output)
                 self.turn(output)
             else:
-                #If the target is visible, and I'm not on target, keep going.
-                #self.dt_turn(output)
-                self.turn(output)
+                if self.enc_pos < ENC_MAX and self.enc_pos > ENC_MIN:
+                    #If the target is visible, I'm in the pot turn tolerence, and I'm not on target, keep going.
+                    #self.dt_turn(output)
+                    self.turn(output)
+                else:
+                    #If the target is visible, and I'm outside of the pot turn tolerence, and I'm not on target
+                    #stop the turntable and turn the dt
+                    output = self.DT_NO_TARGET_TURN_RATE
+                    self.dt_turn(output)
         else:
             if self.last_output > 0:
                 #If the target is not visible, and I was moving forward, keep moving forward.

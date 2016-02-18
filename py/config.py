@@ -18,13 +18,13 @@ from grt.sensors.encoder import Encoder
 #from grt.sensors.talon import Talon
 from grt.mechanism.mechcontroller import MechController
 
-from grt.vision.robot_vision import Vision
+#from grt.vision.robot_vision import Vision
 #from grt.sensors.vision_sensor import VisionSensor
 from grt.mechanism.shooter import Shooter
 from grt.sensors.navx import NavX
 from grt.macro.new_turn_macro import NewTurnMacro
 
-using_vision_server = False
+#using_vision_server = False
 
 
 #from vision.robot_vision_dynamic import Vision
@@ -52,7 +52,7 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 
 turn_macro = NewTurnMacro(90, navx, dt)
 
-flywheel_motor = CANTalon(8)
+flywheel_motor = CANTalon(5)
 flywheel_motor2 = CANTalon(9)
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
 flywheel_motor.setP(.26)
@@ -63,7 +63,7 @@ flywheel_motor.reverseOutput(True)
 flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
 flywheel_motor2.set(8)
 
-turntable_motor = CANTalon(7)
+turntable_motor = CANTalon(11)
 hood_motor = CANTalon(6)
 rails_actuator = Solenoid(2)
 
@@ -71,13 +71,13 @@ belt_roller_motor = CANTalon(10)
 #flywheel = Flywheel(shooter)
 
 #vision_sensor = VisionSensor()
-robot_vision = Vision()
-if using_vision_server:
-	import grt.vision.vision_server
-	grt.vision.vision_server.prepare_module(robot_vision)
+#robot_vision = Vision()
+#if using_vision_server:
+#	import grt.vision.vision_server
+#	grt.vision.vision_server.prepare_module(robot_vision)
 #vision_server = VisionServer(robot_vision)
 
-shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, rails_actuator, dt)
+shooter = Shooter(None, flywheel_motor, turntable_motor, hood_motor, rails_actuator, dt)
 
 
 
