@@ -16,18 +16,6 @@ class GRTTalon:
     def getDeviceID(self):
         return self.t.getDeviceID()
 
-    def changeControlMode(self, mode):
-        self.t.changeControlMode(mode)
-
-    def setP(self, value):
-        self.t.setP(value)
-
-    def setI(self, value):
-        self.t.setI(value)
-
-    def setD(self, value):
-        self.t.setD(value)
-
     def poll(self):
         # self.busVoltage = t.getBusVoltage()
         # self.closeLoopRampRate = t.getCloseLoopRampRate()
@@ -37,7 +25,7 @@ class GRTTalon:
         self.encVelocity = self.t.getEncVelocity()
         self.outputCurrent = self.t.getOutputCurrent()
         self.outputVoltage = self.t.getOutputVoltage()
-        self.closeLoopError = self.t.getCloseLoopError()
+        self.closeLoopError = self.t.getClosedLoopError()
         # self.position = t.getPosition()
         # self.sensorPosition = t.getSensorPosition()
         # self.sensorVelocity = t.getSensorVelocity()
