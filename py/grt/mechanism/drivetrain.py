@@ -7,6 +7,7 @@ class DriveTrain:
     Standard 6-motor drivetrain, with standard tankdrive.
     """
     power = 1.0
+    LOW_GEAR_RAMP_RATE = 2
 
     def __init__(self,
                  left_motor, right_motor,
@@ -34,6 +35,15 @@ class DriveTrain:
         right_output *= self.power
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
+
+    def enable_protective_measures(self):
+        self.left_motor.setVoltageRampRate(self.LOW_GEAR_RAMP_RATE)
+        self.right_motor.setVoltageRampRate(self.LOW_GEAR_RAMP_RATE)
+
+    def disable_protective_measures(self):
+        self.left_motor.setVoltageRampRate(0)
+        self.right_motor.setVoltageRampRate(0)
+
 
     def set_right_motor(self, power):
         self.right_motor.set(power)

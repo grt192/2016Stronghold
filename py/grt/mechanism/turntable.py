@@ -1,10 +1,19 @@
 import wpilib
-
-POT_MIN = -20000
-POT_MAX = 20000
+from wpilib import CANTalon
+from grt.core import Sensor
 
 
 class TurnTable:
+    tt_override = False
+
+    POT_MIN = -20000
+    POT_MAX = 20000
+
+    POT_TURN_KP = .01
+    POT_TURN_KI = 0
+    POT_TURN_KD = 0
+    POT_TURN_OUTPUT_RANGE = .5
+
     DT_NO_TARGET_TURN_RATE = .2
     DT_KP = .0015
     DT_KI = 0
@@ -21,7 +30,7 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 20
     TURNTABLE_OUTPUT_RANGE = .4
 
-    def __init__(self, robot_vision, turntable_motor, dt):
+    def __init__(self, robot_vision, turntable_motor: CANTalon, dt):
         self.turntable_motor = turntable_motor
         self.robot_vision = robot_vision
         self.dt = dt
@@ -54,7 +63,7 @@ class TurnTable:
         pass
 
     def set_output(self, output):
-        self.pot_pos = self.turntable_motor.getEncPosition()
+        self.pot_pos = self.turntable_motor.getPosition()
         if self.robot_vision.target_view:
             if self.pid_controller.onTarget():
                 # If the target is visible, and I'm on target, stop.
@@ -63,14 +72,14 @@ class TurnTable:
                 self.turn(output)
             else:
                 if self.dt_assistance:
-                    if POT_MAX > self.pot_pos > POT_MIN:
-                        # If the target is visi
-                        # ble, I'm in the pot turn tolerence, and I'm not on target, keep going.
+                    if self.POT_MAX > self.pot_pos > self.POT_MIN:
+                        # If the target is visible, I'm in the pot turn tolerence, and I'm not on target, keep going.
                         self.turn(output)
                     else:
                         # If the target is visible, and I'm outside of the pot turn tolerence, and I'm not on target
                         # stop the turntable and turn the dt
                         output = self.DT_NO_TARGET_TURN_RATE
+                        self.turn(0)
                         self.dt_turn(output)
                 else:
                     # self.dt_turn(output)
@@ -105,4 +114,24 @@ class TurnTable:
     def turn_to(self, target):
         self.turntable_motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
         self.turntable_motor.setP(1)
-        self.turntable_motor.set(target)  # TODO: WILL NOT CHANGE CONTROL MODE BACK
+        self.turntable_motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
+
+    def enable_front_lock(self):
+        if not self.tt_override:
+            self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
+            #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
+            self.turntable_motor.setP(self.POT_TURN_KP)
+            self.turntable_motor.set(0)
+
+    def disable_front_lock(self):
+        self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.turntable_motor.set(0)
+
+
+
+# class TurnTableSensor(Sensor):
+#     def __init__(self, turntable):
+#         super().__init__()
+#         self.turntable = turntable
+#     def poll(self):
+#         self.rotation_ready = self.turntable.PID_controller.onTarget()

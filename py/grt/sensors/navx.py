@@ -33,11 +33,11 @@ except ImportError:
 
             self.ahrs = None
 
-            self.pitch = None
-            self.yaw = None
-            self.roll = None
-            self.compass_heading = None
-            self.fused_heading = None
+            self.pitch = 0
+            self.yaw = 0
+            self.roll = 0
+            self.compass_heading = 0
+            self.fused_heading = 0
 
         def poll(self):
             pass

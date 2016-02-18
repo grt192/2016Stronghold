@@ -1,20 +1,17 @@
 import cv2
 import numpy as np
 import time, math, threading
-from grt.core import Sensor
-from wpilib import CANTalon
-from robotpy_ext.common_drivers.navx.ahrs import AHRS
 
-
+# TODO: MIN AREA CHECK
 class Vision:
-    GREEN_LOWER = np.array([0, 100, 0], 'uint8')
-    GREEN_UPPER = np.array([200, 255, 100], 'uint8')
-    # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') # Computer
-    # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') # Computer
+    # GREEN_LOWER = np.array([0, 100, 0], 'uint8')
+    # GREEN_UPPER = np.array([200, 255, 100], 'uint8')
+    # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
+    # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
 
     GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
-    drawing = False
+    drawing = True
     status_print = True
 
     POLY_ARC_LENGTH = .015
@@ -33,7 +30,6 @@ class Vision:
 
 
     def __init__(self, vision_sensor):
-        self.cap = cv2.VideoCapture(0)
         self.vision_sensor = vision_sensor
 
         # Properties
@@ -41,6 +37,7 @@ class Vision:
         self._rotational_error = self._vertical_error = self.DEFAULT_ERROR
 
         self.vision_lock = threading.Lock()
+        self.threshold_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
@@ -149,18 +146,27 @@ class Vision:
             distance = .0021 * (self.vertical_error ** 2) - 1.2973 * self.vertical_error + 261.67
             print("Target View: ", self._target_view, "Rotational Error: ", self._rotational_error,
                   "Vertical Error: ", self._vertical_error, "Distance: ", distance, sep="     ")
-            # print("Vertical Error: ", self.vertical_error)
-            # print("Rotational Error: ", self.rotational_error)
-            # print("Rotational Error: ", self.rotational_error)
-            # print("Average Height: ", self.avg_height)
-            # print("Distance: ", self.distance)
-            # print("Target Speed: ", self.target_speed)
-            # print("Target Angle: ", self.target_angle)
 
-    def get_frame(self):
+    def getFrame(self):
         img_jpg = cv2.imencode(".jpg", self.img)
         print("Returning frame")
         return img_jpg
+
+    def setThreshold(self, lower_threshold, upper_threshold):
+        with self.threshold_lock:
+            self.GREEN_LOWER_HSV = lower_threshold
+            self.GREEN_UPPER_HSV = upper_threshold
+
+    def getLowerThreshold(self):
+        with self.threshold_lock:
+            return self.GREEN_LOWER_HSV
+
+    def getUpperThreshold(self):
+        with self.threshold_lock:
+            return self.GREEN_UPPER_HSV
+
+
+
 
     def vision_loop(self):
         # At the beginning of the loop, self.target_view is set to false
