@@ -8,6 +8,16 @@ try:
     import wpilib
 except ImportError:
     from pyfrc import wpilib
+# Format of instructions:
+
+# {
+#     talon_object : [ {speed : value ...}
+#     ]
+# }
+
+# Format of talon_arr
+
+# [{speed: value...}]
 
 
 class RecordMacro(GRTMacro):
@@ -22,6 +32,10 @@ class RecordMacro(GRTMacro):
         It may be easier to replace it with a 2D list.
         """
         for i in range(len(self.obj_list)):
+
+            #self.obj_list[i].setSensorPosition(0)
+
+
             traj_pt = CANTalon.TrajectoryPoint()
             traj_pt.position = self.obj_list[i].getEncPosition()
             traj_pt.velocity = self.obj_list[i].getEncVelocity()
@@ -74,8 +88,9 @@ class RecordMacro(GRTMacro):
         #     traj_pt.timeDurMs = 100
         #     traj_pt.zeroPos = True
         #     traj_attr = RecordMacro.trajectory2attr(traj_pt)
-        for i in range(len(self.obj_list)):
-            self.instructions[i] = []
+        
+        #for i in range(len(self.obj_list)):
+        #    self.instructions[i] = []
 
 
 
@@ -121,6 +136,10 @@ class RecordMacro(GRTMacro):
 
                 traj_attr = RecordMacro.trajectory2attr(traj_pt)
                 self.instructions[key].append(traj_attr)
+                #print("Adding trajectory point")
+                print(i, " Position: ", self.obj_list[i].getEncPosition())
+                print(i, " Velocity: ", self.obj_list[i].getEncVelocity())
+
 
                 i += 1
 
@@ -142,7 +161,7 @@ class RecordMacro(GRTMacro):
             time.sleep(.1 - (time.time() - tinit))
 
     def save(self, file_name):
-        with open(file_name, 'a') as f:
+        with open(file_name, 'w') as f: # TODO: CHANGE BACK TO APPEND
             f.write(str(self.instructions) + "\n")
 
 
@@ -264,10 +283,17 @@ class Playback(GRTMacro):
         self.instructions = instructions
         self.talon_arr_obj = talon_arr_obj
 
-        self.parse()
+        #self.parse()
 
         self.enabled = False
         self.i = 0
+
+        self.talon_arr = None
+
+        # for talon in talon_arr_obj:
+        #     talon.setSensorPosition(0)
+
+
 
         #self.run_threaded(no_initialize=True)
 
@@ -306,8 +332,7 @@ class Playback(GRTMacro):
 
     def start_playback(self, instructions=None):
         # self.enabled = True
-        if instructions:
-            self.instructions = instructions
+        self.load("/home/lvuser/py/instructions.py")
         self.parse()
         self.run_threaded()
 
@@ -343,21 +368,42 @@ class Playback(GRTMacro):
 
         #disable motion profile talons before
         for talon in self.talon_arr_obj:
+            #talon.changeControlMode(CANTalon.ControlMode.MotionProfile)
             talon.set(CANTalon.SetValueMotionProfile.Disable)
 
+        for k in range(len(self.talon_arr[0])):
+
+            #print(k)
+
+            
 
             for j in range(len(self.talon_arr)):  ###IMPORTANT NOTE!!!
                 # THIS WAS CHANGED FROM len(self.talon_arr) to len(self.talon_arr_obj)
                 # IT SHOULD STILL WORK, but be sure to change it back at some point.
-                attr_dict = self.talon_arr[j][self.i]
+                attr_dict = self.talon_arr[j][k]
                 self.talon_arr_obj[j].pushMotionProfileTrajectory(RecordMacro.attr2trajectory(attr_dict))
-                # print(self.talon_arr[j][self.i])
-                # print("J: " + str(j))
-                # print(self.i)
+                #print(self.talon_arr[j][k])
+
+                #print("J: " + str(j))
+                
+                    #print(self.i)
+                #self.i += 1
+
+                
+            ##print("Enabled motion profile playback")    
 
             talon.set(CANTalon.SetValueMotionProfile.Enable)
+            
 
             time.sleep(.1*len(self.talon_arr))
+
+            talon.set(CANTalon.SetValueMotionProfile.Disable)
+
+        # for talon in self.talon_arr_obj:
+        #     talon.changeControlMode(CANTalon.ControlMode.PercentVbus)
+
+    def terminate(self):
+        for talon in self.talon_arr_obj:
 
             talon.set(CANTalon.SetValueMotionProfile.Disable)
 
