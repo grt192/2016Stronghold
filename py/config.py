@@ -3,6 +3,7 @@ Config File for Robot
 """
 
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon
+import platform
 
 from grt.core import SensorPoller
 from grt.macro.straight_macro import StraightMacro
@@ -25,6 +26,8 @@ from grt.mechanism.turntable import TurnTable
 from grt.mechanism.hood import Hood
 from grt.mechanism.motorset import Motorset
 
+using_vision_server = True
+
 
 # Compressor initialization
 c = Compressor()
@@ -39,8 +42,8 @@ dt_l2 = CANTalon(8)
 # dt_l3 = CANTalon(6)
 dt_shifter = Solenoid(0)
 
-# Motorset.group((dt_right, dt_r2, dt_r3))
-# Motorset.group((dt_left, dt_l2, dt_l3))
+Motorset.group((dt_right, dt_r2))
+Motorset.group((dt_left, dt_l2))
 
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
@@ -85,6 +88,11 @@ xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick, straight_macro)
 
 hid_sp = SensorPoller((driver_stick, xbox_controller, navx, vision_sensor))
+
+if using_vision_server and "Linux" in platform.platform():
+    import grt.vision.vision_server
+    grt.vision.vision_server.prepare_module(robot_vision)
+
 
 # define MechController
 mc = MechController(driver_stick, xbox_controller, shooter, robot_vision)

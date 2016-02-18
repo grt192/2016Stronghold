@@ -29,6 +29,9 @@ class Vision:
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
 
+
+
+
     def __init__(self, vision_sensor):
         self.cap = cv2.VideoCapture(0)
         self.vision_sensor = vision_sensor
@@ -40,7 +43,12 @@ class Vision:
         self.vision_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
-        self.vision_main()
+
+    def vision_init(self):
+        self.cap = cv2.VideoCapture(0)
+        _, self.img = self.cap.read()
+        self.height, self.width, channels = self.img.shape
+        self.x_target = int(self.width / 2)
 
     def vision_main(self):
         self.vision_init()
@@ -84,11 +92,8 @@ class Vision:
         self.vision_sensor.rotational_error = value
         self._vertical_error = value
 
-    def vision_init(self):
-        self.cap = cv2.VideoCapture(0)
-        _, self.img = self.cap.read()
-        self.height, self.width, channels = self.img.shape
-        self.x_target = int(self.width / 2)
+
+
 
     def vision_close(self):
         cv2.destroyAllWindows()

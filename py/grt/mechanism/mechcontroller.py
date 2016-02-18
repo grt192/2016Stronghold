@@ -19,9 +19,9 @@ class MechController:
     def _dummy_vision_listener(self, sensor, state_id, datum):
         # If robot_vision is a Mimic
         if type(self.robot_vision) == Mimic:
-            if state_id == "button2":
-                # print("----Setting Target View----")
-                self.robot_vision.target_view = datum
+            # if state_id == "button2":
+            #     # print("----Setting Target View----")
+            #     self.robot_vision.target_view = datum
             if state_id == "button3":
                 # print("----Enabling Turntable PID----")
                 if datum:
@@ -40,10 +40,8 @@ class MechController:
             if state_id == "y_axis":
                 # print("----Setting Vertical Error----")
                 self.robot_vision.vertical_error = int(datum * 200)
-            if datum:
-                print("Target View:", self.robot_vision.target_view,
-                      "Rotational Error:", self.robot_vision.rotational_error,
-                      "Vertical Error:", self.robot_vision.vertical_error)
+
+
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
 
