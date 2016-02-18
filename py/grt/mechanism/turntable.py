@@ -1,12 +1,10 @@
 import wpilib
-from grt.core import Sensor
 
 POT_MIN = -20000
 POT_MAX = 20000
 
 
 class TurnTable:
-
     DT_NO_TARGET_TURN_RATE = .2
     DT_KP = .0015
     DT_KI = 0
@@ -27,6 +25,7 @@ class TurnTable:
         self.turntable_motor = turntable_motor
         self.robot_vision = robot_vision
         self.dt = dt
+        self.dt_assistance = False
 
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.last_input = 0
@@ -54,17 +53,28 @@ class TurnTable:
     def no_view_timeout(self):  # TODO: Implement
         pass
 
-    def pid_output(self, output):
+    def set_output(self, output):
+        self.pot_pos = self.turntable_motor.getEncPosition()
         if self.robot_vision.target_view:
             if self.pid_controller.onTarget():
                 # If the target is visible, and I'm on target, stop.
                 output = 0
-                self.dt_turn(output)
-                # self.turn(output)
+                # self.dt_turn(output)
+                self.turn(output)
             else:
-                # If the target is visible, and I'm not on target, keep going.
-                self.dt_turn(output)
-                # self.turn(output)
+                if self.dt_assistance:
+                    if POT_MAX > self.pot_pos > POT_MIN:
+                        # If the target is visi
+                        # ble, I'm in the pot turn tolerence, and I'm not on target, keep going.
+                        self.turn(output)
+                    else:
+                        # If the target is visible, and I'm outside of the pot turn tolerence, and I'm not on target
+                        # stop the turntable and turn the dt
+                        output = self.DT_NO_TARGET_TURN_RATE
+                        self.dt_turn(output)
+                else:
+                    # self.dt_turn(output)
+                    self.turn(output)
         else:
             if self.last_output > 0:
                 # If the target is not visible, and I was moving forward, keep moving forward.
@@ -90,7 +100,7 @@ class TurnTable:
 
     def dt_turn(self, output):
         if self.dt:
-            self.dt.set_dt_output(-output + .2, -output + .2)
+            self.dt.set_dt_output(-output, -output)
 
     def turn_to(self, target):
         self.turntable_motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
