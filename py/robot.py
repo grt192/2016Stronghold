@@ -5,10 +5,10 @@ from queue import Queue
 from wpilib import Preferences
 import platform
 
-# if "Linux" in platform.platform():
-#     with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
-#         code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
-#         exec(code)
+if "Linux" in platform.platform():
+    with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
+        code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
+        exec(code)
 
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
@@ -43,10 +43,6 @@ class MyRobot(wpilib.SampleRobot):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
-
-            print("Target View:", self.robot_vision.target_view,
-                  "Rotational Error:", self.robot_vision.rotational_error,
-                  "Vertical Error:", self.robot_vision.vertical_error)
 
             self.safeSleep(tinit, .04)
             
