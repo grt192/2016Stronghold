@@ -60,7 +60,7 @@ class MyRobot(wpilib.SampleRobot):
             #print("Fused heading: ", self.navx.fused_heading)
             #print("Flywheel speed: ", self.flywheel_motor.getEncVelocity())
             #print("Potentiometer position: ", self.turntable_pot.getVoltage())
-            #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
+            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #auto = self.autoChooser.getSelected()
             #print(auto)
             h_lower = SmartDashboard.getDouble("HLower")
