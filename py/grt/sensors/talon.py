@@ -12,7 +12,6 @@ class GRTTalon:
 
     def get(self):
         return self.t.get()
-        print(self.t.Get())
 
     def getDeviceID(self):
         return self.t.getDeviceID()
@@ -32,13 +31,13 @@ class GRTTalon:
     def poll(self):
         # self.busVoltage = t.getBusVoltage()
         # self.closeLoopRampRate = t.getCloseLoopRampRate()
-        self.controlMode = t.getControlMode()
-        self.deviceID = t.getDeviceID()
-        self.encPosition = t.getEncPosition()
-        self.encVelocity = t.getEncVelocity()
-        self.outputCurrent = t.getOutputCurrent()
-        self.outputVoltage = t.getOutputVoltage()
-        self.closeLoopError = t.getCloseLoopError()
+        self.controlMode = self.t.getControlMode()
+        self.deviceID = self.t.getDeviceID()
+        self.encPosition = self.t.getEncPosition()
+        self.encVelocity = self.t.getEncVelocity()
+        self.outputCurrent = self.t.getOutputCurrent()
+        self.outputVoltage = self.t.getOutputVoltage()
+        self.closeLoopError = self.t.getCloseLoopError()
         # self.position = t.getPosition()
         # self.sensorPosition = t.getSensorPosition()
         # self.sensorVelocity = t.getSensorVelocity()
