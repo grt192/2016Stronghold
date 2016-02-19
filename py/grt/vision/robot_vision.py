@@ -111,7 +111,6 @@ class Vision:
         try:
             # Get Maximum-Area Polygon
             max_area_poly = max(polygons, key=cv2.contourArea)
-            # print("Max Area Poly", )
 
             target_view = True
         except:

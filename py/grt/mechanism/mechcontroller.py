@@ -8,12 +8,14 @@ class MechController:
     tt_override = True
     vt_override = True
 
-    def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager, robot_vision, dummy_vision=False): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, mimic_joystick, switch_panel, pickup, shooter, operation_manager, robot_vision, dummy_vision=False): # mechanisms belong in arguments
         # define mechanisms here
         
 
         self.driver_joystick = driver_joystick
         self.xbox_controller = xbox_controller
+        self.mimic_joystick = mimic_joystick
+
         self.robot_vision = robot_vision
         self.dummy_vision = dummy_vision
         
@@ -25,7 +27,7 @@ class MechController:
 
 
         driver_joystick.add_listener(self._driver_joystick_listener)
-        driver_joystick.add_listener(self._dummy_vision_listener)
+        mimic_joystick.add_listener(self._dummy_vision_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
         switch_panel.add_listener(self._switch_panel_listener)
 
