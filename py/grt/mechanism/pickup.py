@@ -47,6 +47,11 @@ class Pickup:
         self.current_position = "frame"
         self.achange_motor2.set(300)
 
+    def go_to_pickup_position(self):
+    	self.set_automatic()
+    	self.current_position = "pickup"
+    	self.achange_motor2.set(0)
+
     def go_to_portcullis(self):
         self.set_automatic()
         # self.achange_motor_1.set(500)

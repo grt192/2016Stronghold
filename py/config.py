@@ -104,16 +104,16 @@ record_macro = RecordMacro(talon_arr)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 switch_panel = SwitchPanel(2)
-mimic_stick = Attack3Joystick(3)
-operation_manager = OperationManager(shooter, pickup, straight_macro)
 
-ac = ArcadeDriveController(dt, driver_stick, record_macro, operation_manager)
+operation_manager = OperationManager(shooter, pickup, straight_macro)
+ac = ArcadeDriveController(dt, driver_stick, operation_manager)
+
 hid_sp = SensorPoller((driver_stick, vision_sensor, xbox_controller, switch_panel, navx))
 
 
 # define MechController
-# driver_joystick, xbox_controller, mimic_joystick, switch_panel, pickup, shooter, operation_manager, robot_vision, dummy_vision=False
-mc = MechController(driver_stick, xbox_controller, mimic_stick, shooter, pickup)
+
+mc = MechController(driver_stick, xbox_controller, switch_panel, shooter, pickup, operation_manager, robot_vision)
 
 # define DriverStation
 ds = DriverStation.getInstance()

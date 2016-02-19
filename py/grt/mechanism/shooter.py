@@ -55,7 +55,7 @@ class Shooter:
 
     def _common_flywheel_listener(self, sensor, state_id, datum):
         if self.target_locked_vertical:
-            if state_id == "at_speed":
+            if state_id == "flywheel_at_speed":
                 if datum:
                     self.rails.rails_down()
                     self.is_shooting = True
@@ -68,7 +68,7 @@ class Shooter:
             if state_id == "rotation_ready":
                 if datum:
                     self.target_locked_rotation = True
-                    #self.turntable.PID_controller.disable()
+                    #self.turntable.pid_controller.disable()
                     #self.turntable_motor.set(0)
                     self.hood.go_to_target_angle()
                     self.flywheel.spin_to_target_speed()
@@ -95,11 +95,12 @@ class Shooter:
             self.hood.go_to_standby_angle()
             self.turntable.disable_front_lock()
             self.turntable.turntable_motor.set(0)
-            self.turntable.PID_controller.enable()
+            self.turntable.pid_controller.enable()
             self.vt_automatic = True
 
 
     def geo_automatic_shot(self):
+        self.shooter_timers_running = True
         if not self.rails.is_up:
             self.rails.rails_up()
             self.geo_reverse_func()
@@ -116,9 +117,9 @@ class Shooter:
 
     def finish_automatic_shot(self):
         self.shooter_timers_running = False
-        self.turntable.PID_controller.disable()
+        self.turntable.pid_controller.disable()
         self.turntable.enable_front_lock()
-        self.flywheel.spindown()
+        self.flywheel.spin_down()
         self.hood.go_to_frame_angle()
         if self.drivecontroller:
             self.drivecontroller.enable_manual_control()
@@ -133,9 +134,9 @@ class Shooter:
     def abort_automatic_shot(self):   #Also aborts automatic pickup and automatic cross
         if not self.is_shooting:
             self.shooter_timers_running = False
-            self.turntable.PID_controller.disable()
+            self.turntable.pid_controller.disable()
             self.turntable.enable_front_lock()
-            self.flywheel.spindown()
+            self.flywheel.spin_down()
             self.hood.go_to_frame_angle()
             if self.drivecontroller:
                 self.drivecontroller.enable_manual_control()
@@ -154,10 +155,11 @@ class Shooter:
 
     def geo_reverse_func(self):
         self.flywheel.spin_to_reverse_speed()
+
         threading.Timer(1.0, self.geo_forward_func).start()
 
     def final_stop_func(self):
-        self.flywheel.spindown()
+        self.flywheel.spin_down()
 
     def automatic_pickup(self):
         self.rails.rails_up()

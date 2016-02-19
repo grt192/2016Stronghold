@@ -62,7 +62,7 @@ class TurnTable:
     def no_view_timeout(self):  # TODO: Implement
         pass
 
-    def set_output(self, output):
+    def pid_output(self, output):
         self.pot_pos = self.turntable_motor.getPosition()
         if self.robot_vision.target_view:
             if self.pid_controller.onTarget():

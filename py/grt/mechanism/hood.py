@@ -22,6 +22,9 @@ class Hood:
     def go_to_frame_angle(self):
         self.auto_set(0)
 
+    def go_to_geo_angle(self):
+        self.auto_set(1000)
+
     def auto_set(self, angle):
         if not self.hood_motor.getControlMode == CANTalon.ControlMode.PercentVbus:
             self.hood_motor.set(angle)

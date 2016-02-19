@@ -8,7 +8,8 @@ class MechController:
     tt_override = True
     vt_override = True
 
-    def __init__(self, driver_joystick, xbox_controller, mimic_joystick, switch_panel, pickup, shooter, operation_manager, robot_vision, dummy_vision=False): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, switch_panel, shooter, pickup,
+     operation_manager, robot_vision, dummy_vision=False): # mechanisms belong in arguments
         # define mechanisms here
         
 
