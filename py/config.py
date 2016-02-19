@@ -29,7 +29,7 @@ from grt.sensors.switch_panel import SwitchPanel
 from grt.macro.record_macro import RecordMacro
 
 
-using_vision_server = True
+using_vision_server = False
 
 
 # Compressor initialization
@@ -57,8 +57,8 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 
 # Vision
 vision_sensor = VisionSensor()
-# robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0)
-robot_vision = Vision(vision_sensor)
+robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0, getLowerThreshold=lambda: [1, 1, 1], getUpperThreshold=lambda: [2, 2, 2], setThreshold=lambda x, y: x)
+#robot_vision = Vision(vision_sensor)
 if using_vision_server:
     import grt.vision.vision_server
     grt.vision.vision_server.prepare_module(robot_vision)

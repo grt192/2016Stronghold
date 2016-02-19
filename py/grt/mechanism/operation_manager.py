@@ -77,7 +77,7 @@ class OperationManager:
 		#Directly controls mechanism functions for manual control mode
 		#Will need the mechanism itself to control these functions for automatic pickup
 		self.pickup.roll(0)
-		self.shooter.flywheel.spindown()
+		self.shooter.flywheel.spin_down()
 		self.op_lock = False
 
 
@@ -88,7 +88,7 @@ class OperationManager:
 		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
 		self.shooter.rails.rails_down()
 		self.shooter.hood.go_to_frame_angle()
-		self.shooter.flywheel.spindown()
+		self.shooter.flywheel.spin_down()
 		self.shooter.turntable.enable_front_lock()
 		self.pickup.go_to_frame_position()
 		threading.Timer(0.5, self.chival_forward_motion).start()
@@ -123,7 +123,7 @@ class OperationManager:
 		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
 		self.shooter.rails.rails_down()
 		self.shooter.hood.go_to_frame_angle()
-		self.shooter.flywheel.spindown()
+		self.shooter.flywheel.spin_down()
 		self.shooter.turntable.enable_front_lock()
 		self.pickup.roll(-1.0)
 		self.straight_macro.POWER = -.4
@@ -144,7 +144,7 @@ class OperationManager:
 		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
 		self.shooter.rails.rails_down()
 		self.shooter.hood.go_to_frame_angle()
-		self.shooter.flywheel.spindown()
+		self.shooter.flywheel.spin_down()
 		self.shooter.turntable.enable_front_lock()
 		self.straight_macro.enable()
 		#Call a straight macro
