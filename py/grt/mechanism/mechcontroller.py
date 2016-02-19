@@ -5,7 +5,7 @@ from turntable.py import TurnTable
 
 class MechController:
 
-    def __init__(self, driver_joystick, xbox_controller, shooter, belt_roller_motor, rails_actuator,challoopa): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, swtich_controller, shooter, belt_roller_motor, rails_actuator,challoopa): # mechanisms belong in arguments
         # define mechanisms here
         self.rails_actuator = rails_actuator
         self.shooter = shooter
@@ -15,6 +15,7 @@ class MechController:
         self.challoopa = challoopa
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
+        driver_swtichjoystick_listener.add_listener(self._driver_swtichjoystick_listener)
 
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
@@ -62,6 +63,55 @@ class MechController:
             if state_id == "button6":
                 if datum:
                     self.shooter.flywheel_motor.set(0)
+
+    def _driver_swtichjoystick_listener(self, sensor, state_id, datum):
+            if state_id == "button1":
+                if datum:
+                    print("button1 on")
+                else 
+                    print("button1 off")
+            if state_id == "button2":
+                if datum:
+                    print("button2 on")
+                else 
+                    print("button2 off")
+            if state_id == "button3":
+                if datum:
+                    print("button3 on")
+                else 
+                    print("button3 off")
+            if state_id == "button4":
+                if datum:
+                    print("button4 on")
+                else 
+                    print("button5 off")
+            if state_id == "button1":
+                if datum:
+                    print("button5 on")
+                else 
+                    print("button5 off")
+            if state_id == "button6":
+                if datum:
+                    print("button6 on")
+                else 
+                    print("button6 off")
+            if state_id == "button7":
+                if datum:
+                    print("button7 on")
+                else 
+                    print("button7 off")
+            if state_id == "button8":
+                if datum:
+                    print("button8 on")
+                else 
+                    print("button8 off")
+            if state_id == "button9":
+                if datum:
+                    print("button9 on")
+                else 
+                    print("button9 off")
+
+
 
 
 

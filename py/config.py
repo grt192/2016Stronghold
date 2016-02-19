@@ -18,7 +18,7 @@ from grt.sensors.encoder import Encoder
 #from grt.sensors.talon import Talon
 from grt.mechanism.mechcontroller import MechController
 
-from grt.vision.robot_vision import Vision
+#from grt.vision.robot_vision import Vision
 #from grt.sensors.vision_sensor import VisionSensor
 from grt.mechanism.shooter import Shooter
 from grt.sensors.navx import NavX
@@ -71,7 +71,7 @@ belt_roller_motor = CANTalon(10)
 #flywheel = Flywheel(shooter)
 
 #vision_sensor = VisionSensor()
-robot_vision = Vision()
+robot_vision = None
 if using_vision_server:
 	import grt.vision.vision_server
 	grt.vision.vision_server.prepare_module(robot_vision)
@@ -92,6 +92,7 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, rai
 # Drive Controllers
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
+switch_controller = Attack3Joystick(1)
 ac = ArcadeDriveController(dt, driver_stick)
 hid_sp = SensorPoller((driver_stick, xbox_controller, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))  # human interface devices
 
