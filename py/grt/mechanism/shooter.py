@@ -55,7 +55,7 @@ class Shooter:
 
     def _common_flywheel_listener(self, sensor, state_id, datum):
         if self.target_locked_vertical:
-            if state_id == "at_speed":
+            if state_id == "flywheel_at_speed":
                 if datum:
                     self.rails.rails_down()
                     self.is_shooting = True

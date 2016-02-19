@@ -179,17 +179,20 @@ class Vision:
         _, img = self.cap.read()
         target_view, max_polygon = self.get_max_polygon(img)
 
-        # with self.vision_lock:
-        # Update properties
-        self.target_view = target_view
-        if self.target_view:
-            self.rotational_error, self.vertical_error = self.get_error(max_polygon)
+        with self.vision_lock:
+            # Update properties
+            if target_view:
+                try:
+                    self.rotational_error, self.vertical_error = self.get_error(max_polygon)
+                except ZeroDivisionError:
+                    target_view = False
+            self.target_view = target_view
 
-        # Draw on image
-        if self.drawing:
-            cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
+            # Draw on image
+            if self.drawing:
+                cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
 
-        self.img = img
+            self.img = img
         # cv2.imshow("Image", self.img)
         # self.print_all_values()
         # cv2.waitkey(25)

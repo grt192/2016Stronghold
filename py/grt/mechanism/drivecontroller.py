@@ -9,14 +9,13 @@ class ArcadeDriveController:
     Class for controlling DT in arcade drive mode, with one or two joysticks.
     """
 
-    def __init__(self, dt, l_joystick, record_macro, operation_manager, r_joystick=None):
+    def __init__(self, dt, l_joystick, operation_manager, r_joystick=None):
         """
         Initialize arcade drive controller with a DT and up to two joysticks.
         """
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
-        self.record_macro = record_macro
         operation_manager.shooter.drivecontroller = self
         operation_manager.shooter.dt = self.dt
         self.manual_control_enabled = True
