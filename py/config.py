@@ -39,17 +39,17 @@ c.start()
 
 # Drive Train
 dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
+#dt_r2 = CANTalon(2)
+#dt_r3 = CANTalon(3)
 dt_left = CANTalon(4)
-dt_l2 = CANTalon(5)
-dt_l3 = CANTalon(6)
+#dt_l2 = CANTalon(5)
+#dt_l3 = CANTalon(6)
 dt_shifter = Solenoid(0)
 
 
 
-Motorset.group((dt_right, dt_r2))
-Motorset.group((dt_left, dt_l2))
+Motorset.group((dt_right, ))
+Motorset.group((dt_left, ))
 
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
