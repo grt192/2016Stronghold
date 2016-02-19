@@ -6,8 +6,10 @@ from grt.core import Sensor
 class TurnTable:
     tt_override = False
 
-    POT_MIN = -20000
-    POT_MAX = 20000
+    # POT_MIN = -20000
+    # POT_MAX = 20000
+    POT_MIN = -2000
+    POT_MAX = 2000
 
     POT_TURN_KP = .01
     POT_TURN_KI = 0
@@ -30,11 +32,12 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 20
     TURNTABLE_OUTPUT_RANGE = .4
 
-    def __init__(self, robot_vision, turntable_motor: CANTalon, dt):
+    def __init__(self, robot_vision, turntable_motor, dt, encoder=None):
         self.turntable_motor = turntable_motor
         self.robot_vision = robot_vision
         self.dt = dt
-        self.dt_assistance = False
+        self.dt_assistance = True
+        self.encoder = encoder
 
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.last_input = 0
@@ -63,7 +66,7 @@ class TurnTable:
         pass
 
     def pid_output(self, output):
-        self.pot_pos = self.turntable_motor.getPosition()
+        self.pot_pos = self.turntable_motor.getPosition() if not self.encoder else self.encoder.position
         if self.robot_vision.target_view:
             if self.pid_controller.onTarget():
                 # If the target is visible, and I'm on target, stop.
@@ -73,9 +76,12 @@ class TurnTable:
             else:
                 if self.dt_assistance:
                     if self.POT_MAX > self.pot_pos > self.POT_MIN:
+                        print("POT IN RANGE", self.pot_pos)
+                        self.dt_turn(0)
                         # If the target is visible, I'm in the pot turn tolerence, and I'm not on target, keep going.
                         self.turn(output)
                     else:
+                        print("OUT OF POT RANGE!!")
                         # If the target is visible, and I'm outside of the pot turn tolerence, and I'm not on target
                         # stop the turntable and turn the dt
                         output = self.DT_NO_TARGET_TURN_RATE
