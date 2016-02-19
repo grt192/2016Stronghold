@@ -1,7 +1,7 @@
 import wpilib
 import time
 
-camera = wpilib.USBCamera()
+camera = wpilib.USBCamera(name=b"cam1")
 camera.startCapture()
 camera.setExposureManual(-2)
 camera.setExposureAuto() #-1 old
