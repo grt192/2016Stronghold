@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import time, math, threading
 
+
 # TODO: MIN AREA CHECK
 class Vision:
     # GREEN_LOWER = np.array([0, 100, 0], 'uint8')
@@ -25,9 +26,6 @@ class Vision:
     # Color Ranges:
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
-
-
-
 
     def __init__(self, vision_sensor):
         self.vision_sensor = vision_sensor
@@ -89,9 +87,6 @@ class Vision:
         self.vision_sensor.rotational_error = value
         self._vertical_error = value
 
-
-
-
     def vision_close(self):
         cv2.destroyAllWindows()
 
@@ -110,9 +105,9 @@ class Vision:
                                                       closed=True), contours)
 
         # Filter Curves:
-        polygons = filter(lambda poly: self.POLY_MIN_SIDES <= poly.shape[0] <= self.POLY_MAX_SIDES, polygons)
+        polygons = filter(lambda poly: self.POLY_MIN_SIDES <= poly.shape[0] <= self.POLY_MAX_SIDES and
+                                       cv2.contourArea(poly) > self.MIN_AREA, polygons)
 
-        target_view = False
         try:
             # Get Maximum-Area Polygon
             max_area_poly = max(polygons, key=cv2.contourArea)
@@ -164,9 +159,6 @@ class Vision:
     def getUpperThreshold(self):
         with self.threshold_lock:
             return self.GREEN_UPPER_HSV
-
-
-
 
     def vision_loop(self):
         # At the beginning of the loop, self.target_view is set to false
