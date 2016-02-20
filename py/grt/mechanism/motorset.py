@@ -2,10 +2,6 @@ from wpilib import CANTalon
 
 
 class Motorset:
-    """
-    Drop-in replacement for wpilib.SpeedController. Useful for grouping
-    bunches of motors together.
-    """
 
     @staticmethod
     def group(motors, scalefactors=None):
