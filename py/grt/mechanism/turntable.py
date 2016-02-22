@@ -36,7 +36,7 @@ class TurnTable:
         self.turntable_motor = turntable_motor
         self.robot_vision = robot_vision
         self.dt = dt
-        self.dt_assistance = True
+        self.dt_assistance = False
         self.encoder = encoder
 
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE

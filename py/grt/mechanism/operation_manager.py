@@ -79,7 +79,7 @@ class OperationManager:
         # Directly controls mechanism functions for manual control mode
         # Will need the mechanism itself to control these functions for automatic pickup
         self.pickup.roll(0)
-        self.shooter.flywheel.spindown()
+        self.shooter.flywheel.spin_down()
         self.op_lock = False
 
     @operation

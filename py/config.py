@@ -40,11 +40,11 @@ c.start()
 
 # Drive Train
 dt_right = CANTalon(1)
-# dt_r2 = CANTalon(2)
-# dt_r3 = CANTalon(3)
-dt_left = CANTalon(4)
-# dt_l2 = CANTalon(5)
-# dt_l3 = CANTalon(6)
+dt_r2 = CANTalon(2)
+dt_r3 = CANTalon(3)
+dt_left = CANTalon(11)
+dt_l2 = CANTalon(12)
+dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
 
@@ -66,17 +66,21 @@ if using_vision_server:
 
 # Manual Pickup
 
-pickup_angle_change_motor1 = CANTalon(11)
+pickup_angle_change_motor1 = CANTalon(8)
 pickup_angle_change_motor2 = CANTalon(7)
-pickup_roller_motor = CANTalon(8)
+pickup_roller_motor = CANTalon(9)
 pickup = Pickup(pickup_angle_change_motor1, pickup_angle_change_motor2, pickup_roller_motor)
 
 # Manual shooter Talons and Objects
 
 rails_actuator = Solenoid(1)
 flywheel_motor = CANTalon(10)
-turntable_motor = CANTalon(12)
-hood_motor = CANTalon(9)
+flywheel_motor2 = CANTalon(4)
+flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
+flywheel_motor2.set(10)
+
+turntable_motor = CANTalon(5)
+hood_motor = CANTalon(6)
 
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
 flywheel_motor.setP(.26)

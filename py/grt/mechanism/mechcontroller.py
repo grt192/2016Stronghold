@@ -3,7 +3,7 @@ import math
 
 
 class MechController:
-    hood_override = False
+    hood_override = True
     pickup_override = True
     tt_override = True
     vt_override = True
@@ -63,6 +63,7 @@ class MechController:
             if state_id == "l_y_axis":
                 if datum:
                     self.pickup.angle_change(datum)
+                    print("Running angle change")
 
         if self.tt_override:
             if state_id == "r_x_axis":
@@ -71,7 +72,7 @@ class MechController:
         if self.hood_override:
             if state_id == "r_y_axis":
                 if datum:
-                    self.shooter.hood.turn(datum * .3)
+                    self.shooter.hood.rotate(datum * .3)
 
         if state_id == "r_shoulder":
             if datum:

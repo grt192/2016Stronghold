@@ -56,7 +56,7 @@ class Flywheel:
 
     def spin_to_pickup_power(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
-        self.flywheel_motor.set(.5)
+        self.flywheel_motor.set(.2)
 
 
 # class FlywheelSensor(Sensor):

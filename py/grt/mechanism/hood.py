@@ -42,6 +42,7 @@ class Hood:
     def disable_automatic_control(self):
         self.hood_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
 
+
 # class HoodSensor(Sensor):
 # 	ANGLE_TOLERANCE = 5
 #
