@@ -111,6 +111,7 @@ class Vision:
         try:
             # Get Maximum-Area Polygon
             max_area_poly = max(polygons, key=cv2.contourArea)
+            # print("Max Area Poly", )
 
             target_view = True
         except:
@@ -141,7 +142,7 @@ class Vision:
             print("Target View: ", self._target_view, "Rotational Error: ", self._rotational_error,
                   "Vertical Error: ", self._vertical_error, "Distance: ", distance, sep="     ")
 
-    def getFrame(self):
+    def get_frame(self):
         img_jpg = cv2.imencode(".jpg", self.img)
         print("Returning frame")
         return img_jpg
@@ -164,99 +165,23 @@ class Vision:
         # If something useful is found, self.target_view is set to true
 
 
-
-        self.target_view = False
-
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
 
         _, img = self.cap.read()
         target_view, max_polygon = self.get_max_polygon(img)
 
-        line3 = cv2.line(self.img,(0,(self.height / 2)),(self.width,(self.height / 2)),(0,0,0),5)
-        line4 = cv2.line(self.img,((self.width / 2),0),((self.width / 2),self.height),(0,0,0),5)
-
-            #defines variables flywheel speen and shooter raised
-
-            #shows the values and changes color accordingly to flywheelspeed and is_raised
-        if config.shooter.flywheel.flywheel_motor.getEncVelocity == 1:
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(self.img,'Flywheel Speed: 1',((self.width / 3),100), font, 1,(0,255,0),2)
-        else:
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(self.img,'0',((self.width / 3),100), font, 1,(0,0,255),2)
-
-        if config.shooter.rails.isUp:
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(self.img,'Shooter: UP',(((self.width * 2) / 3),100), font, 1,(0,255,0),2)
-        else:
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(self.img,'Shooter: DOWN',(((self.width * 2) / 3),100), font, 1,(0,0,255),2)
-
         with self.vision_lock:
             # Update properties
-            if target_view:
-                try:
-                    self.rotational_error, self.vertical_error = self.get_error(max_polygon)
-                except ZeroDivisionError:
-                    target_view = False
             self.target_view = target_view
+            if self.target_view:
+                self.rotational_error, self.vertical_error = self.get_error(max_polygon)
 
             # Draw on image
             if self.drawing:
                 cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
 
-
-                on_target = False
-
-                target_width = False
-
-                target_height = False
-
-                #show a cross in the middle of the target----uses moments
-                line1 = cv2.line(self.img,((self.x_target + self.rotational_error), 0),((self.x_target + self.rotational_error),self.height),(0,0,0),5)
-                line2 = cv2.line(self.img,(0,self.vertical_error),(self.width,self.vertical_error),(0,0,0),5)
-                circle1 = cv2.circle(self.img,((self.x_target + self.rotational_error),self.vertical_error), 50, (0,0,0), 5)
-
-
-                #if the crosses match, turn them green
-                if (self.x_target + self.rotational_error) == (self.width / 2):
-                    line4 = cv2.line(self.img,((self.width / 2),0),((self.width / 2),self.height),(0,255,0),5)
-                    target_width = True
-                    if (self.vertical_error / 2) == self.height:
-                        line3 = cv2.line(self.img,(0,(self.height / 2)),(self.width,(self.height / 2)),(0,255,0),5)
-                        on_target = True
-                    else:
-                        line3 = cv2.line(self.img,(0,(self.height / 2)),(self.width,(self.height / 2)),(0,0,0),5)
-                        on_target = False
-                else:
-                    line4 = cv2.line(self.img,((self.width / 2),0),((self.width / 2),self.height),(0,0,0),5)
-                    on_target = False
-
-                if (self.vertical_error / 2) == self.height:
-                    line3 = cv2.line(self.img,(0,(self.height / 2)),(self.width,(self.height / 2)),(0,255,0),5)
-                    target_height = True
-                    if (self.x_target + self.rotational_error) == (self.width / 2):
-                        line4 = cv2.line(self.img,((self.width / 2),0),((self.width / 2),self.height),(0,255,0),5)
-                        on_target = True
-                    else:
-                        line3 = cv2.line(self.img,(0,(self.height / 2)),(self.width,(self.height / 2)),(0,0,0),5)
-                        on_target = False
-                else:
-                    line3 = cv2.line(self.img,(0,(self.height / 2)),(self.width,(self.height / 2)),(0,0,0),5)
-                    on_target = False
-
-
-                    #displays ready to shoot if everything is good
-                if on_target:
-                    if config.shooter.rails.isUp:
-                        if config.shooter.flywheel.flywheel_motor.getEncVelocity == 1:
-                            font = cv2.FONT_HERSHEY_SIMPLEX
-                            cv2.putText(self.img,'Ready to Shoot',((self.width / 2),(self.height / 2)), font, 4,(0,255,0),5)
-
-
-
-                            self.img = img
-                        # cv2.imshow("Image", self.img)
-                        # self.print_all_values()
-                        # cv2.waitkey(25)
-                        time.sleep(.025)
+        self.img = img
+        # cv2.imshow("Image", self.img)
+        # self.print_all_values()
+        # cv2.waitkey(25)
+        time.sleep(.025)
