@@ -23,11 +23,11 @@ c.start()
 
 #Manual pickup Talons and Objects
 
-pickup_achange_motor1 = CANTalon(9)
-pickup_achange_motor2 = CANTalon(10)
+pickup_achange_motor1 = CANTalon(45)
+pickup_achange_motor2 = CANTalon(46)
 
 pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Follower)
-pickup_achange_motor1.set(10)
+pickup_achange_motor1.set(47)
 pickup_achange_motor1.reverseOutput(True)
 
 pickup_roller_motor = CANTalon(8)
@@ -36,7 +36,7 @@ pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_moto
 
 #Manual shooter Talons and Objects
 
-flywheel_motor = CANTalon(7)
+flywheel_motor = CANTalon(44)
 shooter_act = Solenoid(1)
 turntable_motor = CANTalon(12)
 manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
@@ -48,9 +48,9 @@ manual_shooter = ManualShooter(flywheel_motor, shooter_act, turntable_motor)
 dt_right = CANTalon(1)
 # dt_r2 = CANTalon(2)
 # dt_r3 = CANTalon(3)
-dt_left = CANTalon(4)
-# dt_l2 = CANTalon(5)
-# dt_l3 = CANTalon(6)
+dt_left = CANTalon(10)
+# dt_l2 = CANTalon(11)
+# dt_l3 = CANTalon(12)
 dt_shifter = Solenoid(0)
 
 

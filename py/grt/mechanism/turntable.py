@@ -9,7 +9,28 @@ ENC_MAX = 20000
 
 class TurnTable:
 
-    DT_NO_TARGET_TURN_RATE = .2
+    # 2012 Values:
+
+    # DT_NO_TARGET_TURN_RATE = .2
+    # DT_KP = .0015
+    # DT_KI = 0
+    # DT_KD = 0
+    # DT_ABS_TOL = 50
+    # DT_OUTPUT_RANGE = .25
+    #
+    # INITIAL_NO_TARGET_TURN_RATE = 0
+    #
+    # TURNTABLE_NO_TARGET_TURN_RATE = .2
+    # TURNTABLE_KP = .002
+    # TURNTABLE_KI = 0
+    # TURNTABLE_KD = 0
+    # TURNTABLE_ABS_TOL = 10
+    # TURNTABLE_OUTPUT_RANGE = .4
+    #
+    #
+    # DT_NO_TARGET_TURN_RATE = .2
+    #--------------
+
     DT_KP = .0015
     DT_KI = 0
     DT_KD = 0
