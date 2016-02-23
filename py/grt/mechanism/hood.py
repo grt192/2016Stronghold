@@ -3,6 +3,10 @@ from grt.core import Sensor
 
 
 class Hood:
+
+    CURRENT_MAX = 30
+    # TODO: MAKE COLLISION DETECTION HAPPEN IN SEPARATE THREAD
+
     def __init__(self, robot_vision, hood_motor):
         self.hood_motor = hood_motor
         self.robot_vision = robot_vision
@@ -30,10 +34,11 @@ class Hood:
             self.hood_motor.set(angle)
 
     def rotate(self, power):
-        if self.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.hood_motor.set(power)
-        else:
-            print("Hood motor not in PercentVbus control mode!")
+        if self.hood_motor.getOutputCurrent() < self.CURRENT_MAX:
+            if self.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+                self.hood_motor.set(power)
+            else:
+                print("Hood motor not in PercentVbus control mode!")
 
     def enable_automatic_control(self):
         self.hood_motor.changeControlMode(CANTalon.ControlMode.Position)

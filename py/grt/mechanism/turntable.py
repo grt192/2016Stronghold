@@ -12,6 +12,8 @@ class TurnTable:
     POT_MIN = 485
     POT_MAX = 505
 
+    CURRENT_MAX = 35
+
     POT_TURN_KP = .01
     POT_TURN_KI = 0
     POT_TURN_KD = 0
@@ -33,7 +35,7 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 20
     TURNTABLE_OUTPUT_RANGE = .4
 
-    def __init__(self, robot_vision, turntable_motor, dt, encoder=None):
+    def __init__(self, robot_vision, turntable_motor: CANTalon, dt, encoder=None):
         self.turntable_motor = turntable_motor
         self.robot_vision = robot_vision
         self.dt = dt
@@ -112,7 +114,9 @@ class TurnTable:
         self.last_output = output
 
     def turn(self, output):
-        self.turntable_motor.set(output)
+        # TODO: Make this happen in a separate thread
+        if self.turntable_motor.getOutputCurrent() >= self.CURRENT_MAX:
+            self.turntable_motor.set(output)
 
     def dt_turn(self, output):
         if self.dt:
