@@ -2,7 +2,8 @@ class MechController:
     pickup_override = tt_override = vt_override = hood_override = False
     pickup_override = True
     tt_override = True
-    vt_override = True
+    hood_override = True
+    #vt_override = True
 
     def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager): # mechanisms belong in arguments
         # define mechanisms here
@@ -37,7 +38,7 @@ class MechController:
         if self.hood_override:
             if state_id == "r_y_axis":
                 if datum:
-                    self.shooter.hood.turn(datum*.3)
+                    self.shooter.hood.rotate(datum*.3)
 
         if state_id == "r_shoulder":
             if datum:

@@ -81,6 +81,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
+            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity())
             #print("Flywheel set speed: ", self.shooter.flywheel.currentspeed)
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())

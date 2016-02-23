@@ -37,9 +37,9 @@ turntable_pot = AnalogInput(0)
 dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
 dt_r3 = CANTalon(3)
-dt_left = CANTalon(4)
-dt_l2 = CANTalon(5)
-dt_l3 = CANTalon(6)
+dt_left = CANTalon(11)
+dt_l2 = CANTalon(12)
+dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
 
@@ -68,8 +68,8 @@ flywheel_motor.setP(.26)
 flywheel_motor.setF(.29)
 
 shooter_act = Solenoid(1)
-turntable_motor = CANTalon(12)
-hood_motor = CANTalon(33)
+turntable_motor = CANTalon(5)
+hood_motor = CANTalon(6)
 robot_vision = Vision()
 if using_vision_server:
 	import grt.vision.vision_server
