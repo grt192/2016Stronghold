@@ -31,7 +31,7 @@ class Hood:
 
     def rotate(self, power):
         if self.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.hood_motor.set(power)
+            self.hood_motor.set(-power)
         else:
             print("Hood motor not in PercentVbus control mode!")
 

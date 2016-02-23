@@ -1,12 +1,12 @@
 class Rails:
     def __init__(self, rails_actuator):
         self.rails_actuator = rails_actuator
-        self.is_up = True
+        self.is_up = False
 
     def rails_up(self):
         self.is_up = True
-        self.rails_actuator.set(False)
+        self.rails_actuator.set(True)
 
     def rails_down(self):
         self.is_up = False
-        self.rails_actuator.set(True)
+        self.rails_actuator.set(False)

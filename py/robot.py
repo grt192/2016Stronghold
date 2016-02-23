@@ -49,9 +49,7 @@ class MyRobot(wpilib.SampleRobot):
             tinit = time.time()
             self.hid_sp.poll()
 
-            # print("Target View:", self.robot_vision.target_view,
-            #       "Rotational Error:", self.robot_vision.rotational_error,
-            #       "Vertical Error:", self.robot_vision.vertical_error)
+            print("Target View:", self.robot_vision.target_view,       "Rotational Error:", self.robot_vision.rotational_error,       "Vertical Error:", self.robot_vision.vertical_error)
 
             self.safeSleep(tinit, .04)
             

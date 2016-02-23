@@ -7,7 +7,7 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 from grt.core import SensorPoller
 from grt.macro.straight_macro import StraightMacro
 from grt.macro.record_macro import RecordMacro
-# from grt.vision.robot_vision import Vision
+from grt.vision.robot_vision import Vision
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -30,7 +30,7 @@ from grt.mechanism.operation_manager import OperationManager
 
 
 
-using_vision_server = False
+using_vision_server = True
 
 
 # Compressor initialization
@@ -58,8 +58,8 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 
 # Vision
 vision_sensor = VisionSensor()
-robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0, getLowerThreshold=lambda: [1, 1, 1], getUpperThreshold=lambda: [2, 2, 2], setThreshold=lambda x, y: x)
-#robot_vision = Vision(vision_sensor)
+#robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0, getLowerThreshold=lambda: [1, 1, 1], getUpperThreshold=lambda: [2, 2, 2], setThreshold=lambda x, y: x)
+robot_vision = Vision(vision_sensor)
 if using_vision_server:
     import grt.vision.vision_server
     grt.vision.vision_server.prepare_module(robot_vision)
@@ -111,18 +111,18 @@ record_macro = RecordMacro(talon_arr)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 switch_panel = SwitchPanel(2)
-mimic_stick = Attack3Joystick(3)
+#mimic_stick = Attack3Joystick(3)
 
 operation_manager = OperationManager(shooter, pickup, straight_macro)
 
 ac = ArcadeDriveController(dt, driver_stick, operation_manager)
 
-hid_sp = SensorPoller((driver_stick, vision_sensor, xbox_controller, switch_panel, navx, mimic_stick))
+hid_sp = SensorPoller((driver_stick, vision_sensor, xbox_controller, switch_panel, navx))
 
 
 # define MechController
 
-mc = MechController(driver_stick, xbox_controller, mimic_stick, switch_panel, shooter, pickup, operation_manager, robot_vision)
+mc = MechController(driver_stick, xbox_controller, switch_panel, shooter, pickup, operation_manager, robot_vision)
 
 # define DriverStation
 ds = DriverStation.getInstance()

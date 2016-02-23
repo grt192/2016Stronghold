@@ -141,7 +141,7 @@ class Vision:
             print("Target View: ", self._target_view, "Rotational Error: ", self._rotational_error,
                   "Vertical Error: ", self._vertical_error, "Distance: ", distance, sep="     ")
 
-    def getFrame(self):
+    def get_frame(self):
         img_jpg = cv2.imencode(".jpg", self.img)
         print("Returning frame")
         return img_jpg

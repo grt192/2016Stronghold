@@ -63,15 +63,15 @@ class DriveTrain:
         Upshifts, if shifters are present.
         """
         if self.left_shifter:
-            self.left_shifter.set(False)
+            self.left_shifter.set(True)
         if self.right_shifter:
-            self.right_shifter.set(False)
+            self.right_shifter.set(True)
 
     def downshift(self):
         """
         Downshifts, if shifters are present.
         """
         if self.left_shifter:
-            self.left_shifter.set(True)
+            self.left_shifter.set(False)
         if self.right_shifter:
-            self.right_shifter.set(True)
+            self.right_shifter.set(False)
