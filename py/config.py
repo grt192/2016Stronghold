@@ -59,6 +59,7 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 # Vision
 vision_sensor = VisionSensor()
 #robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0, getLowerThreshold=lambda: [1, 1, 1], getUpperThreshold=lambda: [2, 2, 2], setThreshold=lambda x, y: x)
+
 robot_vision = Vision(vision_sensor)
 if using_vision_server:
     import grt.vision.vision_server
@@ -80,6 +81,7 @@ flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
 flywheel_motor2.set(10)
 
 turntable_motor = CANTalon(5)
+turntable_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
 hood_motor = CANTalon(6)
 
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)

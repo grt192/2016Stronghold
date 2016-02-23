@@ -67,11 +67,11 @@ class Shooter:
         if self.vt_automatic:
             if state_id == "rotation_ready":
                 if datum:
-                    self.target_locked_rotation = True
+                    self.target_locked_rotation = False
                     #self.turntable.pid_controller.disable()
                     #self.turntable_motor.set(0)
-                    self.hood.go_to_target_angle()
-                    self.flywheel.spin_to_target_speed()
+                    # self.hood.go_to_target_angle()
+                    # self.flywheel.spin_to_target_speed()
                     if not self.drivecontroller == None:
                         self.drivecontroller.disable_manual_control()
                     if not self.dt == None:
@@ -91,8 +91,8 @@ class Shooter:
     def vt_forward_func(self):
         if self.shooter_timers_running:
 
-            self.flywheel.spin_to_standby_speed()
-            self.hood.go_to_standby_angle()
+            # self.flywheel.spin_to_standby_speed()
+            # self.hood.go_to_standby_angle()
             self.turntable.disable_front_lock()
             self.turntable.turntable_motor.set(0)
             self.turntable.pid_controller.enable()

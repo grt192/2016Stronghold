@@ -8,8 +8,9 @@ class TurnTable:
 
     # POT_MIN = -20000
     # POT_MAX = 20000
-    POT_MIN = -2000
-    POT_MAX = 2000
+    POT_CENTER = 495
+    POT_MIN = 485
+    POT_MAX = 505
 
     POT_TURN_KP = .01
     POT_TURN_KI = 0

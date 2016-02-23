@@ -20,6 +20,7 @@ class MyRobot(wpilib.SampleRobot):
         self.navx = config.navx
         self.vision_sensor = config.vision_sensor
         self.robot_vision = config.robot_vision
+        self.turntable_motor = config.turntable_motor
         SmartDashboard.putDouble("HLower", self.robot_vision.getLowerThreshold()[0])
         SmartDashboard.putDouble("SLower", self.robot_vision.getLowerThreshold()[1])
         SmartDashboard.putDouble("VLower", self.robot_vision.getLowerThreshold()[2])
@@ -50,6 +51,7 @@ class MyRobot(wpilib.SampleRobot):
             self.hid_sp.poll()
 
             print("Target View:", self.robot_vision.target_view,       "Rotational Error:", self.robot_vision.rotational_error,       "Vertical Error:", self.robot_vision.vertical_error)
+
 
             self.safeSleep(tinit, .04)
             
