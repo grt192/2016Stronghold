@@ -1,6 +1,6 @@
 from grt.core import Sensor
 
-
+"""
 try:
     from robotpy_ext.common_drivers.navx.ahrs import AHRS
     class NavX(Sensor):
@@ -25,19 +25,18 @@ try:
             self.compass_heading = self.ahrs.getCompassHeading()
 
             self.fused_heading = self.ahrs.getFusedHeading()
+"""
+class NavX(Sensor):
+    def __init__(self):
+        super().__init__()
 
-except ImportError:
-    class NavX(Sensor):
-        def __init__(self):
-            super().__init__()
+        self.ahrs = None
 
-            self.ahrs = None
+        self.pitch = 0
+        self.yaw = 0
+        self.roll = 0
+        self.compass_heading = 0
+        self.fused_heading = 0
 
-            self.pitch = 0
-            self.yaw = 0
-            self.roll = 0
-            self.compass_heading = 0
-            self.fused_heading = 0
-
-        def poll(self):
-            pass
+    def poll(self):
+        pass

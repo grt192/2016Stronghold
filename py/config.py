@@ -30,7 +30,7 @@ from grt.mechanism.operation_manager import OperationManager
 
 
 
-using_vision_server = True
+using_vision_server = False
 
 
 # Compressor initialization
