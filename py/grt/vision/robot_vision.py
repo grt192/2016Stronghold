@@ -3,7 +3,6 @@ import numpy as np
 import time, math, threading
 
 
-# TODO: MIN AREA CHECK
 class Vision:
     # GREEN_LOWER = np.array([0, 100, 0], 'uint8')
     # GREEN_UPPER = np.array([200, 255, 100], 'uint8')

@@ -1,6 +1,5 @@
 import threading
 import time
-import config
 
 __author__ = "Calvin Huang"
 
