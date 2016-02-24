@@ -86,6 +86,7 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, sho
 #Raise the hood to 35 degrees (potentiometer position 247)
 #Set the flywheel speed to 2600 ticks
 #Check these numbers with the google spreadsheet
+#Also see about adding in automatic alignment/chival de fris macro/ light-sensor-controlled pickup
 
 
 #Pickup Talons and Objects
