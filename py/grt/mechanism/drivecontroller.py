@@ -28,12 +28,15 @@ class ArcadeDriveController:
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            if self.manual_control_enabled:
-                power = self.l_joystick.y_axis
-                turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
-                # get turn value from r_joystick if it exists, else get it from l_joystick
-                self.dt.set_dt_output(power + turnval,
-                                      power - turnval)
+            if abs(datum) > .03:
+                if self.manual_control_enabled:
+                    power = self.l_joystick.y_axis
+                    turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
+                    # get turn value from r_joystick if it exists, else get it from l_joystick
+                    self.dt.set_dt_output(power + turnval,
+                                          power - turnval)
+            else:
+                self.dt.set_dt_output(0, 0)
         elif sensor == self.l_joystick and state_id == 'trigger':
             if datum:
                 self.dt.downshift()

@@ -67,10 +67,11 @@ class MechController:
 
         if state_id == "x_button":
             if datum:
-                self.shooter.flywheel.power_increment_function()
+                self.shooter.flywheel.speed_increment_function()
         if state_id == "y_button":
             if datum:
-                self.shooter.flywheel.power_decrement_function()
+                self.shooter.flywheel.speed_decrement_function()
+                self.shooter.flywheel.spindown()
 
 
         if state_id == "a_button":
@@ -83,36 +84,38 @@ class MechController:
         
 
     def _switch_panel_listener(self, sensor, state_id, datum):
-        if state_id == "switch1":
+        if state_id == "switch7":
             if datum:
                 self.vt_override = True
             else:
                 self.vt_override = False
-        if state_id == "switch2":
+        if state_id == "switch6":
             if datum:
                 self.tt_override = True
                 self.shooter.turntable.disable_front_lock()
             else:
                 self.tt_override = False
                 self.shooter.turntable.enable_front_lock()
-        if state_id == "switch3":
+        if state_id == "switch9":
             if datum:
                 self.hood_override = True
                 self.shooter.hood.disable_automatic_control()
             else:
                 self.hood_override = False
+                #HOOD_MIN = 155
+                #HOOD_MAX = 385
                 self.shooter.hood.enable_automatic_control()
-        if state_id == "switch4":
+        if state_id == "switch5":
             if datum:
                 pass
                 #Flywheel override not yet implemented
 
-        if state_id == "switch8":
+        if state_id == "switch6":
             if datum:
                 self.shooter.rails.rails_down()
             else:
                 self.shooter.rails.rails_up()
-        if state_id == "switch9":
+        if state_id == "switch8":
             if datum:
                 self.pickup_override = True
             else:

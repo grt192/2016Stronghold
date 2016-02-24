@@ -62,14 +62,19 @@ switch_panel = SwitchPanel(2)
 
 #Shooter Talons and Objects
 flywheel_motor = CANTalon(10)
+flywheel_motor2 = CANTalon(4)
+flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
+flywheel_motor2.set(flywheel_motor.getDeviceID())
 
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setP(.26)
-flywheel_motor.setF(.29)
+flywheel_motor.setP(.33)
+flywheel_motor.setF(.19)
 
 shooter_act = Solenoid(1)
 turntable_motor = CANTalon(5)
+turntable_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
 hood_motor = CANTalon(6)
+hood_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
 robot_vision = Vision()
 if using_vision_server:
 	import grt.vision.vision_server
@@ -79,9 +84,9 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, sho
 
 
 #Pickup Talons and Objects
-pickup_achange_motor1 = CANTalon(11)
+pickup_achange_motor1 = CANTalon(8)
 pickup_achange_motor2 = CANTalon(7)
-pickup_roller_motor = CANTalon(8)
+pickup_roller_motor = CANTalon(9)
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
 

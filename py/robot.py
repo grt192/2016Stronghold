@@ -60,7 +60,7 @@ class MyRobot(wpilib.SampleRobot):
             #print("Fused heading: ", self.navx.fused_heading)
             #print("Flywheel speed: ", self.flywheel_motor.getEncVelocity())
             #print("Potentiometer position: ", self.turntable_pot.getVoltage())
-            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
+            #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #auto = self.autoChooser.getSelected()
             #print(auto)
             h_lower = SmartDashboard.getDouble("HLower")
@@ -81,10 +81,9 @@ class MyRobot(wpilib.SampleRobot):
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
-            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
-            #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity())
-            #print("Flywheel set speed: ", self.shooter.flywheel.currentspeed)
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
+            #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
+            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):

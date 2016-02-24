@@ -2,7 +2,7 @@ from wpilib import CANTalon
 from grt.core import Sensor
 
 class Flywheel:
-    STANDBY_SPEED = -8400
+    STANDBY_SPEED = 2800
     def __init__(self, shooter):
         self.shooter = shooter
         self.flywheel_motor = shooter.flywheel_motor

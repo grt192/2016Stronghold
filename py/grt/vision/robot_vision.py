@@ -11,7 +11,7 @@ class Vision:
     GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
     GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
     drawing = True
-    status_print = True
+    status_print = False
 
     POLY_ARC_LENGTH = .015
     POLY_MIN_SIDES = 6
