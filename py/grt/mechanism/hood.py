@@ -55,13 +55,13 @@ class HoodSensor(Sensor):
         self.hood = hood
 
     def poll(self):
-        if self.hood.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.vertical_ready = True
-        else:
-            if self.hood.hood_motor.getClosedLoopError() < self.ANGLE_TOLERANCE:
-                self.vertical_ready = True
-            else:
-                self.vertical_ready = False
+        # if self.hood.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+        self.vertical_ready = True
+        # else:
+        #     if self.hood.hood_motor.getClosedLoopError() < self.ANGLE_TOLERANCE:
+        #         self.vertical_ready = True
+        #     else:
+        #         self.vertical_ready = False
 
 
 

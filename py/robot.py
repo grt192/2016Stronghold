@@ -83,7 +83,7 @@ class MyRobot(wpilib.SampleRobot):
             self.hid_sp.poll()
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
-            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
+            #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):

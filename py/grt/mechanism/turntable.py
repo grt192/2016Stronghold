@@ -12,8 +12,8 @@ class TurnTable:
 
     #ENC_MIN = -20000
     #ENC_MAX = 20000
-    POT_MIN = 478
-    POT_MAX = 505
+    POT_MIN = 490
+    POT_MAX = 530
     POT_CENTER = 495
 
     INITIAL_NO_TARGET_TURN_RATE = 0

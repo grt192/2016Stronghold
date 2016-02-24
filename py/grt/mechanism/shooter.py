@@ -48,6 +48,7 @@ class Shooter:
     def _vt_hood_listener(self, sensor, state_id, datum):
         if self.target_locked_rotation:
             if state_id == "vertical_ready":
+                print("Vertical rotation ready!" * 50)
                 if datum:
                     self.target_locked_vertical = True
                 else:
@@ -65,21 +66,26 @@ class Shooter:
         if self.target_locked_vertical:
             if state_id == "at_speed":
                 if datum:
-                    self.rails.rails_down()
-                    self.is_shooting = True
-                    # self.abort_timer.start() #Run the abort function after a specified timeout
-                    threading.Timer(2.0, self.finish_automatic_shot).start()
+                    print("Flywheel at speed!" * 50)
+                    threading.Timer(1.0, self.execute_shot).start()
+    
+    def execute_shot(self):
+        self.rails.rails_down()
+        self.is_shooting = True
+        # self.abort_timer.start() #Run the abort function after a specified timeout
+        threading.Timer(2.0, self.finish_automatic_shot).start()
     
 
     def _vt_turntable_listener(self, sensor, state_id, datum):
         if self.vt_automatic:
             if state_id == "rotation_ready":
                 if datum:
-                    self.target_locked_rotation = False
+                    self.target_locked_rotation = True
+                    print("Target locked rotation!" * 50)
                     #self.turntable.PID_controller.disable()
                     #self.turntable_motor.set(0)
                     #self.hood.go_to_target_angle()
-                    #self.flywheel.spin_to_target_speed()
+                    self.flywheel.spin_to_target_speed()
                     if not self.drivecontroller == None:
                         self.drivecontroller.disable_manual_control()
                     if not self.dt == None:
@@ -113,7 +119,7 @@ class Shooter:
     def vt_forward_func(self):
         if self.shooter_timers_running:
 
-            #self.flywheel.spin_to_standby_speed()
+            self.flywheel.spin_to_standby_speed()
             #self.hood.go_to_standby_angle()
             self.turntable.disable_front_lock()
             self.turntable.turntable_motor.set(0)
@@ -160,7 +166,7 @@ class Shooter:
         if not self.is_shooting:
             self.shooter_timers_running = False
             self.turntable.PID_controller.disable()
-            self.turntable.enable_front_lock()
+            #self.turntable.enable_front_lock()
             #self.rails.rails_up()
             self.flywheel.spindown()
             #self.rails.rails_down()
@@ -178,11 +184,11 @@ class Shooter:
                                  #Flywheel reverse component of the operation will continue past the official operation end time.
 
     def vt_reverse_func(self):
-        self.flywheel.spin_to_reverse_speed()
+        self.flywheel.spin_to_reverse_power()
         threading.Timer(1.0, self.vt_forward_func).start()
 
     def geo_reverse_func(self):
-        self.flywheel.spin_to_reverse_speed()
+        self.flywheel.spin_to_reverse_power()
         threading.Timer(1.0, self.geo_forward_func).start()
 
     def final_stop_func(self):

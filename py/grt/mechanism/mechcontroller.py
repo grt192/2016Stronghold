@@ -47,18 +47,18 @@ class MechController:
                 self.operation_manager.manual_pickup_abort()
         if state_id == "l_shoulder":
             if datum:
-                self.pickup.roll(-1.0)
+                self.pickup.roll(-2.0)
             else:
                 self.pickup.roll(0)
 
         
 
         if state_id == "l_trigger":
-            if datum < .5:
+            if datum > .7:
                 self.operation_manager.shot_abort()
 
         if state_id == "r_trigger":
-            if datum < .5:
+            if datum > .7:
                 if self.vt_override:
                     self.operation_manager.geo_automatic_shot()
                 else:
@@ -84,6 +84,12 @@ class MechController:
         
 
     def _switch_panel_listener(self, sensor, state_id, datum):
+        if state_id == "switch3":
+            if datum:
+                self.shooter.flywheel.spin_to_reverse_power()
+            else:
+                self.shooter.flywheel.spindown()
+
         if state_id == "switch7":
             if datum:
                 self.vt_override = True
