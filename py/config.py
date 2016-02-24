@@ -82,6 +82,11 @@ if using_vision_server:
 shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act)
 
 
+#Magic numbers for shooting:
+#Raise the hood to 35 degrees (potentiometer position 247)
+#Set the flywheel speed to 2600 ticks
+#Check these numbers with the google spreadsheet
+
 
 #Pickup Talons and Objects
 pickup_achange_motor1 = CANTalon(8)
