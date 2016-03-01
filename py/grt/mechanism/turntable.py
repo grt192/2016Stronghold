@@ -41,6 +41,11 @@ class TurnTable:
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.prev_input = 0
 
+        self.logging_setpoint = False
+        if self.logging_setpoint:
+            with open("adjustments.txt", "w") as f:
+                f.write("Adjustments:")
+
         self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD, self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
         self.PID_controller.reset()
@@ -49,15 +54,25 @@ class TurnTable:
         #Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
 
+
+
+    def log_setpoint(self, direction):
+        with open("adjustments.txt", "a") as f:
+            f.write(direction + ", " + "setpoint: " + str(self.ROTATIONAL_ERROR_SETPOINT))
+
     def adjust_right(self):
         """Make the shooter line up slightly to the right"""
         self.ROTATIONAL_ERROR_SETPOINT -= self.DELTA_SETPOINT
         self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
+        if self.logging_setpoint:
+            self.log_setpoint("right")
 
     def adjust_left(self):
         """Make the shooter line up slightly to the left"""
         self.ROTATIONAL_ERROR_SETPOINT += self.DELTA_SETPOINT
         self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
+        if self.logging_setpoint:
+            self.log_setpoint("left")
 
     def getRotationReady(self):
         #If an additional check is needed beyond PIDController.onTarget() for determining whether
