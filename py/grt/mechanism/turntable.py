@@ -28,11 +28,10 @@ class TurnTable:
 
     FRONT_POT_POSITION = 500
 
-    def __init__(self, shooter):
-        self.shooter = shooter
-        self.turntable_motor = shooter.turntable_motor
-        self.robot_vision = shooter.robot_vision
-        self.dt = shooter.dt
+    def __init__(self, robot_vision, turntable_motor, dt):
+        self.turntable_motor = turntable_motor
+        self.robot_vision = robot_vision
+        self.dt = dt
         self.override_manager = None
         self.turntable_lock = threading.Lock()
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
@@ -53,7 +52,7 @@ class TurnTable:
             return self.PID_controller.onTarget()
 
     def get_input(self):
-        if self.robot_vision.getTargetView():
+        if self.robot_vision.target_view:
             self.prev_input = self.robot_vision.getRotationalError()
             return self.prev_input
         else:
@@ -62,7 +61,7 @@ class TurnTable:
    
     def set_output(self, output):
         
-        if self.robot_vision.getTargetView():
+        if self.robot_vision.target_view:
             if self.PID_controller.onTarget():
                 #If the target is visible, and I'm on target, stop.
                 output = 0

@@ -23,14 +23,12 @@ class ArcadeDriveController:
         if self.r_joystick:
             self.r_joystick.add_listener(self._joylistener)
 
-
-
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
             if abs(datum) > .03:
                 if self.manual_control_enabled:
                     power = self.l_joystick.y_axis
-                    turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
+                    turnval = self.l_joystick.x_axis  # self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
                     # get turn value from r_joystick if it exists, else get it from l_joystick
                     self.dt.set_dt_output(power + turnval,
                                           power - turnval)
@@ -44,9 +42,9 @@ class ArcadeDriveController:
                 self.dt.upshift()
                 self.dt.disable_protective_measures()
 
-
     def enable_manual_control(self):
         self.manual_control_enabled = True
+
     def disable_manual_control(self):
         self.manual_control_enabled = False
 

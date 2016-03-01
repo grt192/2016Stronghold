@@ -10,7 +10,7 @@ from wpilib import CANTalon
 
 
 class Shooter:
-    def __init__(self, robot_vision, flywheel_motor, turntable_motor, hood_motor, rails_actuator):
+    def __init__(self, robot_vision, flywheel, turntable, hood, rails):
 
         self.GEO_SPINUP_TIME = 2.0
 
@@ -26,11 +26,15 @@ class Shooter:
         """
         These individual motors should be replaced with the complete mechanism classes found in the merged branch
         """
+        self.flywheel = flywheel
+        self.rails = rails
+        self.hood = hood
+        self.turntable = turntable
         self.robot_vision = robot_vision
-        self.flywheel_motor = flywheel_motor
-        self.turntable_motor = turntable_motor
-        self.hood_motor = hood_motor
-        self.rails_actuator = rails_actuator
+        self.flywheel_motor = self.flywheel.flywheel_motor
+        self.turntable_motor = self.turntable.turntable_motor
+        self.hood_motor = self.hood.hood_motor
+        self.rails_actuator = self.rails.rails_actuator
 
 
         """
@@ -45,10 +49,11 @@ class Shooter:
         self.vision_enabled = False
 
 
-        self.flywheel = Flywheel(self)
-        self.turntable = TurnTable(self)
-        self.hood = Hood(self)
-        self.rails = Rails(self)
+
+        # self.flywheel = Flywheel(self)
+        # self.turntable = TurnTable(self)
+        # self.hood = Hood(self)
+        # self.rails = Rails(self)
 
         self.flywheel_sensor = FlywheelSensor(self.flywheel)
         self.turntable_sensor = TurnTableSensor(self.turntable)
