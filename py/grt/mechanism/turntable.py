@@ -2,6 +2,7 @@ import wpilib
 from grt.core import Sensor
 import threading
 from wpilib import CANTalon
+import platform
 
 
 
@@ -9,8 +10,10 @@ from wpilib import CANTalon
 
 class TurnTable:
 
-
-    POT_CENTER = 495
+    if "Linux" in platform.platform():
+        POT_CENTER = 495
+    else:
+        POT_CENTER = 0
     POT_MIN = POT_CENTER - 15
     POT_MAX = POT_CENTER + 15
 
@@ -25,14 +28,15 @@ class TurnTable:
 
     FRONT_POT_POSITION = 500
 
-    def __init__(self, robot_vision, turntable_motor, dt):
-        self.turntable_motor = turntable_motor
-        self.robot_vision = robot_vision
-        self.dt = dt
+    def __init__(self, shooter):
+        self.shooter = shooter
+        self.turntable_motor = shooter.turntable_motor
+        self.robot_vision = shooter.robot_vision
+        self.dt = shooter.dt
         self.override_manager = None
         self.turntable_lock = threading.Lock()
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
-        self.last_input = 0
+        self.prev_input = 0
 
         self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD, self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
@@ -92,12 +96,14 @@ class TurnTable:
                 self.turntable_motor.set(output)
             elif self.turntable_motor.getPosition() < self.POT_MAX and output < 0:
                 self.turntable_motor.set(output)
+            elif output == 0:
+                self.turntable_motor.set(0)
             else:
                 self.turntable_motor.set(0)
-                print("Turntable exceeded max bounds")
+                print("Turntable exceeded max bounds: ", output)
         else:
             print("Turntable motor not in PercentVbus control mode!")
-
+           
 
     def dt_turn(self, output):
         if self.dt:

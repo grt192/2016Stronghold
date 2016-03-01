@@ -209,7 +209,7 @@ class MechController:
 
         if state_id == "button4":
             if datum:
-                if self.vt_override:
+                if self.override_manager.vt_override:
                     self.operation_manager.geo_automatic_shot()
                 else:
                     self.operation_manager.vt_automatic_shot()

@@ -19,17 +19,21 @@ class Hood:
 
 
     def go_to_vt_angle(self):
+        print("Going to vt angle")
         self.auto_set(VT_POSITION)
 
     def go_to_geo_angle(self):
+        print("Going to geo angle")
         self.auto_set(BATTER_POSITION)
 
     def go_to_frame_angle(self):
+        print("Going to frame angle")
         self.auto_set(FRAME_POSITION)
 
     def auto_set(self, angle):
         if not self.hood_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
             self.hood_motor.set(angle)
+            print("Hood set to: ", angle)
 
     def rotate(self, power):
         if self.hood_motor.getOutputCurrent() < self.CURRENT_MAX:

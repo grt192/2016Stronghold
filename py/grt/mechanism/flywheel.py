@@ -87,6 +87,7 @@ class FlywheelSensor(Sensor):
         self.flywheel = flywheel
 
     def poll(self):
+        #print("Flywheel close loop error: ", self.flywheel.flywheel_motor.getClosedLoopError())
         if abs(self.flywheel.flywheel_motor.getClosedLoopError()) < self.SPEED_TOLERANCE:
             self.at_speed = True
         else:
