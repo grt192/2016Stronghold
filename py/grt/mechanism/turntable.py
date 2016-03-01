@@ -28,6 +28,10 @@ class TurnTable:
 
     FRONT_POT_POSITION = 500
 
+    ROTATIONAL_ERROR_SETPOINT = 35
+    TURNTABLE_INPUT_RANGE = 300
+    DELTA_SETPOINT = 10
+
     def __init__(self, robot_vision, turntable_motor, dt):
         self.turntable_motor = turntable_motor
         self.robot_vision = robot_vision
@@ -41,9 +45,19 @@ class TurnTable:
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
         self.PID_controller.reset()
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
-        self.PID_controller.setInputRange(-300, 300)
+        self.PID_controller.setInputRange(-self.TURNTABLE_INPUT_RANGE, self.TURNTABLE_INPUT_RANGE)
         #Be sure to use tolerance buffer
-        self.PID_controller.setSetpoint(35)
+        self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
+
+    def adjust_right(self):
+        """Make the shooter line up slightly to the right"""
+        self.ROTATIONAL_ERROR_SETPOINT -= self.DELTA_SETPOINT
+        self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
+
+    def adjust_left(self):
+        """Make the shooter line up slightly to the left"""
+        self.ROTATIONAL_ERROR_SETPOINT += self.DELTA_SETPOINT
+        self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
 
     def getRotationReady(self):
         #If an additional check is needed beyond PIDController.onTarget() for determining whether
