@@ -20,13 +20,13 @@ from grt.mechanism.shooter import Shooter
 from grt.mechanism.operation_manager import OperationManager
 from grt.sensors.switch_panel import SwitchPanel
 from grt.macro.record_macro import RecordMacro
-
+from grt.mechanism.override_manager import OverrideManager
 
 using_vision_server = True
 
 #Compressor initialization
-c = Compressor()
-c.start()
+compressor = Compressor()
+compressor.start()
 
 turntable_pot = AnalogInput(0)
 
@@ -67,14 +67,23 @@ flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
 flywheel_motor2.set(flywheel_motor.getDeviceID())
 
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setP(.33)
-flywheel_motor.setF(.19)
+flywheel_motor.setPID(.33, 0, 0, f=.19)
 
 shooter_act = Solenoid(1)
+
+#See about configuring a max output voltage
+
 turntable_motor = CANTalon(5)
 turntable_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
+turntable_motor.setPID(.01, 0, 0, f=0)
+turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
+
+
 hood_motor = CANTalon(6)
 hood_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
+hood_motor.setPID(.1, 0, 0, f=0)
+hood_motor.changeControlMode(CANTalon.ControlMode.Position)
+
 robot_vision = Vision()
 if using_vision_server:
 	import grt.vision.vision_server
@@ -92,7 +101,19 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, sho
 #Pickup Talons and Objects
 pickup_achange_motor1 = CANTalon(8)
 pickup_achange_motor2 = CANTalon(7)
+
+
+
 pickup_roller_motor = CANTalon(9)
+
+
+pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Position)
+pickup_achange_motor1.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
+pickup_achange_motor1.setPID(.01, 0, 0, f=0)
+pickup_achange_motor2.changeControlMode(CANTalon.ControlMode.Position)
+pickup_achange_motor2.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
+pickup_achange_motor2.setPID(.01, 0, 0, f=0)
+
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
 
@@ -106,10 +127,12 @@ record_macro = RecordMacro(talon_arr)
 
 #Operation manager, controllers, and sensor pollers
 operation_manager = OperationManager(shooter, pickup, straight_macro)
+override_manager = OverrideManager(shooter, pickup, compressor)
 hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
 ac = ArcadeDriveController(dt, driver_stick, record_macro, operation_manager)
-mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager)
+mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
 
+talon_log_arr = [dt_left, dt_l2, dt_l3, dt_right, dt_r2, dt_r3, flywheel_motor, flywheel_motor2, hood_motor, turntable_motor, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
 # define DriverStation
 ds = DriverStation.getInstance()
 

@@ -21,6 +21,7 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
+        self.switch_panel = config.switch_panel
         self.flywheel_motor = config.flywheel_motor
         self.turntable_pot = config.turntable_pot
         self.shooter = config.shooter
@@ -29,12 +30,13 @@ class MyRobot(wpilib.SampleRobot):
         #h_lower = 123
         #self.prefs = Preferences.getInstance()
         #self.prefs.putFloat("HLower2", h_lower)
+        self.talon_log_arr = config.talon_log_arr
 
-        #self.autoChooser = SendableChooser()
-        #self.autoChooser.addDefault("Basic Auto", -1)
-        #self.autoChooser.addObject("One Bin Steal", 0)
-        #self.autoChooser.addObject("Two Bin Steal", 1)
-        #self.autoChooser.addObject("Backup Bin Steal", 2)
+        self.autoChooser = SendableChooser()
+        self.autoChooser.addDefault("Basic Auto", -1)
+        self.autoChooser.addObject("One Bin Steal", 0)
+        self.autoChooser.addObject("Two Bin Steal", 1)
+        self.autoChooser.addObject("Backup Bin Steal", 2)
         SmartDashboard.putDouble("HLower", self.robot_vision.getLowerThreshold()[0])
         SmartDashboard.putDouble("SLower", self.robot_vision.getLowerThreshold()[1])
         SmartDashboard.putDouble("VLower", self.robot_vision.getLowerThreshold()[2])
@@ -44,25 +46,28 @@ class MyRobot(wpilib.SampleRobot):
 
         SmartDashboard.putDouble("TURNTABLE_KP", self.shooter.turntable.TURNTABLE_KP)
 
-        #SmartDashboard.putData("Autonomous mode chooser", self.autoChooser)
+        SmartDashboard.putNumber("Requested Talon", 0)
+
+        SmartDashboard.putData("Autonomous Mode", self.autoChooser)
         #SmartDashboard.putDouble("HLower: ", h_lower)
 
 
     def disabled(self):
-        print("Hi!!!!")
+        i2 = 0
         while self.isDisabled():
             tinit = time.time()
             self.hid_sp.poll()
-            #print("Pitch: " , self.navx.pitch)
-            #print("Roll: ", self.navx.roll)
-            #print("Yaw: ", self.navx.yaw)
-            #print("Compass heading: ", self.navx.compass_heading)
-            #print("Fused heading: ", self.navx.fused_heading)
-            #print("Flywheel speed: ", self.flywheel_motor.getEncVelocity())
-            #print("Potentiometer position: ", self.turntable_pot.getVoltage())
-            #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
-            #auto = self.autoChooser.getSelected()
-            #print(auto)
+            i2 += 1
+            for i in range(1, 12):
+                key = "S" + str(i)
+                SmartDashboard.putBoolean(key, self.switch_panel.j.getRawButton(i))
+            index = int(SmartDashboard.getNumber("Requested Talon"))
+            try:
+                #SmartDashboard.putNumber("Output Talon", self.talon_log_arr[index].getOutputCurrent())
+                SmartDashboard.putNumber("Output Talon", i2)
+            except IndexError:
+                pass
+           
             h_lower = SmartDashboard.getDouble("HLower")
             s_lower = SmartDashboard.getDouble("SLower")
             v_lower = SmartDashboard.getDouble("VLower")

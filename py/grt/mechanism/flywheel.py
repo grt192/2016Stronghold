@@ -3,6 +3,8 @@ from grt.core import Sensor
 
 class Flywheel:
     STANDBY_SPEED = 2600
+    GEO_SPEED = 4000
+    GEO_POWER = .8
     def __init__(self, shooter):
         self.shooter = shooter
         self.flywheel_motor = shooter.flywheel_motor
@@ -14,7 +16,7 @@ class Flywheel:
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
         if self.robot_vision.getTargetView():
             #self.rpm_speed_spin(self.robot_vision.getTargetSpeed())
-            self.flywheel_motor.set(2600)
+            self.flywheel_motor.set(self.STANDBY_SPEED)
 
     def spin_to_standby_speed(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
@@ -22,17 +24,24 @@ class Flywheel:
 
     def spin_to_geo_speed(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-        self.flywheel_motor.set(2600)
+        self.flywheel_motor.set(self.GEO_SPEED)
 
-    def spin_to_pickup_speed(self):
-        self.flywheel_motor.set(2000)
+    def spin_to_geo_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(self.GEO_POWER)
 
-    def spin_to_reverse_speed(self):
-        self.flywheel_motor.set(1000)
-
+    
     def spin_to_reverse_power(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.flywheel_motor.set(-.3)
+
+    def spin_to_full_reverse_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(-1)
+
+    def spin_to_full_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(1)
 
     def spindown(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
@@ -43,12 +52,11 @@ class Flywheel:
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
         self.currentspeed=self.currentspeed+200
         self.flywheel_motor.set(self.currentspeed)
-        print("Current Set Speed: ", self.currentspeed) 
+
     def speed_decrement_function(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
         self.currentspeed=self.currentspeed-200
         self.flywheel_motor.set(self.currentspeed)
-        print("Current Set Speed: ", self.currentspeed)
 
     def power_increment_function(self):
         self.current_power += .1
@@ -62,7 +70,7 @@ class Flywheel:
 
     def spin_to_pickup_power(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
-        self.flywheel_motor.set(.2)
+        self.flywheel_motor.set(.3)
 
 
 
@@ -80,7 +88,6 @@ class FlywheelSensor(Sensor):
         self.flywheel = flywheel
 
     def poll(self):
-        print(self.flywheel.flywheel_motor.getClosedLoopError())
         if abs(self.flywheel.flywheel_motor.getClosedLoopError()) < self.SPEED_TOLERANCE:
             self.at_speed = True
         else:

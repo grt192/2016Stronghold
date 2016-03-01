@@ -8,13 +8,11 @@ from wpilib import CANTalon
 
 
 class TurnTable:
-    tt_override = False
 
-    #ENC_MIN = -20000
-    #ENC_MAX = 20000
-    POT_MIN = 490
-    POT_MAX = 530
+    
     POT_CENTER = 495
+    POT_MIN = POT_CENTER - 15
+    POT_MAX = POT_CENTER + 15
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
@@ -25,16 +23,14 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 10
     TURNTABLE_OUTPUT_RANGE = .4
 
-    POT_TURN_KP = .01
-    POT_TURN_KI = 0
-    POT_TURN_KD = 0
-    POT_TURN_OUTPUT_RANGE = .5
+    FRONT_POT_POSITION = 500
 
     def __init__(self, shooter):
         self.shooter = shooter
         self.turntable_motor = shooter.turntable_motor
         self.robot_vision = shooter.robot_vision
         self.dt = shooter.dt
+        self.override_manager = None
         self.turntable_lock = threading.Lock()
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.prev_input = 0
@@ -92,11 +88,6 @@ class TurnTable:
         self.last_output = output
 
     def turn(self, output):
-        #enc_pos = self.turntable_motor.getEncPosition()
-        #if output > 0:
-        #    if enc_pos < ENC_MAX:
-                #enc_pos < ENC_MAX:
-        #print("Output: ", output, "    Position: ", self.turntable_motor.getPosition())
         if self.turntable_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
             if self.turntable_motor.getPosition() > self.POT_MIN and output > 0:
                 self.turntable_motor.set(output)
@@ -107,15 +98,7 @@ class TurnTable:
                 print("Turntable exceeded max bounds")
         else:
             print("Turntable motor not in PercentVbus control mode!")
-            #else:
-             #   self.turntable_motor.set(0)
-        #elif output < 0:
-         #   if enc_pos > ENC_MIN:
-          #      self.turntable_motor.set(output)
-           # else:
-          #      self.turntable_motor.set(0)
-        #else:
-         #   self.turntable_motor.set(0)
+           
 
     def dt_turn(self, output):
         if self.dt:
@@ -123,15 +106,16 @@ class TurnTable:
 
     
     def enable_front_lock(self):
-        if not self.tt_override:
+        if not self.override_manager.tt_override:
             self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
-            #self.turntable_motor.setFeedbackDevice() #Fix this to use a potentiometer!
-            self.turntable_motor.setP(self.POT_TURN_KP)
-            self.turntable_motor.set(0)
+            self.turntable_motor.set(self.FRONT_POT_POSITION)
 
     def disable_front_lock(self):
         self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.turntable_motor.set(0)
+
+    def re_zero(self):
+        self.FRONT_POT_POSITION = self.turntable_motor.getPosition()
 
 
 

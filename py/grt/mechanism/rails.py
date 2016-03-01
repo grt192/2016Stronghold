@@ -12,6 +12,3 @@ class Rails:
 	def rails_down(self):
 		self.current_position = "down"
 		self.rails_actuator.set(False)
-
-	def get_position(self):
-		return self.current_position
