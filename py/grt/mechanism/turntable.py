@@ -2,6 +2,7 @@ import wpilib
 from grt.core import Sensor
 import threading
 from wpilib import CANTalon
+import platform
 
 
 
@@ -9,8 +10,10 @@ from wpilib import CANTalon
 
 class TurnTable:
 
-    
-    POT_CENTER = 495
+    if "Linux" in platform.platform():
+        POT_CENTER = 495
+    else:
+        POT_CENTER = 0
     POT_MIN = POT_CENTER - 15
     POT_MAX = POT_CENTER + 15
 
@@ -93,9 +96,11 @@ class TurnTable:
                 self.turntable_motor.set(output)
             elif self.turntable_motor.getPosition() < self.POT_MAX and output < 0:
                 self.turntable_motor.set(output)
+            elif output == 0:
+                self.turntable_motor.set(0)
             else:
                 self.turntable_motor.set(0)
-                print("Turntable exceeded max bounds")
+                print("Turntable exceeded max bounds: ", output)
         else:
             print("Turntable motor not in PercentVbus control mode!")
            

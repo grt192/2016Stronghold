@@ -5,7 +5,7 @@ class OverrideManager:
     pickup_override = True
     tt_override = True
     hood_override = True
-    vt_override = True
+    vt_override = False
     
     def __init__(self, shooter, pickup, compressor):
         self.shooter = shooter
@@ -14,6 +14,14 @@ class OverrideManager:
         self.pickup.override_manager = self
         self.shooter.hood.override_manager = self
         self.shooter.turntable.override_manager = self
+        if self.pickup_override:
+            self.pickup_alt()
+        if self.tt_override:
+            self.turntable_alt()
+        if self.vt_override:
+            self.vt_alt()
+        if self.hood_override:
+            self.hood_alt()
 
     def vt_alt(self):
         self.vt_override = True

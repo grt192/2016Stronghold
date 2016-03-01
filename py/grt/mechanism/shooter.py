@@ -3,7 +3,7 @@ from grt.mechanism.flywheel import Flywheel, FlywheelSensor
 from grt.mechanism.turntable import TurnTable, TurnTableSensor
 from grt.mechanism.hood import Hood, HoodSensor
 from grt.mechanism.rails import Rails
-import threading
+import threading, time
 from wpilib import CANTalon
 
 
@@ -96,6 +96,7 @@ class Shooter:
     
 
     def execute_shot(self):
+        print("Executing shot")
         self.rails.rails_down()
         self.is_shooting = True
         threading.Timer(2.0, self.finish_automatic_shot).start()
@@ -126,6 +127,7 @@ class Shooter:
     def vt_forward_func(self):
         if self.shooter_timers_running:
             self.flywheel.spin_to_standby_speed()
+            self.hood.go_to_vt_angle()
             self.turntable.disable_front_lock()
             self.turntable.turntable_motor.set(0)
             self.turntable.PID_controller.enable()
@@ -138,7 +140,8 @@ class Shooter:
     If rails are down --> geo_automatic calls geo_reverse, then geo_delay, then geo_forward
     """
 
-    def geo_automatic_shot():
+    def geo_automatic_shot(self):
+        self.shooter_timers_running = True
         if self.rails.current_position == "down":
             self.rails.rails_up()
             self.geo_reverse_func()
@@ -147,7 +150,7 @@ class Shooter:
 
     def geo_reverse_func(self):
         self.flywheel.spin_to_reverse_power()
-        threading.Timer(1.0, self.geo_forward_func).start()
+        threading.Timer(1.0, self.geo_delay_func).start()
 
     def geo_delay_func(self):
         self.flywheel.spindown()
@@ -158,7 +161,7 @@ class Shooter:
             self.flywheel.spin_to_geo_power()
             self.hood.go_to_geo_angle()
             self.geo_automatic = True
-            threading.Timer(self.GEO_SPINUP_TIME, self.execute_shot)
+            threading.Timer(self.GEO_SPINUP_TIME, self.execute_shot).start()
 
 
 
