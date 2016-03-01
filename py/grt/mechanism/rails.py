@@ -5,8 +5,8 @@ class Rails:
 
     def rails_up(self):
         self.is_up = True
-        self.rails_actuator.set(False)
+        self.rails_actuator.set(True)
 
     def rails_down(self):
         self.is_up = False
-        self.rails_actuator.set(True)
+        self.rails_actuator.set(False)
