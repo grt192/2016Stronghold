@@ -5,11 +5,12 @@ if "Linux" in platform.platform():
         exec(code)
 
 import wpilib
-import time
+import time, math
 import threading
 from wpilib import Preferences
-from wpilib import SendableChooser, SmartDashboard, Preferences, LiveWindow
+from wpilib import SendableChooser, SmartDashboard, Preferences, LiveWindow, Sendable
 import numpy as np
+from networktables import NetworkTable
 
 #import print_echoer
 
@@ -27,6 +28,7 @@ class MyRobot(wpilib.SampleRobot):
         self.shooter = config.shooter
         self.robot_vision = config.robot_vision
         self.has_initialized = True
+        self.status_table = NetworkTable.getTable("Status Table")
         #h_lower = 123
         #self.prefs = Preferences.getInstance()
         #self.prefs.putFloat("HLower2", h_lower)
@@ -49,6 +51,8 @@ class MyRobot(wpilib.SampleRobot):
         SmartDashboard.putNumber("Requested Talon", 0)
 
         SmartDashboard.putData("Autonomous Mode", self.autoChooser)
+        #SmartDashboard.putData("Turntable Re-Zero", self.shooter.turntable.re_zero)
+        #SmartDashboard.putBoolean("Testing", False)
         #SmartDashboard.putDouble("HLower: ", h_lower)
 
 
@@ -57,7 +61,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isDisabled():
             tinit = time.time()
             self.hid_sp.poll()
-            i2 += 1
+            i2 += math.pi / 16
             for i in range(1, 12):
                 key = "S" + str(i)
                 SmartDashboard.putBoolean(key, self.switch_panel.j.getRawButton(i))
@@ -67,6 +71,12 @@ class MyRobot(wpilib.SampleRobot):
                 SmartDashboard.putNumber("Output Talon", i2)
             except IndexError:
                 pass
+
+            self.status_table.putNumber("NumTalons", len(self.talon_log_arr))
+            for i in range(len(self.talon_log_arr)):
+                key = "Talon " + str(i) + " Current"
+                #self.status_table.putNumber(key, self.talon_log_arr[i].getOutputCurrent())
+                self.status_table.putNumber(key, i * math.sin(i2))
            
             h_lower = SmartDashboard.getDouble("HLower")
             s_lower = SmartDashboard.getDouble("SLower")
