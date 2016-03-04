@@ -2,7 +2,7 @@ from wpilib import CANTalon
 
 
 class OverrideManager:
-    pickup_override = True
+    pickup_override = False
     tt_override = True
     hood_override = True
     vt_override = False
@@ -16,6 +16,8 @@ class OverrideManager:
         self.shooter.turntable.override_manager = self
         if self.pickup_override:
             self.pickup_alt()
+        else:
+            self.pickup_norm()
         if self.tt_override:
             self.turntable_alt()
         if self.vt_override:

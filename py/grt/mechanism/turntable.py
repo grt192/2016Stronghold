@@ -103,6 +103,12 @@ class TurnTable:
                 print("Turntable exceeded max bounds: ", output)
         else:
             print("Turntable motor not in PercentVbus control mode!")
+
+    def joystick_turn(self, output):
+        if self.turntable_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+            self.turntable_motor.set(output)
+        else:
+            print("Turntable motor not in PercentVbus control mode!")
            
 
     def dt_turn(self, output):

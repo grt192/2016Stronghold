@@ -42,7 +42,7 @@ class MechController:
             self.override_manager.turntable_alt()
             if state_id == "r_x_axis":
                 if datum:
-                    self.shooter.turntable.turn(datum*.3)
+                    self.shooter.turntable.joystick_turn(datum*.3)
 
         """
         Hood rotation manual control
@@ -180,9 +180,9 @@ class MechController:
         """                
         if state_id == "switch8":
             if datum:
-                self.override_manger.pickup_alt()
+                self.override_manager.pickup_alt()
             else:
-                self.override_manger.pickup_norm()
+                self.override_manager.pickup_norm()
         
         """
         Compressor override (used in high-power situations)
