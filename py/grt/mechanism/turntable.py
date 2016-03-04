@@ -5,11 +5,7 @@ from wpilib import CANTalon
 import platform
 
 
-
-
-
 class TurnTable:
-
     if "Linux" in platform.platform():
         POT_CENTER = 495
     else:
@@ -27,7 +23,6 @@ class TurnTable:
     TURNTABLE_OUTPUT_RANGE = .4
 
     FRONT_POT_POSITION = 500
-
     ROTATIONAL_ERROR_SETPOINT = 35
     TURNTABLE_INPUT_RANGE = 300
     DELTA_SETPOINT = 10
@@ -46,15 +41,14 @@ class TurnTable:
             with open("adjustments.txt", "w") as f:
                 f.write("Adjustments:")
 
-        self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD, self.get_input, self.set_output)
+        self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD,
+                                                   self.get_input, self.set_output)
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
         self.PID_controller.reset()
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
         self.PID_controller.setInputRange(-self.TURNTABLE_INPUT_RANGE, self.TURNTABLE_INPUT_RANGE)
-        #Be sure to use tolerance buffer
+        # Be sure to use tolerance buffer
         self.PID_controller.setSetpoint(self.ROTATIONAL_ERROR_SETPOINT)
-
-
 
     def log_setpoint(self, direction):
         with open("adjustments.txt", "a") as f:
@@ -75,8 +69,8 @@ class TurnTable:
             self.log_setpoint("left")
 
     def getRotationReady(self):
-        #If an additional check is needed beyond PIDController.onTarget() for determining whether
-        #the rotation is ready, use this function
+        # If an additional check is needed beyond PIDController.onTarget() for determining whether
+        # the rotation is ready, use this function
         with self.turntable_lock:
             return self.PID_controller.onTarget()
 
@@ -87,34 +81,33 @@ class TurnTable:
         else:
             return self.prev_input
 
-   
     def set_output(self, output):
-        
+
         if self.robot_vision.target_view:
             if self.PID_controller.onTarget():
-                #If the target is visible, and I'm on target, stop.
+                # If the target is visible, and I'm on target, stop.
                 output = 0
-                #self.dt_turn(output)
+                # self.dt_turn(output)
                 self.turn(output)
             else:
-                #If the target is visible, and I'm not on target, keep going.
-                #self.dt_turn(output)
+                # If the target is visible, and I'm not on target, keep going.
+                # self.dt_turn(output)
                 self.turn(output)
         else:
             if self.last_output > 0:
-                #If the target is not visible, and I was moving forward, keep moving forward.
-                #output = self.DT_NO_TARGET_TURN_RATE
+                # If the target is not visible, and I was moving forward, keep moving forward.
+                # output = self.DT_NO_TARGET_TURN_RATE
                 output = self.TURNTABLE_NO_TARGET_TURN_RATE
             elif self.last_output < 0:
-                #If the target is not visible, and I was moving backward, keep moving backward.
-                #output = -self.DT_NO_TARGET_TURN_RATE
+                # If the target is not visible, and I was moving backward, keep moving backward.
+                # output = -self.DT_NO_TARGET_TURN_RATE
                 output = -self.TURNTABLE_NO_TARGET_TURN_RATE
             elif self.last_output == 0:
-                #If the target is not visible, but I was just on target, stay put.
+                # If the target is not visible, but I was just on target, stay put.
                 output = 0
             else:
                 print("Last_output error!")
-            #self.dt_turn(output)
+            # self.dt_turn(output)
             self.turn(output)
         self.last_output = output
 
@@ -131,13 +124,11 @@ class TurnTable:
                 print("Turntable exceeded max bounds: ", output)
         else:
             print("Turntable motor not in PercentVbus control mode!")
-           
 
     def dt_turn(self, output):
         if self.dt:
             self.dt.set_dt_output(-output, -output)
 
-    
     def enable_front_lock(self):
         if not self.override_manager.tt_override:
             self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
@@ -151,10 +142,10 @@ class TurnTable:
         self.FRONT_POT_POSITION = self.turntable_motor.getPosition()
 
 
-
 class TurnTableSensor(Sensor):
     def __init__(self, turntable):
         super().__init__()
         self.turntable = turntable
+
     def poll(self):
         self.rotation_ready = self.turntable.PID_controller.onTarget()

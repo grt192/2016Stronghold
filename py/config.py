@@ -42,20 +42,18 @@ using_vision_server = False
 compressor = Compressor()
 compressor.start()
 
-turntable_pot = AnalogInput(0)
-
 # DT talons and objects
 dt_right = CANTalon(1)
-# dt_r2 = CANTalon(2)
-# dt_r3 = CANTalon(3)
+dt_r2 = CANTalon(2)
+dt_r3 = CANTalon(3)
 
 dt_left = CANTalon(11)
-# dt_l2 = CANTalon(12)
-# dt_l3 = CANTalon(13)
+dt_l2 = CANTalon(12)
+dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
-# Motorset.group((dt_right, dt_r2, dt_r3))
-# Motorset.group((dt_left, dt_l2, dt_l3))
+Motorset.group((dt_right, dt_r2, dt_r3))
+Motorset.group((dt_left, dt_l2, dt_l3))
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
@@ -112,9 +110,9 @@ shooter = Shooter(robot_vision, flywheel, turntable, hood, rails)
 
 # Pickup Talons and Objects
 pickup_achange_motor1 = CANTalon(8)
-pickup_achange_motor2 = CANTalon(7)
+pickup_achange_motor2 = CANTalon(9)
 
-pickup_roller_motor = CANTalon(9)
+pickup_roller_motor = CANTalon(7)
 
 pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Position)
 pickup_achange_motor1.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
