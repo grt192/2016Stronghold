@@ -1,6 +1,7 @@
 """
 Config File for Robot
 """
+import platform
 
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon, AnalogInput
 
@@ -25,10 +26,12 @@ from grt.mechanism.rails import Rails
 from grt.mechanism.turntable import TurnTable
 from grt.mechanism.hood import Hood
 
-# from grt.vision.robot_vision import Vision
+from grt.vision.robot_vision import Vision
+from grt.sensors.vision_sensor import VisionSensor
 from grt.macro.straight_macro import StraightMacro
 from grt.macro.record_macro import RecordMacro
 
+print("Imported stuff")
 # Magic numbers for shooting:
 # Raise the hood to 35 degrees (potentiometer position 247)
 # Set the flywheel speed to 2600 ticks
@@ -36,11 +39,12 @@ from grt.macro.record_macro import RecordMacro
 # Also see about adding in automatic alignment/chival de fris macro/ light-sensor-controlled pickup
 
 
-using_vision_server = False
+using_vision_server = "Linux" in platform.platform()
 
 # Compressor initialization
 compressor = Compressor()
 compressor.start()
+
 
 # DT talons and objects
 dt_right = CANTalon(1)
@@ -52,24 +56,32 @@ dt_l2 = CANTalon(12)
 dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
-Motorset.group((dt_right, dt_r2, dt_r3))
-Motorset.group((dt_left, dt_l2, dt_l3))
+print("Compressor, dts")
+# Motorset.group((dt_right, dt_r2, dt_r3))
+# Motorset.group((dt_left, dt_l2, dt_l3))
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
 
 
 # Vision
-robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0,
-                     getLowerThreshold=lambda: [1, 1, 1],
-                     getUpperThreshold=lambda: [2, 2, 2],
-                     setThreshold=lambda x, y: x)
+# robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0,
+                     # getLowerThreshold=lambda: [1, 1, 1],
+                     # getUpperThreshold=lambda: [2, 2, 2],
+                     # setThreshold=lambda x, y: x)
+#
 
-# robot_vision = Vision()
+print("Before vision")
+vision_sensor = VisionSensor
+print("After vision sensor")
+
+robot_vision = Vision(vision_sensor)
+print("After robotvision")
 if using_vision_server:
     import grt.vision.vision_server
     grt.vision.vision_server.prepare_module(robot_vision)
 
+print("After vision server")
 # Shooter objects
 
 # Flywheel motors

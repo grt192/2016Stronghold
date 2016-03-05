@@ -115,7 +115,7 @@ class Shooter:
 
     def vt_automatic_shot(self):
         self.shooter_timers_running = True
-        if self.rails.current_position == "down":
+        if not self.rails.is_up:
             self.rails.rails_up()
             self.vt_reverse_func()
         else:
@@ -147,7 +147,7 @@ class Shooter:
 
     def geo_automatic_shot(self):
         self.shooter_timers_running = True
-        if self.rails.current_position == "down":
+        if not self.rails.is_up:
             self.rails.rails_up()
             self.geo_reverse_func()
         else:

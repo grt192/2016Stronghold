@@ -176,9 +176,9 @@ class MechController:
         """
         if state_id == "switch8":
             if datum:
-                self.override_manger.pickup_alt()
+                self.override_manager.pickup_alt()
             else:
-                self.override_manger.pickup_norm()
+                self.override_manager.pickup_norm()
 
         """
         Compressor override (used in high-power situations)

@@ -1,4 +1,4 @@
-import cv2
+# import cv2
 import numpy as np
 import time, math, threading
 
@@ -27,15 +27,19 @@ class Vision:
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
 
     def __init__(self, vision_sensor):
+        print("robotvision init")
         self.vision_sensor = vision_sensor
 
         # Properties
         self._target_view = False
         self._rotational_error = self._vertical_error = self.DEFAULT_ERROR
+        print("robot_vision constants")
 
         self.vision_lock = threading.Lock()
         self.threshold_lock = threading.Lock()
+        print("making vision_thread")
         self.vision_thread = threading.Thread(target=self.vision_main)
+        print("starting vision thread")
         self.vision_thread.start()
 
     def vision_init(self):
@@ -66,6 +70,7 @@ class Vision:
 
     @property
     def rotational_error(self):
+        print("Getting rotational Error")
         with self.vision_lock:
             return self._rotational_error
 
@@ -178,7 +183,6 @@ class Vision:
             # Draw on image
             if self.drawing:
                 cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
-
         self.img = img
         # cv2.imshow("Image", self.img)
         # self.print_all_values()

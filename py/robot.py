@@ -6,9 +6,7 @@ if "Linux" in platform.platform():
 
 import wpilib
 import time
-import threading
-from wpilib import Preferences
-from wpilib import SendableChooser, SmartDashboard, Preferences, LiveWindow
+from wpilib import SendableChooser, SmartDashboard
 import numpy as np
 
 #import print_echoer
@@ -18,20 +16,22 @@ class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
         import config
+        # print("Imported config")
         self.hid_sp = config.hid_sp
         self.ds = config.ds
         self.navx = config.navx
         self.switch_panel = config.switch_panel
         self.flywheel_motor = config.flywheel_motor
-        self.turntable_pot = config.turntable_pot
         self.shooter = config.shooter
         self.robot_vision = config.robot_vision
+        # print("done robot_vision")
         self.has_initialized = True
         #h_lower = 123
         #self.prefs = Preferences.getInstance()
         #self.prefs.putFloat("HLower2", h_lower)
         self.talon_log_arr = config.talon_log_arr
 
+        # print("before Sendable chooser")
         self.autoChooser = SendableChooser()
         self.autoChooser.addDefault("Basic Auto", -1)
         self.autoChooser.addObject("One Bin Steal", 0)
@@ -49,6 +49,7 @@ class MyRobot(wpilib.SampleRobot):
         SmartDashboard.putNumber("Requested Talon", 0)
 
         SmartDashboard.putData("Autonomous Mode", self.autoChooser)
+        # print("after smartdashboard")
         #SmartDashboard.putDouble("HLower: ", h_lower)
 
 
@@ -75,6 +76,9 @@ class MyRobot(wpilib.SampleRobot):
             s_upper = SmartDashboard.getDouble("SUpper")
             v_upper = SmartDashboard.getDouble("VUpper")
 
+            print("Rotational Error : ", self.robot_vision.rotational_error, "Vertical Error: ", self.robot_vision.vertical_error)
+            self.robot_vision.rotational_error += 20
+
             self.robot_vision.setThreshold(np.array([h_lower, s_lower, v_lower], 'uint8'), np.array([h_upper, s_upper, v_upper], 'uint8'))
             self.shooter.turntable.TURNTABLE_KP = SmartDashboard.getDouble("TURNTABLE_KP")
             self.safeSleep(tinit, .04)
@@ -89,6 +93,8 @@ class MyRobot(wpilib.SampleRobot):
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
+            print("Rotational Error : ", self.robot_vision.rotational_error, "Vertical Error: ", self.robot_vision.vertical_error)
+            self.robot_vision.rotational_error += 20
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
@@ -100,4 +106,5 @@ class MyRobot(wpilib.SampleRobot):
 
 
 if __name__ == "__main__":
+    print("running robot")
     wpilib.run(MyRobot)
