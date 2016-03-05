@@ -63,7 +63,7 @@ class Pickup:
             self.achange_motor_2.changeControlMode(CANTalon.ControlMode.Position)
 
     def disable_automatic_control(self):
-        print("Automatic control disabled!")
+        #print("Automatic control disabled!")
         self.achange_motor_1.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.achange_motor_2.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.achange_motor_1.set(0)

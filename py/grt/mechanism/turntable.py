@@ -11,11 +11,12 @@ import platform
 class TurnTable:
 
     if "Linux" in platform.platform():
-        POT_CENTER = 495
+        #POT_CENTER = 495
+        POT_CENTER = 401
     else:
         POT_CENTER = 0
-    POT_MIN = POT_CENTER - 15
-    POT_MAX = POT_CENTER + 15
+    POT_MIN = POT_CENTER - 9
+    POT_MAX = POT_CENTER + 9
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
@@ -26,7 +27,6 @@ class TurnTable:
     TURNTABLE_ABS_TOL = 10
     TURNTABLE_OUTPUT_RANGE = .4
 
-    FRONT_POT_POSITION = 500
 
     def __init__(self, shooter):
         self.shooter = shooter
@@ -119,14 +119,15 @@ class TurnTable:
     def enable_front_lock(self):
         if not self.override_manager.tt_override:
             self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
-            self.turntable_motor.set(self.FRONT_POT_POSITION)
+            self.turntable_motor.set(self.POT_CENTER)
+            threading.Timer(2.5, self.disable_front_lock).start()
 
     def disable_front_lock(self):
         self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.turntable_motor.set(0)
 
     def re_zero(self):
-        self.FRONT_POT_POSITION = self.turntable_motor.getPosition()
+        self.POT_CENTER = self.turntable_motor.getPosition()
 
 
 

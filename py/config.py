@@ -75,7 +75,10 @@ shooter_act = Solenoid(1)
 
 turntable_motor = CANTalon(5)
 turntable_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
-turntable_motor.setPID(.01, 0, 0, f=0)
+turntable_motor.setPID(90, 0, 0, f=0)
+turntable_motor.configMaxOutputVoltage(8)
+turntable_motor.setAllowableClosedLoopErr(2)
+turntable_motor.reverseOutput(True)
 turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
 
 

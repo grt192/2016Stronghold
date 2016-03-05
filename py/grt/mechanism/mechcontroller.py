@@ -42,7 +42,7 @@ class MechController:
             self.override_manager.turntable_alt()
             if state_id == "r_x_axis":
                 if datum:
-                    self.shooter.turntable.joystick_turn(datum*.3)
+                    self.shooter.turntable.turn(datum*.3)
 
         """
         Hood rotation manual control
@@ -131,7 +131,7 @@ class MechController:
         """
         Flywheel full forward power
         """
-        if state_id == "switch4":
+        if state_id == "switch2":
             if datum:
                 self.shooter.flywheel.spin_to_full_power()
             else:
@@ -149,7 +149,7 @@ class MechController:
         """
         Turntable auto-zero override (allows Xbox joystick to control turntable)
         """
-        if state_id == "switch6":
+        if state_id == "switch4":
             if datum:
                 self.override_manager.turntable_alt()
                 

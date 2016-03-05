@@ -84,16 +84,16 @@ class MyRobot(wpilib.SampleRobot):
             #     #print(key)
             #     #self.status_table.putNumber(key, self.talon_log_arr[i].getOutputCurrent())
             #     self.status_table.putNumber(key, (i+1) * math.sin(i2))
-            self.status_table.putNumber("HoodPot", self.shooter.hood.hood_motor.getPosition())
-            self.status_table.putNumber("TurntablePot", self.shooter.turntable.turntable_motor.getPosition())
-            self.status_table.putNumber("PickupPot1", self.pickup.achange_motor_1.getPosition())
-            self.status_table.putNumber("PickupPot2", self.pickup.achange_motor_2.getPosition())
-            self.status_table.putNumber("FlywheelEncoder", self.shooter.flywheel.flywheel_motor.getEncVelocity())
-            self.status_table.putNumber("RotationalError", self.shooter.robot_vision.getRotationalError())
-            if self.shooter.robot_vision.getTargetView():
-                self.status_table.putNumber("TargetView", 500)
-            else:
-                self.status_table.putNumber("TargetView", 0)
+            # self.status_table.putNumber("HoodPot", self.shooter.hood.hood_motor.getPosition())
+            # self.status_table.putNumber("TurntablePot", self.shooter.turntable.turntable_motor.getPosition())
+            # self.status_table.putNumber("PickupPot1", self.pickup.achange_motor_1.getPosition())
+            # self.status_table.putNumber("PickupPot2", self.pickup.achange_motor_2.getPosition())
+            # self.status_table.putNumber("FlywheelEncoder", self.shooter.flywheel.flywheel_motor.getEncVelocity())
+            # self.status_table.putNumber("RotationalError", self.shooter.robot_vision.getRotationalError())
+            # if self.shooter.robot_vision.getTargetView():
+            #     self.status_table.putNumber("TargetView", 500)
+            # else:
+            #     self.status_table.putNumber("TargetView", 0)
 
            
             # h_lower = SmartDashboard.getDouble("HLower")
@@ -105,7 +105,7 @@ class MyRobot(wpilib.SampleRobot):
 
             # self.robot_vision.setThreshold(np.array([h_lower, s_lower, v_lower], 'uint8'), np.array([h_upper, s_upper, v_upper], 'uint8'))
             # self.shooter.turntable.TURNTABLE_KP = SmartDashboard.getDouble("TURNTABLE_KP")
-            self.safeSleep(tinit, .04)
+            self.safeSleep(tinit, .06)
     
     def autonomous(self):
         pass
@@ -115,10 +115,10 @@ class MyRobot(wpilib.SampleRobot):
             tinit = time.time()
             self.hid_sp.poll()
             #print("Pickup achange output: ", self.pickup.achange_motor_1.getOutputVoltage())
-            print("Hood motor output: ", self.shooter.hood.hood_motor.getOutputVoltage())
+            #print("Hood motor output: ", self.shooter.hood.hood_motor.getOutputVoltage())
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
-            #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
+            print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
