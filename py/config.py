@@ -39,7 +39,7 @@ print("Imported stuff")
 # Also see about adding in automatic alignment/chival de fris macro/ light-sensor-controlled pickup
 
 
-using_vision_server = False
+using_vision_server = True
 
 # Compressor initialization
 compressor = Compressor()

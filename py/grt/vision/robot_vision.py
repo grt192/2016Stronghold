@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 import time, math, threading
-
+"""
+Do not get properties within this class because you will be in danger of recursive lock aquisition.
+"""
 
 class Vision:
     # GREEN_LOWER = np.array([0, 100, 0], 'uint8')
@@ -59,13 +61,17 @@ class Vision:
 
     @property
     def target_view(self):
+        print("getting target view: ")
+        self._target_view = 1
         with self.vision_lock:
+            self._target_view = 2
+            print("vision_lock target view")
             return self._target_view
 
     @target_view.setter
     def target_view(self, value):
         # Call the vision sensor listeners
-        # self.vision_sensor.target_view = value
+        self.vision_sensor.target_view = value
         self._target_view = value
 
     @property
@@ -77,7 +83,7 @@ class Vision:
     @rotational_error.setter
     def rotational_error(self, value):
         # Call the vision sensor listeners
-        # self.vision_sensor.rotational_error = value
+        self.vision_sensor.rotational_error = value
         self._rotational_error = value
 
     @property
@@ -88,7 +94,7 @@ class Vision:
     @vertical_error.setter
     def vertical_error(self, value):
         # Call the vision sensor listeners
-        # self.vision_sensor.rotational_error = value
+        self.vision_sensor.rotational_error = value
         self._vertical_error = value
 
     def vision_close(self):
@@ -176,16 +182,24 @@ class Vision:
         target_view, max_polygon = self.get_max_polygon(img)
 
         with self.vision_lock:
+            print("inside vision_lock _vision loop")
             # Update properties
+            print("Setting target view")
             self.target_view = target_view
-            if self.target_view:
+            print("Set target view")
+            if self._target_view:
+                print("Inside self.target_view")
                 self.rotational_error, self.vertical_error = self.get_error(max_polygon)
 
+            print("done with with statement")
             # Draw on image
             if self.drawing:
                 cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
+            print("drawing done")
+
+        print("outside with")
         self.img = img
-        # cv2.imshow("Image", self.img)
-        # self.print_all_values()
-        # cv2.waitkey(25)
-        time.sleep(.025)
+        cv2.imshow("Image", self.img)
+        self.print_all_values()
+        cv2.waitKey(25)
+        # time.sleep(.025)
