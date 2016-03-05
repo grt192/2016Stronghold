@@ -1,0 +1,47 @@
+
+#######################################
+# First camera
+#######################################
+
+PIDFILE[1]=/var/run/mjpg-streamer1.pid
+
+INPUT[1]="input_uvc.so --device /dev/video1"
+# Frames per second
+FPS[1]=10
+RESOLUTION[1]="160x120"
+
+OUTPUT[1]="output_http.so -w /usr/local/share/mjpg-streamer/www"
+PORT[1]=5800
+
+#######################################
+# Second camera
+#######################################
+
+# If you wish to do two cameras, uncomment this
+PIDFILE[2]=/var/run/mjpg-streamer2.pid
+
+INPUT[2]="input_uvc.so --device /dev/video2"
+# Frames per second
+FPS[2]=10
+RESOLUTION[2]="160x120"
+
+OUTPUT[2]="output_http.so -w /usr/local/share/mjpg-streamer/www"
+PORT[2]=5802
+
+PIDFILE[3]=/var/run/mjpg-streamer3.pid
+
+INPUT[3]="input_uvc.so --device /dev/video3"
+FPS[3]=10
+RESOLUTION[3]="160x120"
+OUTPUT[3]="output_http.so -w /usr/local/share/mjpg-streamer/www"
+PORT[3]=5803
+
+#PIDFILE[4]=/var/run/mjpg-streamer4.pid
+#INPUT[4]="input_uvc.so --device /dev/video3"
+#FPS[4]=10
+#RESOLUTION[4]="160x120"
+#OUTPUT[4]="output_http.so -w /usr/local/share/mjpg-streamer/www"
+#PORT[4]=5803
+
+
+# And so on... up to 4 cameras (seriously?)
