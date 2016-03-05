@@ -1,4 +1,4 @@
-# import cv2
+import cv2
 import numpy as np
 import time, math, threading
 
@@ -26,9 +26,9 @@ class Vision:
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
 
-    def __init__(self, vision_sensor):
+    def __init__(self):
         print("robotvision init")
-        self.vision_sensor = vision_sensor
+        # self.vision_sensor = vision_sensor
 
         # Properties
         self._target_view = False
@@ -65,7 +65,7 @@ class Vision:
     @target_view.setter
     def target_view(self, value):
         # Call the vision sensor listeners
-        self.vision_sensor.target_view = value
+        # self.vision_sensor.target_view = value
         self._target_view = value
 
     @property
@@ -77,7 +77,7 @@ class Vision:
     @rotational_error.setter
     def rotational_error(self, value):
         # Call the vision sensor listeners
-        self.vision_sensor.rotational_error = value
+        # self.vision_sensor.rotational_error = value
         self._rotational_error = value
 
     @property
@@ -88,7 +88,7 @@ class Vision:
     @vertical_error.setter
     def vertical_error(self, value):
         # Call the vision sensor listeners
-        self.vision_sensor.rotational_error = value
+        # self.vision_sensor.rotational_error = value
         self._vertical_error = value
 
     def vision_close(self):
@@ -172,6 +172,7 @@ class Vision:
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
 
         _, img = self.cap.read()
+        print("looping vision")
         target_view, max_polygon = self.get_max_polygon(img)
 
         with self.vision_lock:

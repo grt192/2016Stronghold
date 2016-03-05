@@ -8,7 +8,6 @@ import wpilib
 import time
 from wpilib import SendableChooser, SmartDashboard
 import numpy as np
-
 #import print_echoer
 
 
@@ -76,8 +75,8 @@ class MyRobot(wpilib.SampleRobot):
             s_upper = SmartDashboard.getDouble("SUpper")
             v_upper = SmartDashboard.getDouble("VUpper")
 
-            print("Rotational Error : ", self.robot_vision.rotational_error, "Vertical Error: ", self.robot_vision.vertical_error)
-            self.robot_vision.rotational_error += 20
+            # print("Rotational Error : ", self.robot_vision.rotational_error, "Vertical Error: ", self.robot_vision.vertical_error)
+            # self.robot_vision.rotational_error += 20
 
             self.robot_vision.setThreshold(np.array([h_lower, s_lower, v_lower], 'uint8'), np.array([h_upper, s_upper, v_upper], 'uint8'))
             self.shooter.turntable.TURNTABLE_KP = SmartDashboard.getDouble("TURNTABLE_KP")
@@ -93,8 +92,8 @@ class MyRobot(wpilib.SampleRobot):
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError(), "    Vertical Error: ", self.robot_vision.getTargetAngle(), "    Actual Speed: ", self.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.currentspeed)
-            print("Rotational Error : ", self.robot_vision.rotational_error, "Vertical Error: ", self.robot_vision.vertical_error)
-            self.robot_vision.rotational_error += 20
+            # print("Rotational Error : ", self.robot_vision.rotational_error, "Vertical Error: ", self.robot_vision.vertical_error)
+            # self.robot_vision.rotational_error += 20
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):

@@ -8,7 +8,7 @@ from wpilib import Solenoid, Compressor, DriverStation, CANTalon, AnalogInput
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
 from grt.sensors.dummy import Mimic
-from grt.sensors.navx import NavX
+# from grt.sensors.navx import NavX
 from grt.sensors.switch_panel import SwitchPanel
 
 from grt.core import SensorPoller
@@ -39,7 +39,7 @@ print("Imported stuff")
 # Also see about adding in automatic alignment/chival de fris macro/ light-sensor-controlled pickup
 
 
-using_vision_server = "Linux" in platform.platform()
+using_vision_server = False
 
 # Compressor initialization
 compressor = Compressor()
@@ -72,10 +72,10 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 #
 
 print("Before vision")
-vision_sensor = VisionSensor
+# vision_sensor = VisionSensor()
 print("After vision sensor")
 
-robot_vision = Vision(vision_sensor)
+robot_vision = Vision()
 print("After robotvision")
 if using_vision_server:
     import grt.vision.vision_server
@@ -136,7 +136,8 @@ pickup_achange_motor2.setPID(.01, 0, 0, f=0)
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
 # Straight macro initialization
-navx = NavX()
+# navx = NavX()
+navx = Mimic(fused_heading=0)
 straight_macro = StraightMacro(dt, navx)
 
 # Record macro initialization
