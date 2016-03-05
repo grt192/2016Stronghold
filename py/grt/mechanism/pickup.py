@@ -1,4 +1,5 @@
 from wpilib import CANTalon
+import threading
 LEFT_PICKUP_DOWN_POSITION = 674
 LEFT_PICKUP_UP_POSITION = LEFT_PICKUP_DOWN_POSITION - 125
 
@@ -31,19 +32,26 @@ class Pickup:
 
 
     def go_to_pickup_position(self):
+        self.enable_automatic_control()
         self.current_position = "pickup"
         self.auto_set_left(LEFT_PICKUP_DOWN_POSITION)
         self.auto_set_right(RIGHT_PICKUP_DOWN_POSITION)
+        threading.Timer(2.5, self.disable_automatic_control).start()
 
     def auto_set_left(self, angle):
         if not self.achange_motor_2.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.achange_motor_2.set(angle) 
+            self.achange_motor_2.set(angle)
+            #threading.Timer(2.5, self.disable_automatic_control)
+            print("Auto-setting: ", angle)
 
     def auto_set_right(self, angle):
         if not self.achange_motor_1.getControlMode() == CANTalon.ControlMode.PercentVbus:
             self.achange_motor_1.set(angle)
+            #threading.Timer(2.5, self.disable_automatic_control)
+
 
     def go_to_frame_position(self):
+        self.enable_automatic_control()
         self.current_position = "frame"
         self.auto_set_left(LEFT_PICKUP_UP_POSITION)
         self.auto_set_right(RIGHT_PICKUP_UP_POSITION)
@@ -54,6 +62,7 @@ class Pickup:
             self.achange_motor_2.changeControlMode(CANTalon.ControlMode.Position)
 
     def disable_automatic_control(self):
+        print("Automatic control disabled!")
         self.achange_motor_1.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.achange_motor_2.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.achange_motor_1.set(0)

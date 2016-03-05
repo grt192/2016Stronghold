@@ -109,10 +109,13 @@ pickup_roller_motor = CANTalon(7)
 
 pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Position)
 pickup_achange_motor1.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
-pickup_achange_motor1.setPID(.05, 0, 0, f=0)
+pickup_achange_motor1.setPID(10, 0, 0, f=0)
+pickup_achange_motor1.setAllowableClosedLoopErr(5)
 pickup_achange_motor2.changeControlMode(CANTalon.ControlMode.Position)
 pickup_achange_motor2.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
-pickup_achange_motor2.setPID(.05, 0, 0, f=0)
+pickup_achange_motor2.setPID(10, 0, 0, f=0)
+pickup_achange_motor2.setAllowableClosedLoopErr(5)
+
 
 pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor)
 
