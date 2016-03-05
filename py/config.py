@@ -81,7 +81,9 @@ turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
 
 hood_motor = CANTalon(6)
 hood_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
-hood_motor.setPID(.1, 0, 0, f=0)
+hood_motor.setPID(10, 0, 0, f=0)
+hood_motor.configMaxOutputVoltage(5)
+hood_motor.setAllowableClosedLoopErr(5)
 hood_motor.changeControlMode(CANTalon.ControlMode.Position)
 
 robot_vision = Vision()
@@ -109,11 +111,11 @@ pickup_roller_motor = CANTalon(7)
 
 pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Position)
 pickup_achange_motor1.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
-pickup_achange_motor1.setPID(10, 0, 0, f=0)
+pickup_achange_motor1.setPID(20, 0, 0, f=0)
 pickup_achange_motor1.setAllowableClosedLoopErr(5)
 pickup_achange_motor2.changeControlMode(CANTalon.ControlMode.Position)
 pickup_achange_motor2.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
-pickup_achange_motor2.setPID(10, 0, 0, f=0)
+pickup_achange_motor2.setPID(20, 0, 0, f=0)
 pickup_achange_motor2.setAllowableClosedLoopErr(5)
 
 

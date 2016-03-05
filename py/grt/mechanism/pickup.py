@@ -1,10 +1,10 @@
 from wpilib import CANTalon
 import threading
 LEFT_PICKUP_DOWN_POSITION = 674
-LEFT_PICKUP_UP_POSITION = LEFT_PICKUP_DOWN_POSITION - 125
+LEFT_PICKUP_UP_POSITION = LEFT_PICKUP_DOWN_POSITION - 130
 
 RIGHT_PICKUP_DOWN_POSITION = 815
-RIGHT_PICKUP_UP_POSITION = RIGHT_PICKUP_DOWN_POSITION + 125
+RIGHT_PICKUP_UP_POSITION = RIGHT_PICKUP_DOWN_POSITION + 115
 
 #Talon 9 (left motor, achange2) zero: 674
 #Talon 8 (right motor, achange1) zero: 815
@@ -55,6 +55,7 @@ class Pickup:
         self.current_position = "frame"
         self.auto_set_left(LEFT_PICKUP_UP_POSITION)
         self.auto_set_right(RIGHT_PICKUP_UP_POSITION)
+        threading.Timer(2.5, self.disable_automatic_control).start()
 
     def enable_automatic_control(self):
         if not self.override_manager.pickup_override:

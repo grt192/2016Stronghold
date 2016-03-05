@@ -171,9 +171,9 @@ class MechController:
         """
         if state_id == "switch6":
             if datum:
-                self.shooter.rails.rails_down()
-            else:
                 self.shooter.rails.rails_up()
+            else:
+                self.shooter.rails.rails_down()
 
         """
         Pickup close-loop control override (allows Xbox joystick to control pickup)
