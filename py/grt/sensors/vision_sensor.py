@@ -21,9 +21,9 @@ class VisionSensor(Sensor):
             self.vertical_ready = True
         else:
             self.vertical_ready = self.shooter.hood.hood_motor.getClosedLoopError() < self.HOOD_ANGLE_TOLERANCE
-        self.rotational_error = self.shooter.robot_vision.rotational_error
-        self.vertical_error = self.shooter.robot_vision.vertical_error
-        self.target_view = self.shooter.robot_vision.target_view
+        # self.rotational_error = self.shooter.robot_vision.rotational_error
+        # self.vertical_error = self.shooter.robot_vision.vertical_error
+        # self.target_view = self.shooter.robot_vision.target_view
 
 # class TurnTableSensor(Sensor):
 #     def __init__(self, turntable):
