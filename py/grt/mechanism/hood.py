@@ -2,14 +2,15 @@ from wpilib import CANTalon
 from grt.core import Sensor
 import threading
 
-#FRAME_POSITION = 155
-#VT_POSITION = 271
-#BATTER_POSITION = 200
-VT_POSITION = 265 #35 degrees
-MIN_POSITION = 211 #20 degrees
-MIN_POSITION_ELEVATOR_ALLOWED = 246 #No angle for this position, but this is the lowest the hood can go before the polycarb will crash into the base plate if the elevator lowers
-MAX_POSITION = 454 #63 degrees
-GEO_POSITION = 246 #Made up, untested value between VT and frame positions
+# FRAME_POSITION = 155
+# VT_POSITION = 271
+# BATTER_POSITION = 200
+VT_POSITION = 265  # 35 degrees
+MIN_POSITION = 211  # 20 degrees
+MIN_POSITION_ELEVATOR_ALLOWED = 246  # No angle for this position, but this is the lowest the hood can go before the polycarb will crash into the base plate if the elevator lowers
+MAX_POSITION = 454  # 63 degrees
+GEO_POSITION = 246  # Made up, untested value between VT and frame positions
+
 
 class Hood:
     HOOD_MIN = 155
@@ -20,9 +21,6 @@ class Hood:
         self.hood_motor = hood_motor
         self.robot_vision = robot_vision
         self.override_manager = None
-
-
-
 
     def go_to_vt_angle(self):
         self.enable_automatic_control()
@@ -76,6 +74,3 @@ class HoodSensor(Sensor):
                 self.vertical_ready = True
             else:
                 self.vertical_ready = False
-
-
-

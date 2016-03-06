@@ -8,7 +8,18 @@ from wpilib import CANTalon
 
 
 class Shooter:
+    """
+    Vision tracking sequence:
+
+    vt_automatic_shot -> vt_forward -> vt_logic_loop -> check* -> execute_shot
+
+    Geometric shot sequence
+
+    geo_automatic_shot -> geo_forward -> execute_shot
+    """
+
     def __init__(self, robot_vision, flywheel, turntable, hood, rails):
+
 
         self.GEO_SPINUP_TIME = 2.0
 
@@ -90,10 +101,11 @@ class Shooter:
 
     def execute_shot(self):
         print("Executing shot")
-        self.rails.rails_down()
+        # Move shooter
         self.is_shooting = True
+        self.rails.rails_down()
 
-        #
+        # Spindown flywheel, etc. in a separate thread
         threading.Timer(2.0, self.finish_automatic_shot).start()
 
     def vt_automatic_shot(self):
@@ -104,51 +116,88 @@ class Shooter:
         """
         self.shooter_timers_running = True
         if not self.rails.is_up:
+            # If the rails are down, move them up, then spin the
+            # flywheel backwards to realign the ball
             self.rails.rails_up()
             self.vt_reverse_func()
         else:
+            # Set everything up for PID control
             self.vt_forward_func()
 
     def vt_reverse_func(self):
+        """Momentarily spin flywheel in reverse to realign ball"""
+
         self.flywheel.spin_to_reverse_power()
         threading.Timer(1.0, self.vt_delay_func).start()
 
     def vt_delay_func(self):
+        """Spindown the flywheel, then begin vision tracking shoot"""
+
         self.flywheel.spindown()
         threading.Timer(1.0, self.vt_forward_func).start()
 
     def vt_forward_func(self):
+        """
+        Sets up shooter objects for PID:
+          - Spin flywheel to standby speed
+          - Enables hood PID
+          - Enables turntable PID
+          - Runs logic loop to shoot when all controllers are ready
+        """
+
         if self.shooter_timers_running:
+
             self.flywheel.spin_to_standby_speed()
+
             self.hood.go_to_vt_angle()
+
+            # Disable front lock to allow turntable to be moved,
+            # set turntable motor to 0 power, and enable PID control
             self.turntable.disable_front_lock()
             self.turntable.turntable_motor.set(0)
             self.turntable.PID_controller.enable()
+
             self.vt_automatic = True
+
+            # Begin the logic loop
             threading.Thread(target=self.vt_logic_loop).start()
 
     def geo_automatic_shot(self):
         """
-        Geometric shot initialization
+        Geometric shot initialization: for shooting once aligned using field geometry (For 2016 stronghold, this
+        is the batter ramp)
+
         If rails are up --> geo_automatic calls geo_forward directly
         If rails are down --> geo_automatic calls geo_reverse, then geo_delay, then geo_forward
         """
+
         self.shooter_timers_running = True
         if not self.rails.is_up:
+            # If rails are down, spin flywheel backwards momentarily to realign ball
             self.rails.rails_up()
             self.geo_reverse_func()
         else:
+            # Shoot
             self.geo_forward_func()
 
     def geo_reverse_func(self):
+        """Momentarily spin flywheel in reverse to realign ball"""
         self.flywheel.spin_to_reverse_power()
         threading.Timer(1.0, self.geo_delay_func).start()
 
     def geo_delay_func(self):
+        """Spindown the flywheel, then begin vision tracking shoot"""
         self.flywheel.spindown()
         threading.Timer(1.0, self.geo_forward_func).start()
 
     def geo_forward_func(self):
+        """
+        Sets up shooter objects for PID:
+          - Spin flywheel to geo speed
+          - Rotate hood to geo angle
+          - Shoots
+        """
+
         if self.shooter_timers_running:
             self.flywheel.spin_to_geo_power()
             self.hood.go_to_geo_angle()
