@@ -28,9 +28,7 @@ class Vision:
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
 
-    def __init__(self, vision_sensor):
-        self.vision_sensor = vision_sensor
-
+    def __init__(self):
         # Properties
         self._target_view = False
         self._rotational_error = self._vertical_error = self.DEFAULT_ERROR
@@ -62,8 +60,6 @@ class Vision:
 
     @target_view.setter
     def target_view(self, value):
-        # Call the vision sensor listeners
-        self.vision_sensor.target_view = value
         self._target_view = value
 
     @property
@@ -73,8 +69,6 @@ class Vision:
 
     @rotational_error.setter
     def rotational_error(self, value):
-        # Call the vision sensor listeners
-        self.vision_sensor.rotational_error = value
         self._rotational_error = value
 
     @property
@@ -84,8 +78,6 @@ class Vision:
 
     @vertical_error.setter
     def vertical_error(self, value):
-        # Call the vision sensor listeners
-        self.vision_sensor.rotational_error = value
         self._vertical_error = value
 
     def vision_close(self):
