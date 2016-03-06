@@ -14,7 +14,6 @@ class OperationManager:
         self.straight_macro.operation_manager = self
         self.original_straight_macro_power = self.straight_macro.POWER
 
-    @staticmethod
     def operation(func):
         def self_enable(self):
             if self.op_lock:
@@ -27,7 +26,6 @@ class OperationManager:
 
         return self_enable
 
-    @staticmethod
     def op_abort(func):
 
         def self_enable(self):

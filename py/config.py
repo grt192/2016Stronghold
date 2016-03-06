@@ -142,7 +142,8 @@ operation_manager = OperationManager(shooter, pickup, straight_macro)
 override_manager = OverrideManager(shooter, pickup, compressor)
 hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor,
                        shooter.hood_sensor, navx))
-ac = ArcadeDriveController(dt, driver_stick, record_macro, operation_manager)
+ac = ArcadeDriveController(dt, driver_stick, operation_manager)
+
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
 
 talon_log_arr = [dt_left, dt_l2, dt_l3, dt_right, dt_r2, dt_r3, flywheel_motor, flywheel_motor2, hood_motor,
