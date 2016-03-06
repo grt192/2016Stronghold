@@ -68,6 +68,3 @@ class OverrideManager:
 
     def compressor_norm(self):
         self.compressor.start()
-
-
-        

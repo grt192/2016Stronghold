@@ -14,6 +14,7 @@ class OperationManager:
         self.straight_macro.operation_manager = self
         self.original_straight_macro_power = self.straight_macro.POWER
 
+    @staticmethod
     def operation(func):
         def self_enable(self):
             if self.op_lock:
@@ -26,7 +27,9 @@ class OperationManager:
 
         return self_enable
 
+    @staticmethod
     def op_abort(func):
+
         def self_enable(self):
             if "portcullis" in self.current_op and "portcullis" in func.__name__:
                 return func(self)
@@ -50,10 +53,10 @@ class OperationManager:
     # If flywheel override --> use voltage control mode
     # If pickup override --> assume pickup ready
 
-    @operation
-    # Add logic to check that the pickup arm is down and the elevator rails are raised!
 
+    @operation
     def vt_automatic_shot(self):
+        # Add logic to check that the pickup arm is down and the elevator rails are raised!
         self.op_lock = True
         self.shooter.vt_automatic_shot()
 
