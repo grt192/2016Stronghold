@@ -19,6 +19,7 @@ class Pickup:
         self.achange_motor_1 = achange_motor_1
         self.achange_motor_2 = achange_motor_2
         self.roller_motor = roller_motor
+        self.disable_timer = threading.Timer(2.5, self.disable_automatic_control)
         self.current_position = "frame"
 
     def angle_change(self, power):
@@ -32,11 +33,13 @@ class Pickup:
 
 
     def go_to_pickup_position(self):
+        self.disable_timer.cancel()
         self.enable_automatic_control()
         self.current_position = "pickup"
         self.auto_set_left(LEFT_PICKUP_DOWN_POSITION)
         self.auto_set_right(RIGHT_PICKUP_DOWN_POSITION)
-        threading.Timer(2.5, self.disable_automatic_control).start()
+        self.disable_timer = threading.Timer(2.5, self.disable_automatic_control)
+        self.disable_timer.start()
 
     def auto_set_left(self, angle):
         if not self.achange_motor_2.getControlMode() == CANTalon.ControlMode.PercentVbus:
@@ -51,11 +54,13 @@ class Pickup:
 
 
     def go_to_frame_position(self):
+        self.disable_timer.cancel()
         self.enable_automatic_control()
         self.current_position = "frame"
         self.auto_set_left(LEFT_PICKUP_UP_POSITION)
         self.auto_set_right(RIGHT_PICKUP_UP_POSITION)
-        threading.Timer(2.5, self.disable_automatic_control).start()
+        self.disable_timer = threading.Timer(2.5, self.disable_automatic_control)
+        self.disable_timer.start()
 
     def enable_automatic_control(self):
         if not self.override_manager.pickup_override:

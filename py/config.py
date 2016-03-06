@@ -67,7 +67,8 @@ flywheel_motor2.changeControlMode(CANTalon.ControlMode.Follower)
 flywheel_motor2.set(flywheel_motor.getDeviceID())
 
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setPID(.33, 0, 0, f=.19)
+#flywheel_motor.setPID(.33, 0, 0, f=.19) #Omega 1 tuning constants
+flywheel_motor.setPID(.33, 0, 0, f=.3) #Omega 2 tuning constants
 
 shooter_act = Solenoid(1)
 
