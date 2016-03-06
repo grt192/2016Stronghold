@@ -6,7 +6,7 @@ class MechController:
 
     # vt_override = True
 
-    def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager,
+    def __init__(self, driver_joystick, xbox_controller, switch_panel, mimic_joystick, pickup, shooter, operation_manager,
                  override_manager):  # mechanisms belong in arguments
         # define mechanisms here
 
@@ -24,6 +24,20 @@ class MechController:
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
         switch_panel.add_listener(self._switch_panel_listener)
+        mimic_joystick.add_listener(self._mimic_listener)
+
+    def _mimic_listener(self, sensor, state_id, datum):
+        if state_id == "x_axis":
+            if datum:
+                self.shooter.robot_vision.rotational_error = int(300 * datum)
+
+        if state_id == "y_axis":
+            if datum:
+                self.shooter.robot_vision.vertical_error = int(3000 * datum)
+
+        print("Target View: ", self.shooter.robot_vision.target_view, "    Rotational error: ",
+              self.shooter.robot_vision.rotational_error, "    Vertical Error: ",
+              self.shooter.robot_vision.vertical_error)
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
         """

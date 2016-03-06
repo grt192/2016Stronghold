@@ -48,15 +48,14 @@ compressor.start()
 
 # DT talons and objects
 dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
+# dt_r2 = CANTalon(2)
+# dt_r3 = CANTalon(3)
 
 dt_left = CANTalon(11)
-dt_l2 = CANTalon(12)
-dt_l3 = CANTalon(13)
+# dt_l2 = CANTalon(12)
+# dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
-print("Compressor, dts")
 # Motorset.group((dt_right, dt_r2, dt_r3))
 # Motorset.group((dt_left, dt_l2, dt_l3))
 
@@ -71,17 +70,13 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
                      # setThreshold=lambda x, y: x)
 #
 
-print("Before vision")
-# vision_sensor = VisionSensor()
-print("After vision sensor")
+vision_sensor = VisionSensor()
 
-robot_vision = Vision()
-print("After robotvision")
+robot_vision = Vision(vision_sensor)
 if using_vision_server:
     import grt.vision.vision_server
     grt.vision.vision_server.prepare_module(robot_vision)
 
-print("After vision server")
 # Shooter objects
 
 # Flywheel motors
@@ -152,15 +147,21 @@ override_manager = OverrideManager(shooter, pickup, compressor)
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 switch_panel = SwitchPanel(2)
-# mimic_joystick = Attack3Joystick(3)
+mimic_joystick = Attack3Joystick(3)
 
-hid_sp = SensorPoller((driver_stick, xbox_controller,
-                       switch_panel, shooter.flywheel_sensor,
-                       shooter.turntable_sensor,
-                       shooter.hood_sensor, navx))
+joy_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, mimic_joystick))
+sensor_sp = SensorPoller((shooter.turntable_sensor, shooter.hood_sensor, navx))
+
+hid_sp = SensorPoller((joy_sp, sensor_sp))
+
+
+# hid_sp = SensorPoller((driver_stick, xbox_controller,
+#                        switch_panel, shooter.flywheel_sensor,
+#                        shooter.turntable_sensor,
+#                        shooter.hood_sensor, navx))
 
 ac = ArcadeDriveController(dt, driver_stick, operation_manager)
-mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
+mc = MechController(driver_stick, xbox_controller, switch_panel, mimic_joystick, pickup, shooter, operation_manager, override_manager)
 
 # talon_log_arr = [dt_left, dt_l2, dt_l3, dt_right, dt_r2, dt_r3, flywheel_motor, flywheel_motor2, hood_motor,
 #                  turntable_motor, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]

@@ -28,20 +28,16 @@ class Vision:
     # Gimp: H = 0-360, S = 0-100, V = 0-100
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
 
-    def __init__(self):
-        print("robotvision init")
-        # self.vision_sensor = vision_sensor
+    def __init__(self, vision_sensor):
+        self.vision_sensor = vision_sensor
 
         # Properties
         self._target_view = False
         self._rotational_error = self._vertical_error = self.DEFAULT_ERROR
-        print("robot_vision constants")
 
         self.vision_lock = threading.Lock()
         self.threshold_lock = threading.Lock()
-        print("making vision_thread")
         self.vision_thread = threading.Thread(target=self.vision_main)
-        print("starting vision thread")
         self.vision_thread.start()
 
     def vision_init(self):
@@ -61,11 +57,7 @@ class Vision:
 
     @property
     def target_view(self):
-        print("getting target view: ")
-        self._target_view = 1
         with self.vision_lock:
-            self._target_view = 2
-            print("vision_lock target view")
             return self._target_view
 
     @target_view.setter
@@ -76,7 +68,6 @@ class Vision:
 
     @property
     def rotational_error(self):
-        print("Getting rotational Error")
         with self.vision_lock:
             return self._rotational_error
 
@@ -178,26 +169,18 @@ class Vision:
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
 
         _, img = self.cap.read()
-        print("looping vision")
         target_view, max_polygon = self.get_max_polygon(img)
 
         with self.vision_lock:
-            print("inside vision_lock _vision loop")
             # Update properties
-            print("Setting target view")
-            self.target_view = target_view
-            print("Set target view")
-            if self._target_view:
-                print("Inside self.target_view")
-                self.rotational_error, self.vertical_error = self.get_error(max_polygon)
+            # self.target_view = target_view
+            # if self._target_view:
+                # self.rotational_error, self.vertical_error = self.get_error(max_polygon)
 
-            print("done with with statement")
             # Draw on image
             if self.drawing:
                 cv2.drawContours(img, [max_polygon], -1, (255, 0, 0), 2)
-            print("drawing done")
 
-        print("outside with")
         self.img = img
         cv2.imshow("Image", self.img)
         self.print_all_values()
