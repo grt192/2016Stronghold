@@ -1,10 +1,18 @@
 from wpilib import CANTalon
+import threading
+LEFT_PICKUP_DOWN_POSITION = 674
+LEFT_PICKUP_UP_POSITION = LEFT_PICKUP_DOWN_POSITION - 130
 
-PICKUP_DOWN_POSITION = 0
-PICKUP_UP_POSITION = PICKUP_DOWN_POSITION + 120
+RIGHT_PICKUP_DOWN_POSITION = 815
+RIGHT_PICKUP_UP_POSITION = RIGHT_PICKUP_DOWN_POSITION + 115
 
+#Talon 9 (left motor, achange2) zero: 674
+#Talon 8 (right motor, achange1) zero: 815
+#Talon 8 frame: 945
+#Talon 9 frame: 555
 
 class Pickup:
+
     def __init__(self, achange_motor_1, achange_motor_2, roller_motor):
         self.operation_manager = None
         self.override_manager = None
@@ -18,24 +26,36 @@ class Pickup:
         self.achange_motor_2.set(-power)
 
     def roll(self, power):
-        self.roller_motor.set(-power * .7)
-
+        self.roller_motor.set(-power*.7)
     def stop(self):
         self.roller_motor.set(0)
 
-    def go_to_pickup_position(self):
-        self.current_position = "pickup"
-        self.auto_set(PICKUP_DOWN_POSITION)
 
-    def auto_set(self, angle):
-        if not self.achange_motor_1.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.achange_motor_1.set(angle)
+    def go_to_pickup_position(self):
+        self.enable_automatic_control()
+        self.current_position = "pickup"
+        self.auto_set_left(LEFT_PICKUP_DOWN_POSITION)
+        self.auto_set_right(RIGHT_PICKUP_DOWN_POSITION)
+        threading.Timer(2.5, self.disable_automatic_control).start()
+
+    def auto_set_left(self, angle):
         if not self.achange_motor_2.getControlMode() == CANTalon.ControlMode.PercentVbus:
             self.achange_motor_2.set(angle)
+            #threading.Timer(2.5, self.disable_automatic_control)
+            print("Auto-setting: ", angle)
+
+    def auto_set_right(self, angle):
+        if not self.achange_motor_1.getControlMode() == CANTalon.ControlMode.PercentVbus:
+            self.achange_motor_1.set(angle)
+            #threading.Timer(2.5, self.disable_automatic_control)
+
 
     def go_to_frame_position(self):
+        self.enable_automatic_control()
         self.current_position = "frame"
-        self.auto_set(PICKUP_UP_POSITION)
+        self.auto_set_left(LEFT_PICKUP_UP_POSITION)
+        self.auto_set_right(RIGHT_PICKUP_UP_POSITION)
+        threading.Timer(2.5, self.disable_automatic_control).start()
 
     def enable_automatic_control(self):
         if not self.override_manager.pickup_override:
@@ -43,6 +63,7 @@ class Pickup:
             self.achange_motor_2.changeControlMode(CANTalon.ControlMode.Position)
 
     def disable_automatic_control(self):
+        #print("Automatic control disabled!")
         self.achange_motor_1.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.achange_motor_2.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.achange_motor_1.set(0)
@@ -50,4 +71,4 @@ class Pickup:
 
 
 
-        # Pass this the actual flywheel class, eventually.
+    #Pass this the actual flywheel class, eventually.

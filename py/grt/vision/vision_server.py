@@ -27,7 +27,7 @@ def gen(camera):
 
 def prepare_module(robot_vision):
     def start_server():
-        app.run(host=host_ip, debug=False, threaded=True)
+        app.run(host=host_ip, port=5809, debug=False, threaded=True)
 
     @app.route('/video_feed')
     def video_feed():

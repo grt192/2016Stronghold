@@ -1,0 +1,76 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="Requested Talon" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="113"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.MJPGStreamerViewerExtension">
+		<location x="357" y="0"/>
+		<width>574</width>
+		<height>497</height>
+		<property name="Robot IP Address or mDNS name" value="roborio-192-frc.local"/>
+		<property name="port" value="5803"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
+		<location x="0" y="203"/>
+	</static-widget>
+	<widget field="S11" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="173" y="404"/>
+	</widget>
+	<widget field="S10" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="177" y="369"/>
+	</widget>
+	<widget field="S9" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="185" y="330"/>
+	</widget>
+	<widget field="S8" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="183" y="292"/>
+	</widget>
+	<widget field="S7" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="189" y="253"/>
+	</widget>
+	<widget field="S6" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="-3" y="409"/>
+	</widget>
+	<widget field="S5" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="-1" y="385"/>
+	</widget>
+	<widget field="S4" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="357"/>
+	</widget>
+	<widget field="S3" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1" y="324"/>
+	</widget>
+	<widget field="S2" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="5" y="289"/>
+	</widget>
+	<widget field="S1" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="6" y="256"/>
+	</widget>
+	<widget field="Autonomous Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="202" y="20"/>
+	</widget>
+	<widget field="TURNTABLE_KP" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="145"/>
+	</widget>
+	<widget field="HUpper" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="174"/>
+	</widget>
+	<widget field="SLower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="116"/>
+	</widget>
+	<widget field="VLower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="87"/>
+	</widget>
+	<widget field="HLower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="58"/>
+	</widget>
+	<widget field="SUpper" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="29"/>
+	</widget>
+	<widget field="VUpper" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="0"/>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+</xml>
