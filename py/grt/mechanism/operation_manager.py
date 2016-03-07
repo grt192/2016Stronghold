@@ -56,6 +56,7 @@ class OperationManager:
     def vt_automatic_shot(self):
         # Add logic to check that the pickup arm is down and the elevator rails are raised!
         self.op_lock = True
+        self.vision_shooting = True
         self.shooter.vt_automatic_shot()
 
     @operation
