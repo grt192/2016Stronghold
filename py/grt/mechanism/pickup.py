@@ -6,6 +6,9 @@ LEFT_PICKUP_UP_POSITION = LEFT_PICKUP_DOWN_POSITION - 130
 RIGHT_PICKUP_DOWN_POSITION = 815
 RIGHT_PICKUP_UP_POSITION = RIGHT_PICKUP_DOWN_POSITION + 115
 
+LEFT_PICKUP_CROSS_POSITION = 640
+RIGHT_PICKUP_CROSS_POSITION = 845
+
 #Talon 9 (left motor, achange2) zero: 674
 #Talon 8 (right motor, achange1) zero: 815
 #Talon 8 frame: 945
@@ -61,6 +64,12 @@ class Pickup:
         self.auto_set_right(RIGHT_PICKUP_UP_POSITION)
         self.disable_timer = threading.Timer(2.5, self.disable_automatic_control)
         self.disable_timer.start()
+
+    def go_to_cross_position(self):
+        self.enable_automatic_control()
+        self.current_position = "cross"
+        self.auto_set_left(LEFT_PICKUP_CROSS_POSITION)
+        self.auto_set_right(RIGHT_PICKUP_CROSS_POSITION)
 
     def enable_automatic_control(self):
         if not self.override_manager.pickup_override:

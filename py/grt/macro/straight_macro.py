@@ -26,6 +26,7 @@ class StraightMacro(GRTMacro):
         Pass drivetrain, distance to travel (ft), and timeout (secs)
         """
         super().__init__(timeout)
+        self.set_forward()
         self.operation_manager = None
         self.dt = dt
         self.enabled = False
@@ -52,6 +53,18 @@ class StraightMacro(GRTMacro):
         self.enable()
         threading.Timer(2.0, self.disable).start()
 
+    def macro_stop(self):
+        self.disable()
+
+    def set_forward(self):
+        #Negative value is forward, positive value is reverse
+        if self.POWER > 0:
+            self.POWER *= -1
+
+    def set_reverse(self):
+        if self.POWER < 0:
+            self.POWER *= -1
+
 
     def enable(self):
         self.setpoint = self.navx.fused_heading
@@ -66,7 +79,7 @@ class StraightMacro(GRTMacro):
         self.dt.set_dt_output(0, 0)
         if not self.operation_manager == None:
             self.operation_manager.op_lock = False
-        self.terminate()
+        #self.terminate()
 
     def set_output(self, output):
         """

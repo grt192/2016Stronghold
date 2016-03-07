@@ -1,7 +1,7 @@
 import threading
 
 class OperationManager:
-	def __init__(self, shooter, pickup, straight_macro):
+	def __init__(self, shooter, pickup, straight_macro, record_macro, playback_macro):
 		self.op_lock = False
 		self.chival_timers_running = False
 		self.current_op = "None"
@@ -12,6 +12,10 @@ class OperationManager:
 		self.straight_macro = straight_macro
 		self.straight_macro.operation_manager = self
 		self.original_straight_macro_power = self.straight_macro.POWER
+
+		self.record_macro = record_macro
+		self.playback_macro = playback_macro
+		self.playback_macro.operation_manager = self
 
 	def operation(func):
 		def self_enable(self):
@@ -48,9 +52,7 @@ class OperationManager:
 		#If pickup override --> assume pickup ready
 
 	@operation
-
 	#Add logic to check that the pickup arm is down and the elevator rails are raised!
-
 	def vt_automatic_shot(self):
 		self.op_lock = True
 		self.shooter.vt_automatic_shot()
@@ -90,36 +92,30 @@ class OperationManager:
 		self.shooter.hood.go_to_frame_angle()
 		self.shooter.flywheel.spindown()
 		self.shooter.turntable.enable_front_lock()
-		self.pickup.go_to_frame_position()
-		threading.Timer(0.5, self.chival_forward_motion).start()
-		#Run recorded chival de fris cross operation
+		self.pickup.go_to_pickup_position()
+		threading.Timer(.5, self.chival_finish_cross).start()
+		#self.chival_macro.enable()
 
-	def chival_forward_motion(self):
+	def chival_finish_cross(self):
 		if self.chival_timers_running:
-			self.straight_macro.enable()
-			threading.Timer(0.2, self.chival_down_motion).start()
-
-	def chival_down_motion(self):
-		if self.chival_timers_running:
-			self.straight_macro.disable()
-			self.pickup.go_to_pickup_position()
-			threading.Timer(0.5, self.chival_finish_motion).start()
-
-	def chival_finish_motion(self):
-		if self.chival_timers_running:
-			self.straight_macro.enable()
+			self.pickup.disable_automatic_control()
+			self.playback_macro.start_playback()
+		
 
 
 	@op_abort
 	def chival_cross_abort(self):
-		self.straight_macro.disable()
-		self.chival_timers_running = False
-		self.op_lock = False
+		#self.chival_macro.disable()
+		#self.straight_macro.disable()
+		self.playback_macro.stop_playback()
+		#self.chival_timers_running = False
+		#self.op_lock = False
 		#Called when recorded cross finished or aborted
 
 	@operation
 	def portcullis_cross(self):
 		self.op_lock = True
+		print("Running portcullis cross!")
 		self.shooter.drivecontroller.disable_manual_control() #Fix this -- the shooter shouldn't really own a drivecontroller
 		self.shooter.rails.rails_down()
 		self.shooter.hood.go_to_frame_angle()
@@ -146,8 +142,17 @@ class OperationManager:
 		self.shooter.hood.go_to_frame_angle()
 		self.shooter.flywheel.spindown()
 		self.shooter.turntable.enable_front_lock()
+		self.pickup.go_to_cross_position()
 		self.straight_macro.enable()
 		#Call a straight macro
+
+	def forward_straight_cross(self):
+		self.straight_macro.set_forward()
+		self.straight_cross()
+
+	def reverse_straight_cross(self):
+		self.straight_macro.set_reverse()
+		self.straight_cross()
 
 	@op_abort
 	def straight_cross_abort(self):
@@ -157,6 +162,8 @@ class OperationManager:
 		#self.shooter.abort_automatic_shot()
 		self.op_lock = False
 		#Called when straight macro aborted (won't finish on its own)
+
+	
 
 	def twirly_cross(self):
 		pass

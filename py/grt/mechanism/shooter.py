@@ -186,6 +186,7 @@ class Shooter:
         self.vt_automatic = False
         self.shooter_timers_running = False
         self.turntable.PID_controller.disable()
+        self.turntable.turntable_motor.set(0)
         self.turntable.enable_front_lock()
         self.flywheel.spindown()
         self.hood.go_to_frame_angle()
