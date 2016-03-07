@@ -4,6 +4,7 @@ from grt.core import Sensor
 class Flywheel:
     STANDBY_SPEED = 2600
     GEO_POWER = .8
+    GEO_SPEED = 2600
     def __init__(self, shooter):
         self.shooter = shooter
         self.flywheel_motor = shooter.flywheel_motor
@@ -69,6 +70,14 @@ class Flywheel:
     def decrement_geo_power(self):
         self.GEO_POWER -= .1
         print("Current geo power: ", self.GEO_POWER)
+
+    def increment_geo_speed(self):
+        self.GEO_SPEED += 200
+        print("Current geo speed: ", self.GEO_SPEED)
+
+    def decrement_geo_speed(self):
+        self.GEO_SPEED -= 200
+        print("Current geo speed: ", self.GEO_SPEED)
 
         #self.current_power -= .1
         #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)

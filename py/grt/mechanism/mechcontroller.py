@@ -91,6 +91,7 @@ class MechController:
             if datum:
                 if self.override_manager.vt_override:
                     self.shooter.flywheel.increment_geo_power()
+                    self.shooter.flywheel.increment_geo_speed()
                 else:
                     self.shooter.flywheel.increment_vt_speed()
 
@@ -101,6 +102,7 @@ class MechController:
             if datum:
                 if self.override_manager.vt_override:
                     self.shooter.flywheel.decrement_geo_power()
+                    self.shooter.flywheel.decrement_geo_speed()
                 else:
                     self.shooter.flywheel.decrement_vt_speed()
                 #self.shooter.flywheel.spindown()
@@ -214,13 +216,13 @@ class MechController:
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):
-        if state_id == "button2":
+        if state_id == "button3":
             if datum:
                 self.operation_manager.forward_straight_cross()
             else:
                 self.operation_manager.straight_cross_abort()
 
-        if state_id == "button3":
+        if state_id == "button2":
             if datum:
                 self.operation_manager.reverse_straight_cross()
             else:
