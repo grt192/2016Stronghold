@@ -8,7 +8,7 @@ class AutonomousMode(object):
 
     thread = None
     running = False
-	
+
     def __init__(self):
         self.running_macros = set()
 
@@ -70,7 +70,7 @@ class AutonomousMode(object):
         Runs a macro in a separate thread.
         Returns a handle to the thread.
         """
-        thread = threading.Thread(target=self.exec_macro, args=(macro, ))
+        thread = threading.Thread(target=self.exec_macro, args=(macro,))
         thread.start()
         return thread
 
