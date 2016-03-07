@@ -71,6 +71,7 @@ class OperationManager:
 		self.op_lock = True
 		self.shooter.turntable.enable_front_lock()
 		self.shooter.rails.rails_up()
+		self.pickup.go_to_pickup_position()
 		self.pickup.roll(1.0)
 		self.shooter.flywheel.spin_to_pickup_power()
 
