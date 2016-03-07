@@ -202,7 +202,7 @@ class MechController:
         """
         Compressor override (used in high-power situations)
         """
-        if state_id == "switch11":
+        if state_id == "switch1":
             if datum:
                 self.override_manager.compressor_alt()
             else:
