@@ -3,6 +3,7 @@ Config File for Robot
 """
 
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon, AnalogInput
+import platform
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -23,6 +24,8 @@ from grt.mechanism.override_manager import OverrideManager
 from grt.mechanism.motorset import Motorset
 from grt.mechanism.rails import Rails
 from grt.mechanism.flywheel import Flywheel
+from grt.mechanism.turntable import TurnTable
+from grt.mechanism.hood import Hood
 
 from grt.vision.robot_vision import Vision
 
@@ -44,16 +47,18 @@ turntable_pot = AnalogInput(0)
 
 # DT talons and objects
 dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
-
 dt_left = CANTalon(11)
-dt_l2 = CANTalon(12)
-dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
-Motorset.group((dt_right, dt_r2, dt_r3))
-Motorset.group((dt_left, dt_l2, dt_l3))
+if "Linux" in platform.platform():
+    dt_r2 = CANTalon(2)
+    dt_r3 = CANTalon(3)
+
+    dt_l2 = CANTalon(12)
+    dt_l3 = CANTalon(13)
+
+    Motorset.group((dt_right, dt_r2, dt_r3))
+    Motorset.group((dt_left, dt_l2, dt_l3))
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
@@ -148,7 +153,8 @@ playback_macro = PlaybackMacro(sim_instructions, talon_arr)
 #Operation manager, controllers, and sensor pollers
 operation_manager = OperationManager(shooter, pickup, straight_macro, record_macro, playback_macro)
 override_manager = OverrideManager(shooter, pickup, compressor)
-ac = ArcadeDriveController(dt, driver_stick, shooter)
+
+ac = ArcadeDriveController(dt, driver_stick, shooter, straight_macro, operation_manager)
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
 
 # define DriverStation

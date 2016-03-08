@@ -5,9 +5,9 @@ from grt.macro.straight_macro import StraightMacro
 __author__ = "dhruv"
 
 
-class ShootMacro(GRTMacro):
+class ChivalMacro(GRTMacro):
     """
-    Runs a vision tracking shot
+    Runs across the cival de frise
     """
 
     def __init__(self, pickup, straight_macro: StraightMacro, operations_manager: OperationManager, timeout=3):
