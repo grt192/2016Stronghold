@@ -199,7 +199,7 @@ class Shooter:
         """
 
         if self.shooter_timers_running:
-            self.flywheel.spin_to_geo_power()
+            self.flywheel.spin_to_geo_speed()
             self.hood.go_to_geo_angle()
             self.geo_automatic = True
             threading.Timer(self.GEO_SPINUP_TIME, self.execute_shot).start()
@@ -225,6 +225,7 @@ class Shooter:
 
         # Disable turntable PID control, and return it to it's locked forward state
         self.turntable.PID_controller.disable()
+        self.turntable.turntable_motor.set(0)
         self.turntable.enable_front_lock()
 
         # Spin down the flywheel, return hood to frame position for low-bar clearance

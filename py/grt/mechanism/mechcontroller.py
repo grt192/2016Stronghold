@@ -1,9 +1,5 @@
 class MechController:
-    pickup_override = tt_override = vt_override = hood_override = False
-    pickup_override = True
-    tt_override = True
-    hood_override = True
-    #vt_override = True
+    
 
     def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager): # mechanisms belong in arguments
         # define mechanisms here
@@ -17,7 +13,6 @@ class MechController:
         self.operation_manager = operation_manager
         self.override_manager = override_manager
 
-        self.shooter.turntable.tt_override = self.tt_override
 
 
         driver_joystick.add_listener(self._driver_joystick_listener)
@@ -90,19 +85,41 @@ class MechController:
 
 
         """
-        Increment the flywheel speed
+        Increment the flywheel speed. Only affects the value for the currently selected shot type.
         """
         if state_id == "x_button":
             if datum:
-                self.shooter.flywheel.speed_increment_function()
+                if self.override_manager.vt_override:
+                    self.shooter.flywheel.increment_geo_power()
+                    self.shooter.flywheel.increment_geo_speed()
+                else:
+                    self.shooter.flywheel.increment_vt_speed()
 
         """
-        Decrement the flywheel speed. Currently also stops the flywheel.
+        Decrement the flywheel speed. Only affects the value for the currently selected shot type.
         """
         if state_id == "y_button":
             if datum:
-                self.shooter.flywheel.speed_decrement_function()
-                self.shooter.flywheel.spindown()
+                if self.override_manager.vt_override:
+                    self.shooter.flywheel.decrement_geo_power()
+                    self.shooter.flywheel.decrement_geo_speed()
+                else:
+                    self.shooter.flywheel.decrement_vt_speed()
+                #self.shooter.flywheel.spindown()
+
+        """
+        Decrement the offset for the vision-tracking turntable center.
+        """
+        if state_id == "back_button":
+            if datum:
+                self.shooter.turntable.decrement_vt_setpoint()
+
+        """
+        Increment the offset for the vision-tracking turntable center.
+        """
+        if state_id == "start_button":
+            if datum:
+                self.shooter.turntable.increment_vt_setpoint()
 
         """
         Raise the pickup to the frame position
@@ -187,7 +204,7 @@ class MechController:
         """
         Compressor override (used in high-power situations)
         """
-        if state_id == "switch11":
+        if state_id == "switch1":
             if datum:
                 self.override_manager.compressor_alt()
             else:
@@ -199,9 +216,15 @@ class MechController:
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):
+        if state_id == "button3":
+            if datum:
+                self.operation_manager.forward_straight_cross()
+            else:
+                self.operation_manager.straight_cross_abort()
+
         if state_id == "button2":
             if datum:
-                self.operation_manager.straight_cross()
+                self.operation_manager.reverse_straight_cross()
             else:
                 self.operation_manager.straight_cross_abort()
 
@@ -225,10 +248,11 @@ class MechController:
                 self.operation_manager.chival_cross_abort()
 
         if state_id == "button7":
-            if datum:
-                self.operation_manager.portcullis_cross()
-            else:
-                self.operation_manager.portcullis_cross_abort()
+            pass
+            # if datum:
+            #     self.operation_manager.portcullis_cross()
+            # else:
+            #     self.operation_manager.portcullis_cross_abort()
 
         
 
@@ -239,6 +263,12 @@ class MechController:
         if state_id == "button9":
             if datum:
                 self.shooter.rails.rails_up()
+
+        elif state_id == "button10":
+            if datum:
+                self.operation_manager.record_macro.start_record()
+            else:
+                self.operation_manager.record_macro.stop_record()
             
 
 #Requested driver joystick mappings

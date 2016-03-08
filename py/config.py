@@ -21,15 +21,18 @@ from grt.mechanism.shooter import Shooter
 from grt.mechanism.operation_manager import OperationManager
 from grt.mechanism.override_manager import OverrideManager
 from grt.mechanism.motorset import Motorset
-from grt.mechanism.hood import Hood
 from grt.mechanism.rails import Rails
-from grt.mechanism.turntable import TurnTable
 from grt.mechanism.flywheel import Flywheel
 
 from grt.vision.robot_vision import Vision
 
 from grt.macro.straight_macro import StraightMacro
 from grt.macro.record_macro import RecordMacro
+from grt.macro.record_macro import PlaybackMacro
+
+from grt.mechanism.nt_ticker import NTTicker
+from grt.autonomous.one_cross_auto import OneCrossAuto
+from collections import OrderedDict
 
 using_vision_server = True
 
@@ -63,7 +66,6 @@ switch_panel = SwitchPanel(2)
 robot_vision = Vision()
 if using_vision_server:
     import grt.vision.vision_server
-
     grt.vision.vision_server.prepare_module(robot_vision)
 
 # Flywheel
@@ -72,7 +74,8 @@ flywheel_motor2 = CANTalon(4)
 Motorset.group((flywheel_motor, flywheel_motor2))
 
 flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-flywheel_motor.setPID(.33, 0, 0, f=.19)
+#flywheel_motor.setPID(.33, 0, 0, f=.19) #Omega 1 tuning constants
+flywheel_motor.setPID(.33, 0, 0, f=.3) #Omega 2 tuning constants
 
 flywheel = Flywheel(robot_vision, flywheel_motor)
 
@@ -132,21 +135,32 @@ pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_moto
 # Straight macro initialization
 navx = NavX()
 straight_macro = StraightMacro(dt, navx)
+one_cross_auto = OneCrossAuto(straight_macro)
 
 # Record macro initialization
 talon_arr = [dt_left, dt_right, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
 record_macro = RecordMacro(talon_arr)
+sim_instructions = OrderedDict([("11, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798]), ("1, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, -0.5659824046920822, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798, 0.24926686217008798]), ("8, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), ("9, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), ("7, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])])
 
-# Operation manager, controllers, and sensor pollers
-operation_manager = OperationManager(shooter, pickup, straight_macro)
+playback_macro = PlaybackMacro(sim_instructions, talon_arr)
+#playback_macro = Pl
+
+#Operation manager, controllers, and sensor pollers
+operation_manager = OperationManager(shooter, pickup, straight_macro, record_macro, playback_macro)
 override_manager = OverrideManager(shooter, pickup, compressor)
-hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor,
-                       shooter.hood_sensor, navx))
-ac = ArcadeDriveController(dt, driver_stick, operation_manager)
-
+ac = ArcadeDriveController(dt, driver_stick, shooter)
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
 
-talon_log_arr = [dt_left, dt_l2, dt_l3, dt_right, dt_r2, dt_r3, flywheel_motor, flywheel_motor2, hood_motor,
-                 turntable_motor, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
 # define DriverStation
 ds = DriverStation.getInstance()
+
+nt_ticker = NTTicker(shooter, pickup, straight_macro)
+
+hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
+nt_sp = SensorPoller((nt_ticker,))
+
+
+
+
+
+

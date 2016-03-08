@@ -22,6 +22,7 @@ class TurnTable:
     TURNTABLE_KD = .008
     TURNTABLE_ABS_TOL = 10
     TURNTABLE_OUTPUT_RANGE = .4
+    TURNTABLE_SETPOINT = 35
 
     def __init__(self, robot_vision, turntable_motor, dt):
         self.turntable_motor = turntable_motor
@@ -34,12 +35,13 @@ class TurnTable:
 
         self.PID_controller = wpilib.PIDController(self.TURNTABLE_KP, self.TURNTABLE_KI, self.TURNTABLE_KD,
                                                    self.get_input, self.set_output)
+
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
         self.PID_controller.reset()
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
         self.PID_controller.setInputRange(-300, 300)
         # Be sure to use tolerance buffer
-        self.PID_controller.setSetpoint(35)
+        self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
 
     def getRotationReady(self):
         # If an additional check is needed beyond PIDController.onTarget() for determining whether
@@ -118,8 +120,13 @@ class TurnTable:
         self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
         self.turntable_motor.set(0)
 
-    def re_zero(self):
-        self.POT_CENTER = self.turntable_motor.getPosition()
+    def decrement_vt_setpoint(self):
+        self.TURNTABLE_SETPOINT -= 5
+        self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
+
+    def increment_vt_setpoint(self):
+        self.TURNTABLE_SETPOINT += 5
+        self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
 
 
 class TurnTableSensor(Sensor):

@@ -2,14 +2,14 @@
 Module for various drivetrain control mechanisms.
 Listens to Attack3Joysticks, not wpilib.Joysticks.
 """
-from grt.macro.straight_macro import StraightMacro
+
 
 class ArcadeDriveController:
     """
     Class for controlling DT in arcade drive mode, with one or two joysticks.
     """
 
-    def __init__(self, dt, l_joystick, driving_straight_macro: StraightMacro, operation_manager, r_joystick=None):
+    def __init__(self, dt, l_joystick, shooter, driving_straight_macro, operation_manager, r_joystick=None):
         """
         Initialize arcade drive controller with a DT and up to two joysticks.
         """
@@ -55,6 +55,8 @@ class ArcadeDriveController:
             else:
                 self.dt.upshift()
                 self.dt.disable_protective_measures()
+
+
 
     def enable_manual_control(self):
         self.manual_control_enabled = True

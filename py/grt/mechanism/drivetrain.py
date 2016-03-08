@@ -7,7 +7,7 @@ class DriveTrain:
     Standard 6-motor drivetrain, with standard tankdrive.
     """
     power = 1.0
-    LOW_GEAR_RAMP_RATE = 2
+    LOW_GEAR_RAMP_RATE = 5
 
     def __init__(self,
                  left_motor, right_motor,

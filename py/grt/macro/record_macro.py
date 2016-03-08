@@ -3,6 +3,7 @@ import time
 from collections import OrderedDict
 from grt.core import GRTMacro
 import wpilib
+from wpilib import CANTalon
 
 import platform
 if "Linux" in platform.platform():
@@ -77,14 +78,15 @@ class RecordMacro(GRTMacro):
 
 class PlaybackMacro(GRTMacro):
 
-    def __init__(self, instructions, talon_arr_obj, revert_controller=None, timeout=None):
+    def __init__(self, instructions, talon_arr_obj, operation_manager=None, timeout=None):
         super().__init__(timeout)
         self.instructions = instructions #instructions to output
         self.talon_arr_obj = talon_arr_obj #talons to output instructions to
-        self.revert_controller = revert_controller #drive controller to revert control to when finished
+        self.operation_manager = operation_manager #drive controller to revert control to when finished
         
         #self.running = False
         self.enabled = False
+        self.playback_finished = False
         self.i = 0
         #parsing the dictionary into talon and solenoid components.
         self.parse()
@@ -126,6 +128,8 @@ class PlaybackMacro(GRTMacro):
         if instructions:
             self.instructions = instructions
         self.parse()
+        self.i = 0
+        self.playback_finished = False
         self.run_threaded()
 
     def stop_playback(self):
@@ -151,7 +155,13 @@ class PlaybackMacro(GRTMacro):
         self.enabled = False
         for talon in self.talon_arr_obj:
             if str(type(talon)) == "<class 'wpilib.cantalon.CANTalon'>":
-                talon.set(0)
+                if talon.getControlMode() == CANTalon.ControlMode.PercentVbus:
+                    talon.set(0)
+        if self.operation_manager:
+            self.operation_manager.shooter.drivecontroller.enable_manual_control()
+            self.operation_manager.pickup.enable_automatic_control()
+            self.operation_manager.chival_timers_running = False
+            self.operation_manager.op_lock = False
 
         #self.revert_controller.engage()
 
@@ -178,6 +188,7 @@ class PlaybackMacro(GRTMacro):
         except IndexError:
             self.enabled = False
             self.i = 0
-            self.macro_stop()
+
+            #self.macro_stop()
             self.terminate()
             #self.disengage()

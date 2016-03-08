@@ -42,7 +42,7 @@ class AutonomousMode(object):
     def stop_autonomous(self):
         self.running = False
         for macro in self.running_macros:
-            macro.kill()
+            macro.terminate()
         self.running_macros.clear()
 
     def exec_macro(self, macro):
@@ -59,7 +59,7 @@ class AutonomousMode(object):
             raise StopIteration()
         self.running_macros.add(macro)
         macro.reset()
-        macro.execute()
+        macro.run_linear()
         if macro in self.running_macros:
             self.running_macros.remove(macro)
         if not self.running:
@@ -70,7 +70,7 @@ class AutonomousMode(object):
         Runs a macro in a separate thread.
         Returns a handle to the thread.
         """
-        thread = threading.Thread(target=self.exec_macro, args=(macro,))
+        thread = threading.Thread(target=self.exec_macro, args=(macro, ))
         thread.start()
         return thread
 
