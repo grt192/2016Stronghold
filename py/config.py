@@ -23,7 +23,7 @@ from grt.macro.record_macro import RecordMacro, PlaybackMacro
 from grt.mechanism.override_manager import OverrideManager
 
 from grt.mechanism.nt_ticker import NTTicker
-from grt.autonomous.basic_auto import OneCrossAuto
+from grt.autonomous.one_cross_auto import OneCrossAuto
 from collections import OrderedDict
 
 using_vision_server = True
