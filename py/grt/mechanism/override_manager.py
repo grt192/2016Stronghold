@@ -2,14 +2,15 @@ from wpilib import CANTalon
 
 
 class OverrideManager:
-    pickup_override = True
-    tt_override = True
-    hood_override = True
+    pickup_override = False
+    tt_override = False
+    hood_override = False
     vt_override = False
     
     def __init__(self, shooter, pickup, compressor):
         self.shooter = shooter
         self.pickup = pickup
+        self.compressor = compressor
         self.shooter.override_manager = self
         self.pickup.override_manager = self
         self.shooter.hood.override_manager = self

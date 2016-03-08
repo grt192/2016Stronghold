@@ -158,7 +158,7 @@ class Shooter:
 
     def geo_forward_func(self):
         if self.shooter_timers_running:
-            self.flywheel.spin_to_geo_speed()
+            self.flywheel.spin_to_geo_power()
             self.hood.go_to_geo_angle()
             self.geo_automatic = True
             threading.Timer(self.GEO_SPINUP_TIME, self.execute_shot).start()

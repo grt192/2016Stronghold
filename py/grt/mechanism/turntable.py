@@ -121,7 +121,7 @@ class TurnTable:
         if not self.override_manager.tt_override:
             self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
             self.turntable_motor.set(self.POT_CENTER)
-            threading.Timer(2.5, self.disable_front_lock).start()
+            #threading.Timer(2.5, self.disable_front_lock).start()
 
     def disable_front_lock(self):
         self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)

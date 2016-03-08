@@ -25,16 +25,17 @@ class MechController:
         Pickup angle change manual control
         """
         if self.override_manager.pickup_override:
-            self.override_manager.pickup_alt()
             if state_id == "l_y_axis":
                 if datum:
-                    self.pickup.angle_change(datum)
+                    print("Moving pickup")
+                    self.pickup.angle_change(-datum)
+                
+            
 
         """
         Turntable rotation manual control
         """
         if self.override_manager.tt_override:
-            self.override_manager.turntable_alt()
             if state_id == "r_x_axis":
                 if datum:
                     self.shooter.turntable.turn(datum*.3)
@@ -43,7 +44,6 @@ class MechController:
         Hood rotation manual control
         """
         if self.override_manager.hood_override:
-            self.override_manager.hood_alt()
             if state_id == "r_y_axis":
                 if datum:
                     self.shooter.hood.rotate(datum*.3)
@@ -140,7 +140,7 @@ class MechController:
         """
         Flywheel full reverse power
         """
-        if state_id == "switch3":
+        if state_id == "switch2":
             if datum:
                 self.shooter.flywheel.spin_to_full_reverse_power()
             else:
@@ -148,7 +148,7 @@ class MechController:
         """
         Flywheel full forward power
         """
-        if state_id == "switch2":
+        if state_id == "switch5":
             if datum:
                 self.shooter.flywheel.spin_to_full_power()
             else:
@@ -204,7 +204,7 @@ class MechController:
         """
         Compressor override (used in high-power situations)
         """
-        if state_id == "switch1":
+        if state_id == "switch3":
             if datum:
                 self.override_manager.compressor_alt()
             else:
