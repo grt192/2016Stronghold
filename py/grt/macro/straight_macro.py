@@ -19,7 +19,12 @@ class StraightMacro(GRTMacro):
     DT_KD = 0
     DT_ABS_TOL = 5
     DT_OUTPUT_RANGE = .25
+
+    POWER_DEFAULT = -.7
+
     POWER = -.7
+
+    JOYSTICK_POWER = .8
 
     def __init__(self, dt, navx, timeout=None):
         """
@@ -33,6 +38,7 @@ class StraightMacro(GRTMacro):
         self.navx = navx
 
         self.setpoint = None
+        self.driver_control = False
 
 
 
@@ -55,6 +61,12 @@ class StraightMacro(GRTMacro):
 
     def macro_stop(self):
         self.disable()
+
+    def enable_driver_control(self):
+        self.driver_control = True
+
+    def disable_driver_control(self):
+        self.driver_control = False
 
     def set_forward(self):
         #Negative value is forward, positive value is reverse
@@ -89,9 +101,16 @@ class StraightMacro(GRTMacro):
         """
         if self.enabled:
             if not self.pid_controller.onTarget():
-                self.dt.set_dt_output(self.POWER + output, self.POWER -output)
+                if not self.driver_control:
+                    self.dt.set_dt_output(self.POWER + output, self.POWER -output)
+                else:
+                    self.dt.set_dt_output(self.JOYSTICK_POWER + output, self.JOYSTICK_POWER - output)
             else:
-                self.dt.set_dt_output(self.POWER, self.POWER)
+                if not self.driver_control:
+                    self.dt.set_dt_output(self.POWER, self.POWER)
+                else:
+                    self.dt.set_dt_output(self.JOYSTICK_POWER, self.JOYSTICK_POWER)
+
             print("Setpoint: ", self.pid_controller.getSetpoint())
             print("Output: ", output)
 

@@ -19,7 +19,6 @@ class ArcadeDriveController:
         operation_manager.shooter.drivecontroller = self
         operation_manager.shooter.dt = self.dt
         self.straight_macro = driving_straight_macro
-        self.straight_macro_driving = False
 
         self.manual_control_enabled = True
         self.l_joystick.add_listener(self._joylistener)
@@ -27,27 +26,26 @@ class ArcadeDriveController:
             self.r_joystick.add_listener(self._joylistener)
 
     def _joylistener(self, sensor, state_id, datum):
+
         if state_id == "trigger":
             if datum:
-                self.straight_macro.enable()
-                self.straight_macro_driving = True
+                self.straight_macro.enable_driver_control()
             else:
-                self.straight_macro.disable()
+                self.straight_macro.disable_driver_control()
 
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            if self.straight_macro_driving:
-                self.straight_macro.POWER = self.l_joystick.y_axis
 
+            self.straight_macro.JOYSTICK_POWER = self.l_joystick.y_axis
+
+            if abs(datum) > .03:
+                if self.manual_control_enabled:
+                    power = self.l_joystick.y_axis
+                    turnval = self.l_joystick.x_axis  # self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
+                    # get turn value from r_joystick if it exists, else get it from l_joystick
+                    self.dt.set_dt_output(power + turnval,
+                                          power - turnval)
             else:
-                if abs(datum) > .03:
-                    if self.manual_control_enabled:
-                        power = self.l_joystick.y_axis
-                        turnval = self.l_joystick.x_axis  # self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
-                        # get turn value from r_joystick if it exists, else get it from l_joystick
-                        self.dt.set_dt_output(power + turnval,
-                                              power - turnval)
-                else:
-                    self.dt.set_dt_output(0, 0)
+                self.dt.set_dt_output(0, 0)
         elif sensor == self.l_joystick and state_id == 'trigger':
             if datum:
                 self.dt.downshift()
