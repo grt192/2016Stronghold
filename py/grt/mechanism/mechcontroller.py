@@ -46,7 +46,7 @@ class MechController:
         if self.override_manager.hood_override:
             if state_id == "r_y_axis":
                 if datum:
-                    self.shooter.hood.rotate(datum*.3)
+                    self.shooter.hood.rotate(-datum*.3)
 
         """
         Pickup operation

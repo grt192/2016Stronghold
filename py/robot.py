@@ -64,7 +64,7 @@ class MyRobot(wpilib.SampleRobot):
             #print("Hood motor output: ", self.shooter.hood.hood_motor.getOutputVoltage())
             #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
             #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
-            #print("Target View: ", self.shooter.robot_vision.getTargetView(), "    Rotational error: ", self.shooter.robot_vision.getRotationalError(), "    Vertical Error: ", self.shooter.robot_vision.getTargetAngle(), "    Actual Speed: ", self.shooter.flywheel.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.STANDBY_SPEED)
+            print("Target View: ", self.shooter.robot_vision.getTargetView(), "    Rotational error: ", self.shooter.robot_vision.getRotationalError(), "    Vertical Error: ", self.shooter.robot_vision.getTargetAngle(), "    Actual Speed: ", self.shooter.flywheel.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.STANDBY_SPEED)
             #print("Number of threads: ", threading.active_count())
             self.safeSleep(tinit, .04)
             

@@ -111,13 +111,13 @@ class Vision:
             #print("Target Speed: ", self.target_speed)
             #print("Target Angle: ", self.target_angle)
     def getFrame(self):
-        small_img = cv2.resize(self.img, (160, 120))
-        ret, img_jpg = cv2.imencode(".jpg", small_img)
+        #small_img = cv2.resize(self.img, (160, 120))
+        #ret, img_jpg = cv2.imencode(".jpg", small_img)
         #image = Image.fromarray(img_jpg)
         #buf = StringIO()
         #image.save(buf,)
         #print("Returning frame")
-        return img_jpg
+        return None
 
     def getTargetView(self):
         with self.vision_lock:

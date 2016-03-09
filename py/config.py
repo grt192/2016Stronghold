@@ -26,7 +26,7 @@ from grt.mechanism.nt_ticker import NTTicker
 from grt.autonomous.one_cross_auto import OneCrossAuto
 from collections import OrderedDict
 
-using_vision_server = True
+using_vision_server = False
 
 #Compressor initialization
 compressor = Compressor()

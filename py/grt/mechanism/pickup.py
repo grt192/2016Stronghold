@@ -1,9 +1,9 @@
 from wpilib import CANTalon
 import threading
-LEFT_PICKUP_DOWN_POSITION = 674
+LEFT_PICKUP_DOWN_POSITION = 680
 LEFT_PICKUP_UP_POSITION = LEFT_PICKUP_DOWN_POSITION - 130
 
-RIGHT_PICKUP_DOWN_POSITION = 815
+RIGHT_PICKUP_DOWN_POSITION = 808
 RIGHT_PICKUP_UP_POSITION = RIGHT_PICKUP_DOWN_POSITION + 115
 
 LEFT_PICKUP_CROSS_POSITION = 640
@@ -27,7 +27,7 @@ class Pickup:
 
     def angle_change(self, power):
         if self.achange_motor_1.getControlMode() == CANTalon.ControlMode.PercentVbus  and self.achange_motor_2.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.achange_motor_1.set(power*.8)
+            self.achange_motor_1.set(power*.7)
             self.achange_motor_2.set(-power)
 
     def roll(self, power):

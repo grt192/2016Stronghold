@@ -31,7 +31,7 @@ class Flywheel:
     
     def spin_to_reverse_power(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
-        self.flywheel_motor.set(-.6)
+        self.flywheel_motor.set(-.4)
 
     def spin_to_full_reverse_power(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
@@ -85,7 +85,7 @@ class Flywheel:
 
     def spin_to_pickup_power(self):
         self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
-        self.flywheel_motor.set(.25)
+        self.flywheel_motor.set(.19)
 
 
 
