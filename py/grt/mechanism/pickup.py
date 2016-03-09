@@ -76,6 +76,12 @@ class Pickup:
             self.achange_motor_1.changeControlMode(CANTalon.ControlMode.Position)
             self.achange_motor_2.changeControlMode(CANTalon.ControlMode.Position)
 
+    def straight_macro_angle_change(self, power_left, power_right):
+        self.disable_automatic_control()
+        if (power_left < 0) == (not power_right < 0):
+            self.achange_motor_1.set(power_left)
+            self.achange_motor_2.set(power_right)
+
     def disable_automatic_control(self):
         #print("Automatic control disabled!")
         self.achange_motor_1.changeControlMode(CANTalon.ControlMode.PercentVbus)
