@@ -104,7 +104,7 @@ if using_vision_server:
 shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act)
 
 
-ball_switch = Sw
+ball_switch = Switch(0)
 
 #Magic numbers for shooting:
 #Raise the hood to 35 degrees (potentiometer position 247)
@@ -154,11 +154,13 @@ playback_macro = PlaybackMacro(shop_instructions, talon_arr)
 #Operation manager, controllers, and sensor pollers
 operation_manager = OperationManager(shooter, pickup, straight_macro, record_macro, playback_macro)
 override_manager = OverrideManager(shooter, pickup, compressor)
+
+pickup_macro = PickupMacro(operation_manager, ball_switch=ball_switch)
+
 ac = ArcadeDriveController(dt, driver_stick, shooter)
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
 
 
-pickup_macro = PickupMacro(operation_manager, ball_switch=ball_switch)
 
 
 # define DriverStation

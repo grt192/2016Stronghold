@@ -6,10 +6,15 @@ import threading
 #VT_POSITION = 271
 #BATTER_POSITION = 200
 VT_POSITION = 265 #35 degrees
-MIN_POSITION = 211 #20 degrees
-MIN_POSITION_ELEVATOR_ALLOWED = 246 #No angle for this position, but this is the lowest the hood can go before the polycarb will crash into the base plate if the elevator lowers
-MAX_POSITION = 454 #63 degrees
+# MIN_POSITION = 211 #20 degrees
+
+# MIN_POSITION_ELEVATOR_ALLOWED = 246 #No angle for this position, but this is the lowest the hood can go before the polycarb will crash into the base plate if the elevator lowers
+# MAX_POSITION = 454 #63 degrees
 GEO_POSITION = 217 #23 degrees
+
+# Flagstaff
+MIN_POSITION = 220
+MAX_POSITION = 224
 
 class Hood:
     HOOD_MIN = 155
@@ -36,7 +41,8 @@ class Hood:
     def go_to_frame_angle(self):
         self.enable_automatic_control()
         print("Going to frame angle")
-        self.auto_set(MIN_POSITION_ELEVATOR_ALLOWED)
+        # self.auto_set(MIN_POSITION_ELEVATOR_ALLOWED)
+        self.auto_set(MIN_POSITION)
         threading.Timer(2.5, self.disable_automatic_control).start()
 
     def auto_set(self, angle):

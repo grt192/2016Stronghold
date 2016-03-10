@@ -11,12 +11,14 @@ import platform
 class TurnTable:
 
     if "Linux" in platform.platform():
-        #POT_CENTER = 495
-        POT_CENTER = 401
+        #POT_CENTER = 495 409
+        POT_CENTER = 312
     else:
         POT_CENTER = 0
-    POT_MIN = POT_CENTER - 9
-    POT_MAX = POT_CENTER + 9
+    POT_MIN = POT_CENTER - 25
+    POT_MAX = POT_CENTER + 25
+    # POT_MIN = POT_CENTER - 9
+    # POT_MAX = POT_CENTER + 9
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
