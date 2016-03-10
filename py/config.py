@@ -3,6 +3,7 @@ Config File for Robot
 """
 
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon, AnalogInput
+from grt.sensors.switch import Switch
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -18,6 +19,7 @@ from grt.mechanism.manual_shooter import ManualShooter
 from grt.vision.robot_vision import Vision
 from grt.mechanism.shooter import Shooter
 from grt.mechanism.operation_manager import OperationManager
+from grt.macro.pickup_macro import PickupMacro
 from grt.sensors.switch_panel import SwitchPanel
 from grt.macro.record_macro import RecordMacro, PlaybackMacro
 from grt.mechanism.override_manager import OverrideManager
@@ -102,6 +104,8 @@ if using_vision_server:
 shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, shooter_act)
 
 
+ball_switch = Sw
+
 #Magic numbers for shooting:
 #Raise the hood to 35 degrees (potentiometer position 247)
 #Set the flywheel speed to 2600 ticks
@@ -111,11 +115,11 @@ shooter = Shooter(robot_vision, flywheel_motor, turntable_motor, hood_motor, sho
 
 #Pickup Talons and Objects
 pickup_achange_motor1 = CANTalon(8)
-pickup_achange_motor2 = CANTalon(9)
+pickup_achange_motor2 = CANTalon(7)
 
 
 
-pickup_roller_motor = CANTalon(7)
+pickup_roller_motor = CANTalon(9)
 
 
 pickup_achange_motor1.changeControlMode(CANTalon.ControlMode.Position)
@@ -136,6 +140,8 @@ navx = NavX()
 straight_macro = StraightMacro(dt, navx)
 one_cross_auto = OneCrossAuto(straight_macro)
 
+# Macros
+
 #Record macro initialization
 talon_arr = [dt_left, dt_right, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
 record_macro = RecordMacro(talon_arr)
@@ -150,6 +156,10 @@ operation_manager = OperationManager(shooter, pickup, straight_macro, record_mac
 override_manager = OverrideManager(shooter, pickup, compressor)
 ac = ArcadeDriveController(dt, driver_stick, shooter)
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
+
+
+pickup_macro = PickupMacro(operation_manager, ball_switch=ball_switch)
+
 
 # define DriverStation
 ds = DriverStation.getInstance()

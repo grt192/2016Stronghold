@@ -1,7 +1,7 @@
 class MechController:
     
 
-    def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, pickup_macro=None): # mechanisms belong in arguments
         # define mechanisms here
         
 
@@ -12,6 +12,7 @@ class MechController:
         self.shooter = shooter
         self.operation_manager = operation_manager
         self.override_manager = override_manager
+        self.pickup_macro = pickup_macro
 
 
 
@@ -52,10 +53,16 @@ class MechController:
         Pickup operation
         """
         if state_id == "r_shoulder":
-            if datum:
-                self.operation_manager.manual_pickup()
+            if self.pickup_macro:
+                if datum:
+                    self.pickup_macro.macro_initialize()
+                else:
+                    self.pickup_macro.terminate()
             else:
-                self.operation_manager.manual_pickup_abort()
+                if datum:
+                    self.operation_manager.manual_pickup()
+                else:
+                    self.operation_manager.manual_pickup_abort()
 
         """
         Run roller in reverse
