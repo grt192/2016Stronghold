@@ -16,12 +16,11 @@ def index():
 #@staticmethod
 def gen(camera):
     """Video streaming generator function."""
-    i = 0
     while True:
-        frame = camera.getFrame()
+        frame = camera.getFrame()[1]
         #print(frame)
-        time.sleep(.1)
-        to_print = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame.tobytes() + b'\r\n'
+        time.sleep(1)
+        to_print = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + np.ndarray.tostring(frame) + b'\r\n'
         #print(to_print)
         yield (to_print)
 
