@@ -28,7 +28,7 @@ from grt.mechanism.nt_ticker import NTTicker
 from grt.autonomous.one_cross_auto import OneCrossAuto
 from collections import OrderedDict
 
-using_vision_server = False
+using_vision_server = True
 
 #Compressor initialization
 compressor = Compressor()
@@ -86,7 +86,7 @@ turntable_motor.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
 turntable_motor.setPID(90, 0, 0, f=0)
 turntable_motor.configMaxOutputVoltage(8)
 turntable_motor.setAllowableClosedLoopErr(2)
-turntable_motor.reverseOutput(True)
+turntable_motor.reverseOutput(False)
 turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
 
 

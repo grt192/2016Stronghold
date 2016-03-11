@@ -29,7 +29,7 @@ class MechController:
             if state_id == "l_y_axis":
                 if datum:
                     print("Moving pickup")
-                    self.pickup.angle_change(-datum)
+                    self.pickup.angle_change(datum)
                 
             
 

@@ -27,8 +27,8 @@ class Pickup:
 
     def angle_change(self, power):
         if self.achange_motor_1.getControlMode() == CANTalon.ControlMode.PercentVbus  and self.achange_motor_2.getControlMode() == CANTalon.ControlMode.PercentVbus:
-            self.achange_motor_1.set(power*.7)
-            self.achange_motor_2.set(-power)
+            self.achange_motor_1.set(power)
+            self.achange_motor_2.set(-power*.9)
 
     def roll(self, power):
         self.roller_motor.set(-power*.7)
