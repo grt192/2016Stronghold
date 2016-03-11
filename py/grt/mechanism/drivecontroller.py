@@ -36,7 +36,8 @@ class ArcadeDriveController:
                                               power - turnval)
                     else:
                         self.dt.set_dt_output(0, 0)
-        elif sensor == self.l_joystick and state_id == 'trigger':
+        # elif sensor == self.l_joystick and state_id == 'trigger':
+        elif sensor == self.l_joystick and state_id == 'button9':
             if datum:
                 self.dt.downshift()
                 self.dt.enable_protective_measures()

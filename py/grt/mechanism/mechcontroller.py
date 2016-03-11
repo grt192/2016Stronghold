@@ -1,7 +1,7 @@
 class MechController:
     
 
-    def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, pickup_macro=None): # mechanisms belong in arguments
+    def __init__(self, driver_joystick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, portcullis_macro=None): # mechanisms belong in arguments
         # define mechanisms here
         
 
@@ -12,7 +12,8 @@ class MechController:
         self.shooter = shooter
         self.operation_manager = operation_manager
         self.override_manager = override_manager
-        self.pickup_macro = pickup_macro
+        self.pickup_macro = None
+        self.portcullis_macro = portcullis_macro
 
 
 
@@ -223,6 +224,13 @@ class MechController:
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):
+        if state_id == "trigger":
+            if self.shooter.rails.current_position == "up" :
+                self.shooter.rails.rails_down()
+            else:
+                self.shooter.rails.rails_up()
+
+
         if state_id == "button3":
             if datum:
                 self.operation_manager.forward_straight_cross()
