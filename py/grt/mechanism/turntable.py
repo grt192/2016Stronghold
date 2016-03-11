@@ -151,5 +151,9 @@ class TurnTableSensor(Sensor):
     def __init__(self, turntable):
         super().__init__()
         self.turntable = turntable
+        self.on_target_count = 0
+
     def poll(self):
-        self.rotation_ready = self.turntable.PID_controller.onTarget()
+        if self.turntable.PID_controller.onTarget():
+            self.on_target_count += 1
+        self.rotation_ready = self.turntable.PID_controller.onTarget() and self.on_target_count >= 4
