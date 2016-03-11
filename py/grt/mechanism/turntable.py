@@ -157,3 +157,5 @@ class TurnTableSensor(Sensor):
         if self.turntable.PID_controller.onTarget():
             self.on_target_count += 1
         self.rotation_ready = self.turntable.PID_controller.onTarget() and self.on_target_count >= 4
+        if self.rotation_ready:
+            self.on_target_count = 0
