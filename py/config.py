@@ -24,11 +24,18 @@ from grt.sensors.switch_panel import SwitchPanel
 from grt.macro.record_macro import RecordMacro, PlaybackMacro
 from grt.mechanism.override_manager import OverrideManager
 
+from grt.autonomous.basic_auto import BasicAuto
+from grt.autonomous.cross_and_shoot_auto import CrossAndShootAuto
+
+
 from grt.mechanism.nt_ticker import NTTicker
-from grt.autonomous.one_cross_auto import OneCrossAuto
 from collections import OrderedDict
 
 using_vision_server = True
+
+
+
+
 
 #Compressor initialization
 compressor = Compressor()
@@ -42,22 +49,22 @@ turntable_pot = AnalogInput(0)
 #DT talons and objects
 
 dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
+# dt_r2 = CANTalon(2)
+# dt_r3 = CANTalon(3)
 dt_left = CANTalon(11)
-dt_l2 = CANTalon(12)
-dt_l3 = CANTalon(13)
+# dt_l2 = CANTalon(12)
+# dt_l3 = CANTalon(13)
 dt_shifter = Solenoid(0)
 
 
-dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(dt_right.getDeviceID())
-dt_r3.set(dt_right.getDeviceID())
-dt_l2.set(dt_left.getDeviceID())
-dt_l3.set(dt_left.getDeviceID())
+# dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
+# dt_r2.set(dt_right.getDeviceID())
+# dt_r3.set(dt_right.getDeviceID())
+# dt_l2.set(dt_left.getDeviceID())
+# dt_l3.set(dt_left.getDeviceID())
 
 dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, right_encoder=None)
 
@@ -138,7 +145,7 @@ pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_moto
 #Straight macro initialization
 navx = NavX()
 straight_macro = StraightMacro(dt, navx)
-one_cross_auto = OneCrossAuto(straight_macro)
+# one_cross_auto = OneCrossAuto(straight_macro)
 
 # Macros
 
@@ -161,6 +168,9 @@ ac = ArcadeDriveController(dt, driver_stick, shooter)
 mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
 
 
+# Auto
+basic_auto = BasicAuto(straight_macro)
+cross_and_shoot_auto = CrossAndShootAuto(straight_macro, operation_manager)
 
 
 # define DriverStation

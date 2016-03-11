@@ -218,11 +218,6 @@ class MechController:
             else:
                 self.override_manager.compressor_norm()
 
-
-
-
-
-
     def _driver_joystick_listener(self, sensor, state_id, datum):
         if state_id == "trigger":
             if self.shooter.rails.current_position == "up" :

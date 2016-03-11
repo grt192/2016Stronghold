@@ -17,7 +17,8 @@ class MyRobot(wpilib.SampleRobot):
         import config
         self.hid_sp = config.hid_sp
         self.nt_sp = config.nt_sp
-        self.one_cross_auto = config.one_cross_auto
+        self.basic_auto = config.basic_auto
+        self.cross_and_shoot_auto = config.cross_and_shoot_auto
         self.navx = config.navx
         self.shooter = config.shooter
         self.pickup = config.pickup
@@ -25,7 +26,8 @@ class MyRobot(wpilib.SampleRobot):
 
         self.autoChooser = SendableChooser()
         self.autoChooser.addDefault("No Autonomous", None)
-        self.autoChooser.addObject("One Cross Auto", self.one_cross_auto)
+        self.autoChooser.addObject("Cross And Shoot Auto", self.cross_and_shoot_auto)
+        self.autoChooser.addObject("Basic Auto", self.basic_auto)
         SmartDashboard.putData("Autonomous Mode", self.autoChooser)
         self.auto = self.autoChooser.getSelected()
         
