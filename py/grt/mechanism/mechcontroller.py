@@ -254,12 +254,15 @@ class MechController:
 
         if state_id == "button6":
             if datum:
-                self.operation_manager.chival_cross()
+                self.chival_macro.enable()
             else:
-                self.operation_manager.chival_cross_abort()
+                self.chival_macro.disable()
 
         if state_id == "button7":
-            pass
+            if datum:
+                self.portcullis_macro.enable()
+            else:
+                self.portcullis_macro.disable()
             # if datum:
             #     self.operation_manager.portcullis_cross()
             # else:
