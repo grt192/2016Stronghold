@@ -14,6 +14,7 @@ class MechController:
         self.override_manager = override_manager
         self.pickup_macro = None
         self.portcullis_macro = portcullis_macro
+        self.chival_macro = chival_macro
 
 
 
@@ -40,7 +41,7 @@ class MechController:
         if self.override_manager.tt_override:
             if state_id == "r_x_axis":
                 if datum:
-                    self.shooter.turntable.turn(datum*.3)
+                    self.shooter.turntable.joystick_turn(datum*.3)
 
         """
         Hood rotation manual control

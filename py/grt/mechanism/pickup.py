@@ -32,7 +32,7 @@ class Pickup:
             self.achange_motor_2.set(-power * .9)
 
     def roll(self, power):
-        self.roller_motor.set(-power * .7)
+        self.roller_motor.set(-power)
 
     def stop(self):
         self.roller_motor.set(0)

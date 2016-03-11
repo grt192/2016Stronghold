@@ -12,7 +12,8 @@ class TurnTable:
 
     if "Linux" in platform.platform():
         #POT_CENTER = 495 409
-        POT_CENTER = 312
+        # POT_CENTER = 312
+        POT_CENTER = 348
     else:
         POT_CENTER = 0
     POT_MIN = POT_CENTER - 25
@@ -23,12 +24,12 @@ class TurnTable:
     INITIAL_NO_TARGET_TURN_RATE = 0
 
     TURNTABLE_NO_TARGET_TURN_RATE = .1
-    TURNTABLE_KP = .0018
+    TURNTABLE_KP = .0007
     TURNTABLE_KI = 0
-    TURNTABLE_KD = .008
-    TURNTABLE_ABS_TOL = 10
+    TURNTABLE_KD = .001
+    TURNTABLE_ABS_TOL = 15
     TURNTABLE_OUTPUT_RANGE = .4
-    TURNTABLE_SETPOINT = 35
+    TURNTABLE_SETPOINT = -20
 
 
     def __init__(self, shooter):
@@ -74,7 +75,14 @@ class TurnTable:
             else:
                 #If the target is visible, and I'm not on target, keep going.
                 #self.dt_turn(output)
-                self.turn(output)
+                self.joystick_turn(output)
+                if abs(output) > .07:
+                    self.joystick_turn(output)
+                elif output <= 0:
+                    self.joystick_turn(-.07)
+                elif output > 0:
+                    self.joystick_turn(.07)
+
         else:
             if self.last_output > 0:
                 #If the target is not visible, and I was moving forward, keep moving forward.
@@ -90,7 +98,7 @@ class TurnTable:
             else:
                 print("Last_output error!")
             #self.dt_turn(output)
-            self.turn(output)
+            self.joystick_turn(output)
         self.last_output = output
 
     def turn(self, output):

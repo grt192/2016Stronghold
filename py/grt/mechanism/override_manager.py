@@ -3,7 +3,7 @@ from wpilib import CANTalon
 
 class OverrideManager:
     pickup_override = True
-    tt_override = False
+    tt_override = True
     hood_override = False
     vt_override = False
     
