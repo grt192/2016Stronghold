@@ -21,7 +21,6 @@ class MyRobot(wpilib.SampleRobot):
         self.navx = config.navx
         self.shooter = config.shooter
         self.pickup = config.pickup
-        
 
         self.autoChooser = SendableChooser()
         self.autoChooser.addDefault("No Autonomous", None)

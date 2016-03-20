@@ -33,6 +33,7 @@ from grt.macro.straight_macro import StraightMacro
 from grt.macro.record_macro import RecordMacro
 from grt.macro.record_macro import PlaybackMacro
 
+from grt.macro.pickup_straight_macro import PickupStraightMacro
 from grt.mechanism.nt_ticker import NTTicker
 from grt.autonomous.one_cross_auto import OneCrossAuto
 from collections import OrderedDict
@@ -142,6 +143,8 @@ navx = NavX()
 straight_macro = StraightMacro(dt, navx)
 one_cross_auto = OneCrossAuto(straight_macro)
 
+pickup_straight_macro = PickupStraightMacro(pickup_motor1, pickup_motor2, potentiometer1, potentiometer2)
+
 # Record macro initialization
 talon_arr = [dt_left, dt_right, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
 record_macro = RecordMacro(talon_arr)
@@ -155,7 +158,7 @@ operation_manager = OperationManager(shooter, pickup, straight_macro, record_mac
 override_manager = OverrideManager(shooter, pickup, compressor)
 
 ac = ArcadeDriveController(dt, driver_stick, shooter, straight_macro, operation_manager)
-mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager)
+mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, pickup_straight_macro)
 
 # define DriverStation
 ds = DriverStation.getInstance()
