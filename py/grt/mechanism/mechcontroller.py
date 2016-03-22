@@ -4,44 +4,45 @@ class MechController:
 
 
 
-    def __init__(self,  macro_initialize, potentiometer1, potentiometer2, disable, mimic_joystick, driver_joystick, xbox_controller, switch_panel, pickup, shooter, robot_vision, operation_manager, override_manager, dummy_vision=False): # mechanisms belong in arguments
+    def __init__(self, pickup_straight_macro, pickup_achange_motor1, pickup_achange_motor2, potentiometer1, potentiometer2, mimic_joystick, driver_joystick, xbox_controller, switch_panel, pickup, shooter, robot_vision, operation_manager, override_manager, dummy_vision=False): # mechanisms belong in arguments
         # define mechanisms here
         
 
         self.driver_joystick = driver_joystick
         self.xbox_controller = xbox_controller
         self.mimic_joystick = mimic_joystick
-
+        self.pickup_straight_macro = pickup_straight_macro
         self.pickup = pickup
         self.shooter = shooter
         self.operation_manager = operation_manager
         self.override_manager = override_manager
-        self.macro_initialize = macro_initialize
+        self.pickup_achange_motor1 = pickup_achange_motor1
+        self.pickup_achange_motor2 = pickup_achange_motor2
         self.potentiometer1 = potentiometer1
         self.potentiometer2 = potentiometer2
-        self.disable = disable
         self.robot_vision = robot_vision
 
 
         driver_joystick.add_listener(self._driver_joystick_listener)
         xbox_controller.add_listener(self._xbox_controller_listener)
         switch_panel.add_listener(self._switch_panel_listener)
+        mimic_joystick.add_listener(self._dummy_vision_listener)
 
     def _dummy_vision_listener(self, pickup_straight_macro, state_id, datum):
         # If robot_vision is a Mimic
         if type(self.robot_vision) == Mimic:
             if state_id == "button2":
-                self.macro_initialize()
+                self.pickup_straight_macro.enable()
             if state_id == "x_axis":
                 if datum:
-                    self.potentiometer1.angle()
+                    self.potentiometer1.angle = int(datum * 100)
+                    print("Potentiometer1 angle: " , self.potentiometer1.angle)
             if state_id == "y_axis":
                 if datum:
-                    self.potentiometer2.angle()
-            if state_id == "button3":
-                self.potentiometer1.angle() - self.potentiometer2.angle()
+                    self.potentiometer2.angle = int(datum * 100)
+                    print("Potentiometer2 angle: " , self.potentiometer2.angle)
             if state_id == "button4":
-                self.disable()
+                self.pickup_straight_macro.disable()
 
 
     def _xbox_controller_listener(self, sensor, state_id, datum):

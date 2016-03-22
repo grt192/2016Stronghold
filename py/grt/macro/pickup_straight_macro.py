@@ -23,18 +23,19 @@ class PickupStraightMacro(GRTMacro):
     DT_OUTPUT_RANGE = .25
     POWER = -.7
 
-    def __init__(self, pickup_motor1, pickup_motor2, potentiometer1, potentiometer2, timeout=None):
+    def __init__(self, pickup_motor1, pickup_motor2, dt, potentiometer1, potentiometer2, timeout=None):
         """
         Pass drivetrain, distance to travel (ft), and timeout (secs)
         """
         super().__init__(timeout)
+        self.dt = dt
         self.operation_manager = None
         self.pickup_motor1 = pickup_motor1
         self.pickup_motor2 = pickup_motor2
         self.potentiometer1 = potentiometer1
         self.potentiometer2 = potentiometer2
         self.enabled = False
-        self.setpoint = None
+        self.setpoint = 0
 
         self.pid_controller = wpilib.PIDController(self.DT_KP, self.DT_KI,
                                                    self.DT_KD, self.get_input,
@@ -53,14 +54,13 @@ class PickupStraightMacro(GRTMacro):
         threading.Timer(2.0, self.disable).start()
 
     def enable(self):
-        self.setpoint = self.navx.fused_heading
         self.pid_controller.setSetpoint(self.setpoint)
         self.pid_controller.enable()
         self.enabled = True
 
     def disable(self):
         self.pid_controller.disable()
-        self.setpoint = None
+        self.setpoint = 0
         self.enabled = False
         self.pickup_motor1.set(0)
         self.pickup_motor2.set(0)
@@ -71,10 +71,11 @@ class PickupStraightMacro(GRTMacro):
     def set_output(self, output):
         if self.enabled:
             if not self.pid_controller.onTarget():
-                self.potentiometer1.set(self.POWER + output)
-                self.potentiometer1.set(self.POWER - output)
+                self.pickup_motor1.set(self.POWER + output)
+                self.pickup_motor2.set(self.POWER - output)
             else:
-                self.dt.set_dt_output(self.POWER, self.POWER)
+                self.pickup_motor1.set(self.POWER, self.POWER)
+                self.pickup_motor2.set(self.POWER, self.POWER)
 
     def get_input(self):
         print("Input: ", (self.potentiometer1.angle - self.potentiometer2.angle))

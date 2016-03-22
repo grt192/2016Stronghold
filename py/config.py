@@ -27,7 +27,7 @@ from grt.mechanism.flywheel import Flywheel
 from grt.mechanism.turntable import TurnTable
 from grt.mechanism.hood import Hood
 
-from grt.vision.robot_vision import Vision
+#from grt.vision.robot_vision import Vision
 
 from grt.macro.straight_macro import StraightMacro
 from grt.macro.record_macro import RecordMacro
@@ -67,12 +67,17 @@ dt = DriveTrain(dt_left, dt_right, left_shifter=dt_shifter, left_encoder=None, r
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 switch_panel = SwitchPanel(2)
+mimic_joystick = Attack3Joystick(3)
 
 # Vision
-robot_vision = Vision()
-if using_vision_server:
-    import grt.vision.vision_server
-    grt.vision.vision_server.prepare_module(robot_vision)
+#robot_vision = Vision()
+robot_vision = Mimic(target_view=False, rotational_error=0, vertical_error=0,
+getLowerThreshold=lambda: [1, 1, 1],
+getUpperThreshold=lambda: [2, 2, 2],
+setThreshold=lambda x, y: x)
+#if using_vision_server:
+    #import grt.vision.vision_server
+    #grt.vision.vision_server.prepare_module(robot_vision)
 
 # Flywheel
 flywheel_motor = CANTalon(10)
@@ -142,8 +147,10 @@ pickup = Pickup(pickup_achange_motor1, pickup_achange_motor2, pickup_roller_moto
 navx = NavX()
 straight_macro = StraightMacro(dt, navx)
 one_cross_auto = OneCrossAuto(straight_macro)
+potentiometer1 = Mimic(angle = 0)
+potentiometer2 = Mimic(angle = 0)
 
-pickup_straight_macro = PickupStraightMacro(pickup_motor1, pickup_motor2, potentiometer1, potentiometer2)
+pickup_straight_macro = PickupStraightMacro(pickup_achange_motor1, pickup_achange_motor2, dt, potentiometer1, potentiometer2)
 
 # Record macro initialization
 talon_arr = [dt_left, dt_right, pickup_achange_motor1, pickup_achange_motor2, pickup_roller_motor]
@@ -158,14 +165,14 @@ operation_manager = OperationManager(shooter, pickup, straight_macro, record_mac
 override_manager = OverrideManager(shooter, pickup, compressor)
 
 ac = ArcadeDriveController(dt, driver_stick, shooter, straight_macro, operation_manager)
-mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, pickup_straight_macro)
+mc = MechController(pickup_straight_macro, pickup_achange_motor1, pickup_achange_motor2, potentiometer1, potentiometer2, mimic_joystick, driver_stick, xbox_controller, switch_panel, pickup, shooter, robot_vision, operation_manager, override_manager)
 
 # define DriverStation
 ds = DriverStation.getInstance()
 
 nt_ticker = NTTicker(shooter, pickup, straight_macro)
 
-hid_sp = SensorPoller((driver_stick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
+hid_sp = SensorPoller((driver_stick, mimic_joystick, xbox_controller, switch_panel, shooter.flywheel_sensor, shooter.turntable_sensor, shooter.hood_sensor, navx))
 nt_sp = SensorPoller((nt_ticker,))
 
 
