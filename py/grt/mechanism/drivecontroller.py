@@ -9,57 +9,48 @@ class ArcadeDriveController:
     Class for controlling DT in arcade drive mode, with one or two joysticks.
     """
 
-    def __init__(self, dt, l_joystick, straight_macro=None, r_joystick=None):
+    def __init__(self, dt, l_joystick, shooter, r_joystick=None):
         """
         Initialize arcade drive controller with a DT and up to two joysticks.
         """
         self.dt = dt
         self.l_joystick = l_joystick
         self.r_joystick = r_joystick
+        shooter.drivecontroller = self
+        shooter.dt = self.dt
+        self.manual_control_enabled = True
         self.l_joystick.add_listener(self._joylistener)
         if self.r_joystick:
             self.r_joystick.add_listener(self._joylistener)
 
-        self.straight_macro = straight_macro
 
-        #self.engage()
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            if not self.straight_macro.enabled:
-                self.straight_macro.disable()
-                power = self.l_joystick.y_axis
-                turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
-                # get turn value from r_joystick if it exists, else get it from l_joystick
-                self.dt.set_dt_output(power + turnval,
-                                      power - turnval)
-
-        elif sensor == self.l_joystick and state_id == 'trigger':
+                if self.manual_control_enabled:
+                    if abs(self.l_joystick.x_axis) > .03 or abs(self.l_joystick.y_axis) > .03:
+                        power = self.l_joystick.y_axis
+                        turnval = self.l_joystick.x_axis#self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
+                        # get turn value from r_joystick if it exists, else get it from l_joystick
+                        self.dt.set_dt_output(power + turnval,
+                                              power - turnval)
+                    else:
+                        self.dt.set_dt_output(0, 0)
+        # elif sensor == self.l_joystick and state_id == 'trigger':
+        elif sensor == self.l_joystick and state_id == 'button9':
             if datum:
+                pass
+            else:
                 self.dt.upshift()
-            else:
-                self.dt.downshift()
+                self.dt.disable_protective_measures()
 
-        elif sensor == self.l_joystick and state_id == "button6":
-            if datum:
-                self.straight_macro.enable()
-            else:
-                self.straight_macro.disable()
-        elif state_id == "button7":
-            if datum:
-                self.straight_macro.disable()
-                self.dt.set_dt_output(0, 0)
+        
 
-    #def _vision_listener(self, sensor, state_id, datum):
+    def enable_manual_control(self):
+        self.manual_control_enabled = True
+    def disable_manual_control(self):
+        self.manual_control_enabled = False
 
-
-    #def engage(self):
-            
-
-    #def disengage(self):
-    #        self.l_joystick.remove_listener(self._joylistener)
-    #        if self.r_joystick:
-    #            self.r_joystick.remove_listener(self._joylistener)
 
 class TankDriveController:
     """

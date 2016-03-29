@@ -19,13 +19,15 @@ class StraightMacro(GRTMacro):
     DT_KD = 0
     DT_ABS_TOL = 5
     DT_OUTPUT_RANGE = .25
-    POWER = -.7
+    POWER = -.4
 
     def __init__(self, dt, navx, timeout=None):
         """
         Pass drivetrain, distance to travel (ft), and timeout (secs)
         """
         super().__init__(timeout)
+        self.set_forward()
+        self.operation_manager = None
         self.dt = dt
         self.enabled = False
         self.navx = navx
@@ -45,7 +47,23 @@ class StraightMacro(GRTMacro):
 
 
         self.pid_controller.setOutputRange(-.4, .4)
-        self.run_threaded()
+        #self.run_threaded()
+
+    def macro_initialize(self):
+        self.enable()
+        threading.Timer(6, self.disable).start()
+
+    def macro_stop(self):
+        self.disable()
+
+    def set_forward(self):
+        #Negative value is forward, positive value is reverse
+        if self.POWER > 0:
+            self.POWER *= -1
+
+    def set_reverse(self):
+        if self.POWER < 0:
+            self.POWER *= -1
 
 
     def enable(self):
@@ -59,6 +77,9 @@ class StraightMacro(GRTMacro):
         self.setpoint = None
         self.enabled = False
         self.dt.set_dt_output(0, 0)
+        if not self.operation_manager == None:
+            self.operation_manager.op_lock = False
+        #self.terminate()
 
     def set_output(self, output):
         """
@@ -68,9 +89,9 @@ class StraightMacro(GRTMacro):
         """
         if self.enabled:
             if not self.pid_controller.onTarget():
-                self.dt.set_dt_output(self.POWER + output, self.POWER -output)
+                self.dt.set_dt_output((self.POWER+.06) + output, self.POWER -output)
             else:
-                self.dt.set_dt_output(self.POWER, self.POWER)
+                self.dt.set_dt_output(self.POWER+.06, self.POWER)
             print("Setpoint: ", self.pid_controller.getSetpoint())
             print("Output: ", output)
 

@@ -2,42 +2,94 @@ from wpilib import CANTalon
 from grt.core import Sensor
 
 class Flywheel:
-    STANDBY_SPEED = -8400
+    STANDBY_SPEED = 3600
+    GEO_POWER = .7
+    GEO_SPEED = 2600
     def __init__(self, shooter):
         self.shooter = shooter
         self.flywheel_motor = shooter.flywheel_motor
         self.robot_vision = shooter.robot_vision
-        self.currentspeed = self.STANDBY_SPEED
 
     def spin_to_target_speed(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
         if self.robot_vision.getTargetView():
-            self.rpm_speed_spin(self.robot_vision.getTargetSpeed())
-    def spin_to_standby_speed(self):
-        self.rpm_speed_spin(self.STANDBY_SPEED)
-    def spindown(self):
-        self.rpm_speed_spin(0)
+            #self.rpm_speed_spin(self.robot_vision.getTargetSpeed())
+            self.flywheel_motor.set(self.STANDBY_SPEED)
 
-    def vbus_spin(self, power):
-        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVBus)
-        self.flywheel_motor.set(power)
-    def voltage_spin(self, voltage):
-        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Voltage)
-        self.flywheel_motor.set(voltage)
-    def raw_speed_spin(self, speed):
+    def spin_to_standby_speed(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+        self.flywheel_motor.set(self.STANDBY_SPEED)
+
+    def spin_to_geo_speed(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+        self.flywheel_motor.set(self.GEO_SPEED)
+
+    def spin_to_geo_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(self.GEO_POWER)
+
+    
+    def spin_to_reverse_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(-.8)
+
+    def spin_to_full_reverse_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(-1)
+
+    def spin_to_full_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(1)
+
+    def spindown(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(0)
+    
+    
+    def increment_vt_speed(self):
+        self.STANDBY_SPEED += 200
+        print("Current vt speed: ", self.STANDBY_SPEED)
         #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
-        #self.flywheel_motor.setP(1)
-        self.flywheel_motor.set(speed)
-    def rpm_speed_spin(self, speed):
-        #ADD PROPER CONVERSION CONSTANTS
-        self.raw_speed_spin(speed)
-    def speed_increment_function(self):
-        self.currentspeed=self.currentspeed+200
-        self.rpm_speed_spin(self.currentspeed)
-        print("Current Set Speed: ", self.currentspeed) 
-    def speed_decrement_function(self):
-        self.currentspeed=self.currentspeed-200
-        self.rpm_speed_spin(self.currentspeed)
-        print("Current Set Speed: ", self.currentspeed)
+        #self.currentspeed=self.currentspeed+200
+        #self.flywheel_motor.set(self.currentspeed)
+
+    def decrement_vt_speed(self):
+        self.STANDBY_SPEED -= 200
+        print("Current vt speed: ", self.STANDBY_SPEED)
+        #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.Speed)
+        #self.currentspeed=self.currentspeed-200
+        #self.flywheel_motor.set(self.currentspeed)
+
+    def increment_geo_power(self):
+        self.GEO_POWER += .1
+        print("Current geo power: ", self.GEO_POWER)
+        #self.current_power += .1
+        #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        #self.flywheel_motor.set(self.current_power)
+
+    def decrement_geo_power(self):
+        self.GEO_POWER -= .1
+        print("Current geo power: ", self.GEO_POWER)
+
+    def increment_geo_speed(self):
+        self.GEO_SPEED += 200
+        print("Current geo speed: ", self.GEO_SPEED)
+
+    def decrement_geo_speed(self):
+        self.GEO_SPEED -= 200
+        print("Current geo speed: ", self.GEO_SPEED)
+
+        #self.current_power -= .1
+        #self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        #self.flywheel_motor.set(self.current_power)
+
+    def spin_to_pickup_power(self):
+        self.flywheel_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.flywheel_motor.set(.19)
+        #self.flywheel_motor.set(.23)
+
+
+
 
         
 
@@ -45,14 +97,15 @@ class Flywheel:
 
 
 class FlywheelSensor(Sensor):
-    SPEED_TOLERANCE = 50
+    SPEED_TOLERANCE = 250
 
     def __init__(self, flywheel):
         super().__init__()
         self.flywheel = flywheel
 
     def poll(self):
-        if self.flywheel.flywheel_motor.getClosedLoopError() < self.SPEED_TOLERANCE:
+        #print("Flywheel close loop error: ", self.flywheel.flywheel_motor.getClosedLoopError())
+        if abs(self.flywheel.flywheel_motor.getClosedLoopError()) < self.SPEED_TOLERANCE:
             self.at_speed = True
         else:
             self.at_speed = False
