@@ -21,6 +21,7 @@ class MyRobot(wpilib.SampleRobot):
         self.cross_and_shoot_auto = config.cross_and_shoot_auto
         self.low_bar_auto = config.low_bar_auto
         self.low_bar_macro = config.low_bar_macro
+        self.cheval_macro = config.cheval_macro
         self.navx = config.navx
         self.shooter = config.shooter
         self.pickup = config.pickup
@@ -34,6 +35,7 @@ class MyRobot(wpilib.SampleRobot):
         #self.autoChooser.addObject("Cross And Shoot Auto", self.cross_and_shoot_auto)
         #self.autoChooser.addObject("Basic Auto", self.basic_auto)
         self.autoChooser.addObject("Low Bar Auto", self.low_bar_macro)
+        self.autoChooser.addObject("Cheval Auto" , self.cheval_macro)
         SmartDashboard.putData("Autonomous Mode", self.autoChooser)
         self.auto = self.autoChooser.getSelected()
         

@@ -175,8 +175,9 @@ override_manager = OverrideManager(shooter, pickup, compressor)
 chival_macro = ChivalMacro(pickup, straight_macro, operation_manager)
 pickup_macro = PickupMacro(operation_manager, ball_switch=ball_switch)
 
+
 ac = ArcadeDriveController(dt, driver_stick, shooter, )
-mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, portcullis_macro, chival_macro)
+mc = MechController(driver_stick, xbox_controller, switch_panel, pickup, shooter, operation_manager, override_manager, portcullis_macro, chival_macro, cheval_macro)
 
 
 # Auto
@@ -185,6 +186,7 @@ cross_and_shoot_auto = CrossAndShootAuto(straight_macro, operation_manager)
 
 low_bar_macro = LowBarMacro(shooter, pickup, straight_macro)
 low_bar_auto = LowBarAuto(low_bar_macro)
+cheval_macro = ChevalMacro(shooter, pickup, straight_macro)
 
 dual_low_goal = DualLowGoal(shooter, pickup, straight_macro, new_turn_macro)
 
