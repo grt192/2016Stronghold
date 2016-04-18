@@ -1,56 +1,43 @@
 import wpilib
 from grt.core import Sensor
 import threading
+from wpilib import CANTalon
+import platform
 
 
-ENC_MIN = -20000
-ENC_MAX = 20000
+
 
 
 class TurnTable:
 
-    # 2012 Values:
-
-    # DT_NO_TARGET_TURN_RATE = .2
-    # DT_KP = .0015
-    # DT_KI = 0
-    # DT_KD = 0
-    # DT_ABS_TOL = 50
-    # DT_OUTPUT_RANGE = .25
-    #
-    # INITIAL_NO_TARGET_TURN_RATE = 0
-    #
-    # TURNTABLE_NO_TARGET_TURN_RATE = .2
-    # TURNTABLE_KP = .002
-    # TURNTABLE_KI = 0
-    # TURNTABLE_KD = 0
-    # TURNTABLE_ABS_TOL = 10
-    # TURNTABLE_OUTPUT_RANGE = .4
-    #
-    #
-    # DT_NO_TARGET_TURN_RATE = .2
-    #--------------
-
-    DT_KP = .0015
-    DT_KI = 0
-    DT_KD = 0
-    DT_ABS_TOL = 50
-    DT_OUTPUT_RANGE = .25
+    if "Linux" in platform.platform():
+        #POT_CENTER = 495 409
+        # POT_CENTER = 312
+        POT_CENTER = 431
+    else:
+        POT_CENTER = 0
+    POT_MIN = POT_CENTER - 25
+    POT_MAX = POT_CENTER + 25
+    # POT_MIN = POT_CENTER - 9
+    # POT_MAX = POT_CENTER + 9
 
     INITIAL_NO_TARGET_TURN_RATE = 0
 
-    TURNTABLE_NO_TARGET_TURN_RATE = .2
-    TURNTABLE_KP = .0015
+    TURNTABLE_NO_TARGET_TURN_RATE = .1
+    TURNTABLE_KP = .0009
     TURNTABLE_KI = 0
-    TURNTABLE_KD = 0
-    TURNTABLE_ABS_TOL = 20
+    TURNTABLE_KD = .002
+    TURNTABLE_ABS_TOL = 15
     TURNTABLE_OUTPUT_RANGE = .4
+    # TURNTABLE_SETPOINT = -20
+    TURNTABLE_SETPOINT = 0
 
     def __init__(self, shooter):
         self.shooter = shooter
         self.turntable_motor = shooter.turntable_motor
         self.robot_vision = shooter.robot_vision
         self.dt = shooter.dt
+        self.override_manager = None
         self.turntable_lock = threading.Lock()
         self.last_output = self.INITIAL_NO_TARGET_TURN_RATE
         self.prev_input = 0
@@ -59,80 +46,111 @@ class TurnTable:
         self.PID_controller.setAbsoluteTolerance(self.TURNTABLE_ABS_TOL)
         self.PID_controller.reset()
         self.PID_controller.setOutputRange(-self.TURNTABLE_OUTPUT_RANGE, self.TURNTABLE_OUTPUT_RANGE)
-        #self.PID_controller.setInputRange(-300, 300)
+        self.PID_controller.setInputRange(-300, 300)
         #Be sure to use tolerance buffer
-        self.PID_controller.setSetpoint(0)
+        self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
 
     def getRotationReady(self):
+        #If an additional check is needed beyond PIDController.onTarget() for determining whether
+        #the rotation is ready, use this function
         with self.turntable_lock:
-            return self.rotation_ready
+            return self.PID_controller.onTarget()
 
     def get_input(self):
-        #Make sure this checks getTargetView(), as well
         if self.robot_vision.getTargetView():
             self.prev_input = self.robot_vision.getRotationalError()
             return self.prev_input
         else:
             return self.prev_input
 
-    def no_view_timeout(self):
-        pass
-        
+   
     def set_output(self, output):
+        if abs(output) > .12:
+            if output < 0:
+                self.TURNTABLE_SETPOINT = 10
+            if output > 0:
+                self.TURNTABLE_SETPOINT = -10
+                #self.TURNTABLE_SETPOINT = 0
+            self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
         
         if self.robot_vision.getTargetView():
             if self.PID_controller.onTarget():
                 #If the target is visible, and I'm on target, stop.
                 output = 0
-                self.dt_turn(output + 0.1)
-                # self.turn(output)
+                #self.dt_turn(output)
+                self.turn(output)
             else:
                 #If the target is visible, and I'm not on target, keep going.
-                self.dt_turn(output + 0.1)
-                # self.turn(output)
+                #self.dt_turn(output)
+                self.joystick_turn(output)
+                if abs(output) > .09:
+                    self.joystick_turn(output)
+                elif output <= 0:
+                    self.joystick_turn(-.09)
+                elif output > 0:
+                    self.joystick_turn(.09)
+
         else:
             if self.last_output > 0:
                 #If the target is not visible, and I was moving forward, keep moving forward.
-                output = self.DT_NO_TARGET_TURN_RATE
-                # output = self.TURNTABLE_NO_TARGET_TURN_RATE
+                #output = self.DT_NO_TARGET_TURN_RATE
+                output = self.TURNTABLE_NO_TARGET_TURN_RATE
             elif self.last_output < 0:
                 #If the target is not visible, and I was moving backward, keep moving backward.
-                output = -self.DT_NO_TARGET_TURN_RATE
-                # output = -self.TURNTABLE_NO_TARGET_TURN_RATE
+                #output = -self.DT_NO_TARGET_TURN_RATE
+                output = -self.TURNTABLE_NO_TARGET_TURN_RATE
             elif self.last_output == 0:
                 #If the target is not visible, but I was just on target, stay put.
                 output = 0
             else:
                 print("Last_output error!")
-
-            self.dt_turn(output + 0.1)
-            # self.turn(output)
+            #self.dt_turn(output)
+            self.joystick_turn(output)
         self.last_output = output
 
     def turn(self, output):
-        #enc_pos = self.turntable_motor.getEncPosition()
-        #if output > 0:
-        #    if enc_pos < ENC_MAX:
-                #enc_pos < ENC_MAX:
-        self.turntable_motor.set(output)
-            #else:
-             #   self.turntable_motor.set(0)
-        #elif output < 0:
-         #   if enc_pos > ENC_MIN:
-          #      self.turntable_motor.set(output)
-           # else:
-          #      self.turntable_motor.set(0)
-        #else:
-         #   self.turntable_motor.set(0)
+        if self.turntable_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+            if self.turntable_motor.getPosition() > self.POT_MIN and output > 0:
+                self.turntable_motor.set(output)
+            elif self.turntable_motor.getPosition() < self.POT_MAX and output < 0:
+                self.turntable_motor.set(output)
+            elif output == 0:
+                self.turntable_motor.set(0)
+            else:
+                self.turntable_motor.set(0)
+                print("Turntable exceeded max bounds: ", output)
+        else:
+            print("Turntable motor not in PercentVbus control mode!")
+
+    def joystick_turn(self, output):
+        if self.turntable_motor.getControlMode() == CANTalon.ControlMode.PercentVbus:
+            self.turntable_motor.set(output)
+        else:
+            print("Turntable motor not in PercentVbus control mode!")
+           
 
     def dt_turn(self, output):
         if self.dt:
             self.dt.set_dt_output(-output, -output)
 
-    def turn_to(self, target):
-        self.motor.changeControlMode(wpilib.CANTalon.ControlMode.Position)
-        self.motor.setP(1)
-        self.motor.set(target) # TODO: WILL NOT CHANGE CONTROL MODE BACK
+    
+    def enable_front_lock(self):
+        if not self.override_manager.tt_override:
+            self.turntable_motor.changeControlMode(CANTalon.ControlMode.Position)
+            self.turntable_motor.set(self.POT_CENTER)
+            #threading.Timer(2.5, self.disable_front_lock).start()
+
+    def disable_front_lock(self):
+        self.turntable_motor.changeControlMode(CANTalon.ControlMode.PercentVbus)
+        self.turntable_motor.set(0)
+
+    def decrement_vt_setpoint(self):
+        self.TURNTABLE_SETPOINT -= 5
+        self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
+
+    def increment_vt_setpoint(self):
+        self.TURNTABLE_SETPOINT += 5
+        self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
 
 
 
@@ -140,5 +158,13 @@ class TurnTableSensor(Sensor):
     def __init__(self, turntable):
         super().__init__()
         self.turntable = turntable
+        self.on_target_count = 0
+
     def poll(self):
-        self.rotation_ready = self.turntable.PID_controller.onTarget()
+        #if self.turntable.PID_controller.onTarget():
+        #    self.on_target_count += 1
+        if self.turntable.robot_vision.getTargetView() and self.turntable.PID_controller.onTarget():
+            self.rotation_ready = True
+        else:
+            self.rotation_ready = False
+        print("Rotation ready: ", self.rotation_ready)

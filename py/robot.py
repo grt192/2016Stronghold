@@ -1,41 +1,83 @@
+import platform
+if "Linux" in platform.platform():
+    with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
+        code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
+        exec(code)
+
 import wpilib
-import time
+import time, math
 import threading
-from queue import Queue
-from wpilib import Preferences
+from wpilib import SendableChooser, SmartDashboard
+
 
 
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
-
         import config
         self.hid_sp = config.hid_sp
-        self.ds = config.ds
+        self.nt_sp = config.nt_sp
+        self.basic_auto = config.basic_auto
+        self.cross_and_shoot_auto = config.cross_and_shoot_auto
+        self.low_bar_auto = config.low_bar_auto
+        self.low_bar_macro = config.low_bar_macro
+        self.cheval_macro = config.cheval_macro
         self.navx = config.navx
-        self.achange_motor = config.pickup_achange_motor2
+        self.shooter = config.shooter
+        self.pickup = config.pickup
+
+        self.dual_low_goal = config.dual_low_goal
+        
+
+        self.autoChooser = SendableChooser()
+        self.autoChooser.addObject("No Autonomous", None)
+        self.autoChooser.addObject("Dual Low Goal", self.dual_low_goal)
+        #self.autoChooser.addObject("Cross And Shoot Auto", self.cross_and_shoot_auto)
+        #self.autoChooser.addObject("Basic Auto", self.basic_auto)
+        self.autoChooser.addDefault("Low Bar Auto", self.low_bar_macro)
+        self.autoChooser.addObject("Cheval Auto" , self.cheval_macro)
+        SmartDashboard.putData("Autonomous Mode", self.autoChooser)
+        self.auto = self.autoChooser.getSelected()
+        
+
 
 
     def disabled(self):
+        if self.auto:
+            self.auto.stop_autonomous()
         while self.isDisabled():
             tinit = time.time()
             self.hid_sp.poll()
-            print("Pitch: " , self.navx.pitch, "Roll: ", self.navx.roll, "Yaw: ", self.navx.yaw, "Compass heading: ", self.navx.compass_heading, "Fused heading: ", self.navx.fused_heading)
-            # print("Pitch: " , self.navx.pitch)
-            # print("Roll: ", self.navx.roll)
-            # print("Yaw: ", self.navx.yaw)
-            # print("Compass heading: ", self.navx.compass_heading)
-            # print("Fused heading: ", self.navx.fused_heading)
+            self.nt_sp.poll()
+            self.auto = self.autoChooser.getSelected()
+            
             self.safeSleep(tinit, .04)
     
     def autonomous(self):
-        pass
+        if self.auto:
+            self.auto.run_autonomous()
+        while self.isAutonomous() and self.isEnabled():
+            tinit = time.time()
+            self.hid_sp.poll()
+            print("Target View: ", self.shooter.robot_vision.getTargetView(), "    Rotational error: ", self.shooter.robot_vision.getRotationalError(), "    Vertical Error: ", self.shooter.robot_vision.getTargetAngle(), "    Actual Speed: ", self.shooter.flywheel.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.STANDBY_SPEED)
+            self.safeSleep(tinit, .04)
+        if self.auto:
+            self.auto.stop_autonomous()
+        
     
     def operatorControl(self):
-
+        if self.auto:
+            self.auto.stop_autonomous()
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.hid_sp.poll()
+            print("Fused heading: ", self.navx.fused_heading)
+            #print("Pickup achange output: ", self.pickup.achange_motor_1.getOutputVoltage())
+            #print("Hood motor output: ", self.shooter.hood.hood_motor.getOutputVoltage())
+            #print("Target View: ", self.robot_vision.getTargetView(), "    Rotational error: ", self.robot_vision.getRotationalError())
+            #print("Flywheel actual speed: ", self.flywheel_motor.getEncVelocity(), "    Flywheel set speed: ", self.shooter.flywheel.currentspeed)
+            print("Target View: ", self.shooter.robot_vision.getTargetView(), "    Rotational error: ", self.shooter.robot_vision.getRotationalError(), "    Vertical Error: ", self.shooter.robot_vision.getTargetAngle(), "    Actual Speed: ", self.shooter.flywheel.flywheel_motor.getEncVelocity(), "    Set speed: ", self.shooter.flywheel.STANDBY_SPEED)
+            #print("Number of threads: ", threading.active_count())
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):

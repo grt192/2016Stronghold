@@ -3,15 +3,22 @@ import numpy as np
 import time, math, threading
 
 class Vision:
-    GREEN_LOWER = np.array([0, 100, 0], 'uint8')
-    GREEN_UPPER = np.array([200, 255, 100], 'uint8')
-    # GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
-    # GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
+    #GREEN_LOWER = np.array([0, 100, 0], 'uint8')   #Computer
+    #GREEN_UPPER = np.array([200, 255, 100], 'uint8')    #Computer
+    #GREEN_LOWER_HSV = np.array([75, 100, 160], 'uint8') #Computer
+    #GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Computer
 
-    GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')
-    GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8')
-    drawing = False
-    status_print = True
+    #GREEN_LOWER_HSV = np.array([75, 80, 100], 'uint8')  #Original Arizona arrival
+    #GREEN_UPPER_HSV = np.array([130, 255, 255], 'uint8') #Original Arizona arrival
+    #GREEN_LOWER_HSV = np.array([0, 0, 80], 'uint8') #Daylight
+    #GREEN_UPPER_HSV = np.array([130, 150, 150], 'uint8') #Daylight
+
+    GREEN_LOWER_HSV = np.array([60, 60, 60], 'uint8')
+    GREEN_UPPER_HSV = np.array([170, 255, 220], 'uint8')
+    
+
+    drawing = True
+    status_print = False
 
     POLY_ARC_LENGTH = .015
     POLY_MIN_SIDES = 6
@@ -36,6 +43,7 @@ class Vision:
         self.target_view = False
         self.rotational_error = self.vertical_error = self.DEFAULT_ERROR
         self.vision_lock = threading.Lock()
+        self.threshold_lock = threading.Lock()
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
@@ -51,7 +59,8 @@ class Vision:
 
     def get_max_contour(self, img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
+        with self.threshold_lock:
+            thresh = cv2.inRange(hsv, self.GREEN_LOWER_HSV, self.GREEN_UPPER_HSV)
         im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         area_max = area = 0
         max_contour = None
@@ -100,7 +109,7 @@ class Vision:
             #Initial distance calibration
             #distance = .0016 * (self.vertical_error ** 2) - .7107 * self.vertical_error + 162.09
             distance = .0021 * (self.vertical_error ** 2) - 1.2973 * self.vertical_error + 261.67
-            print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
+            #print("Target View: ", self.target_view, "   Rotational Error: ", self.rotational_error, "    Vertical Error: ", self.vertical_error, "     Distance: ", distance)
             #print("Vertical Error: ", self.vertical_error)
             #print("Rotational Error: ", self.rotational_error)
             #print("Rotational Error: ", self.rotational_error)
@@ -109,8 +118,8 @@ class Vision:
             #print("Target Speed: ", self.target_speed)
             #print("Target Angle: ", self.target_angle)
     def getFrame(self):
-        img_jpg = cv2.imencode(".jpg", self.img)
-        print("Returning frame")
+        img_jpg = cv2.imencode(".jpg", self.img, (cv2.IMWRITE_JPEG_QUALITY, 20))
+
         return img_jpg
 
     def getTargetView(self):
@@ -120,6 +129,10 @@ class Vision:
         with self.vision_lock:
             return self.rotational_error
 
+    def getVerticalError(self):
+        with self.vision_lock:
+            return self.vertical_error
+
     def getTargetAngle(self):
         with self.vision_lock:
             return self.vertical_error * 1 #Fancy conversion equation here
@@ -127,6 +140,20 @@ class Vision:
     def getTargetSpeed(self):
         with self.vision_lock:
             return self.vertical_error * 1 #Fancy coversion equation here
+
+    def setThreshold(self, lower_threshold, upper_threshold):
+        with self.threshold_lock:
+            self.GREEN_LOWER_HSV = lower_threshold
+            self.GREEN_UPPER_HSV = upper_threshold
+
+    def getLowerThreshold(self):
+        with self.threshold_lock:
+            return self.GREEN_LOWER_HSV
+
+    def getUpperThreshold(self):
+        with self.threshold_lock:
+            return self.GREEN_UPPER_HSV
+
 
 
 

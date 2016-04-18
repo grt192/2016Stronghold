@@ -1,12 +1,12 @@
-
 from wpilib import Talon
+
 
 class DriveTrain:
     """
     Standard 6-motor drivetrain, with standard tankdrive.
     """
     power = 1.0
-
+    LOW_GEAR_RAMP_RATE = 5
 
     def __init__(self,
                  left_motor, right_motor,
@@ -29,16 +29,27 @@ class DriveTrain:
         """
         Sets the DT output values; should be between -1 and 1.
         """
+        scale = 1
         left_output *= self.power
         right_output *= self.power
-        self.left_motor.set(-left_output)
-        self.right_motor.set(+right_output)
+        self.left_motor.set(-left_output * scale)
+        self.right_motor.set(+right_output * scale)
+
+    def enable_protective_measures(self):
+        # self.left_motor.setVoltageRampRate(self.LOW_GEAR_RAMP_RATE)
+        # self.right_motor.setVoltageRampRate(self.LOW_GEAR_RAMP_RATE)
+        self.disable_protective_measures()
+
+    def disable_protective_measures(self):
+        pass
+        # self.left_motor.setVoltageRampRate(0)
+        # self.right_motor.setVoltageRampRate(0)
 
     def set_right_motor(self, power):
         self.right_motor.set(power)
+
     def set_left_motor(self, power):
         self.left_motor.set(power)
-
 
     def set_power(self, power):
         """
