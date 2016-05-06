@@ -36,7 +36,7 @@ class Vision:
     # OpenCV: H = 0-180, S = 0-255, V = 0-255
     def vision_main(self):
         # initializes stuff
-        # self.vision_init()
+        self.vision_init()
         face_cascade_path = "/Users/dhruv/anaconda/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml"
         self.face_cascade = cv2.CascadeClassifier(os.path.expanduser(face_cascade_path))
 
@@ -56,7 +56,7 @@ class Vision:
         self.vision_lock = threading.Lock()
         self.threshold_lock = threading.Lock()
         print("Before video capture")
-        self.cap = cv2.VideoCapture()
+
         self.vision_thread = threading.Thread(target=self.vision_main)
         self.vision_thread.start()
 
@@ -64,6 +64,7 @@ class Vision:
         # cap = video capture object that lets you capture video
 
         # read functions returns 2 things, first thing gets ignored(_), second thing goes into img
+        self.cap = cv2.VideoCapture(0)
         _, self.img = self.cap.read()
         cv2.imshow("frame", self.img)
         # method: shape returns height, width, channels?
@@ -251,4 +252,5 @@ class Vision:
                 print("shoot")
             self.print_all_values()
         print(self.img)
+        cv2.imshow("frame", self.img)
         time.sleep(.025)
