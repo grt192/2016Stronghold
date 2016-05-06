@@ -113,7 +113,9 @@ hood_motor.configMaxOutputVoltage(5)
 hood_motor.setAllowableClosedLoopErr(5)
 hood_motor.changeControlMode(CANTalon.ControlMode.Position)
 
+print("before vision")
 robot_vision = Vision()
+print("after vision")
 if using_vision_server:
 	import grt.vision.vision_server
 	grt.vision.vision_server.prepare_module(robot_vision)

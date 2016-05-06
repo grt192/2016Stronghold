@@ -3,7 +3,8 @@ if "Linux" in platform.platform():
     with open("/home/lvuser/py/grt/vision/camscript_new.py") as f:
         code = compile(f.read(), "/home/lvuser/py/grt/vision/camscript_new.py", 'exec')
         exec(code)
-
+import sys
+sys.path.append("/Users/dhruv/anaconda/share/OpenCV/haarcascades")
 import wpilib
 import time, math
 import threading
