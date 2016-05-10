@@ -221,6 +221,12 @@ class MechController:
             else:
                 self.override_manager.compressor_norm()
 
+        if state_id == "switch1":
+            if datum:
+                self.shooter.drivecontroller.disable_manual_control()
+            else:
+                self.shooter.drivecontroller.enable_manual_control()
+
     def _driver_joystick_listener(self, sensor, state_id, datum):
         if state_id == "trigger":
             if datum:
