@@ -167,4 +167,4 @@ class TurnTableSensor(Sensor):
             self.rotation_ready = True
         else:
             self.rotation_ready = False
-        print("Rotation ready: ", self.rotation_ready)
+        #print("Rotation ready: ", self.rotation_ready)

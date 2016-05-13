@@ -37,7 +37,8 @@ class Vision:
     def vision_main(self):
         # initializes stuff
         self.vision_init()
-        face_cascade_path = "/Users/dhruv/anaconda/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml"
+        #face_cascade_path = "/Users/dhruv/anaconda/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml"
+        face_cascade_path = "/home/lvuser/haarcascade_frontalface_default.xml"
         self.face_cascade = cv2.CascadeClassifier(os.path.expanduser(face_cascade_path))
 
         # loop forever until you hit a key
@@ -66,7 +67,7 @@ class Vision:
         # read functions returns 2 things, first thing gets ignored(_), second thing goes into img
         self.cap = cv2.VideoCapture(0)
         _, self.img = self.cap.read()
-        cv2.imshow("frame", self.img)
+        #cv2.imshow("frame", self.img)
         # method: shape returns height, width, channels?
         self.height, self.width, channels = self.img.shape
         self.x_target = int(self.width / 2)
@@ -194,11 +195,21 @@ class Vision:
 
         cv2.rectangle(img, (mx, my), (mx + mw, my + mh), (255, 255, 255), 2)
 
+
         # Display the resulting frame
 
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     break
         return target_view, mx, my, mw, mh
+
+    def get_face_error(self, x, y, w, h):
+
+        moments = cv2.moments(target)
+        x_cm = (x+x+w)/2
+        vertical_error = y_cm = (y+y+h)/2
+        rotational_error = x_cm - self.x_target  # Experimental - actual
+        return (rotational_error, vertical_error)
+
 
 
     def vision_loop(self):
@@ -234,7 +245,7 @@ class Vision:
         # print("Exposure: ", self.cap.get(cv2.CAP_PROP_FPS))
         # captures frame every time loop is run
         _, self.img = self.cap.read()
-        cv2.imshow('frame', self.img)
+        #cv2.imshow('frame', self.img)
         # gets if the target is detected, and the array of the polygon that fits constraints
         target_view, x, y, w, h = self.get_face(self.img)
         # ?
@@ -247,10 +258,10 @@ class Vision:
                 cv2.rectangle(self.img, (x, y), (x + w, y + h), (255, 255, 0), 2)
             self.img = self.img
             if self.target_view:
-                # self.rotational_error, self.vertical_error = self.get_error(max_polygon)
+                self.rotational_error, self.vertical_error = self.get_face_error(max_polygon)
                 # self.vertical_error = self.get_vertical_error(max_polygon)
                 print("shoot")
             self.print_all_values()
         print(self.img)
-        cv2.imshow("frame", self.img)
+        #cv2.imshow("frame", self.img)
         time.sleep(.025)
