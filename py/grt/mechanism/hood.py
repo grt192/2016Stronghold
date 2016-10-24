@@ -14,7 +14,7 @@ if BALL_QUALITY == 0:
     # VT_POSITION = 302
     # LONG_RANGE_VT_POSITION = 330
     VT_POSITION = 292
-    LONG_RANGE_VT_POSITION = 320
+    LONG_RANGE_VT_POSITION = 270 #was 320
 # MIN_POSITION = 211 #20 degrees
 
 # MIN_POSITION_ELEVATOR_ALLOWED = 246 #No angle for this position, but this is the lowest the hood can go before the polycarb will crash into the base plate if the elevator lowers
@@ -22,7 +22,7 @@ if BALL_QUALITY == 0:
 GEO_POSITION = 198 #23 degrees
 
 # Flagstaff
-MIN_POSITION = 205
+MIN_POSITION = 205 
 MAX_POSITION = 419
 
 class Hood:

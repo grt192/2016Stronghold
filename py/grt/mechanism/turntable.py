@@ -67,9 +67,13 @@ class TurnTable:
     def set_output(self, output):
         if abs(output) > .12:
             if output < 0:
-                self.TURNTABLE_SETPOINT = 10
+                self.TURNTABLE_SETPOINT = -10 #was 10
+                print("turntable setpoint:")
+                print(self.TURNTABLE_SETPOINT)
             if output > 0:
-                self.TURNTABLE_SETPOINT = -10
+                self.TURNTABLE_SETPOINT = -40 #was -10
+                print("turntable setpoint:")
+                print(self.TURNTABLE_SETPOINT)
                 #self.TURNTABLE_SETPOINT = 0
             self.PID_controller.setSetpoint(self.TURNTABLE_SETPOINT)
         
@@ -167,4 +171,4 @@ class TurnTableSensor(Sensor):
             self.rotation_ready = True
         else:
             self.rotation_ready = False
-        print("Rotation ready: ", self.rotation_ready)
+        #print("Rotation ready: ", self.rotation_ready)

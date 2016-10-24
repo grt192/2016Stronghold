@@ -13,7 +13,10 @@ class Vision:
     #GREEN_LOWER_HSV = np.array([0, 0, 80], 'uint8') #Daylight
     #GREEN_UPPER_HSV = np.array([130, 150, 150], 'uint8') #Daylight
 
-    GREEN_LOWER_HSV = np.array([60, 60, 60], 'uint8')
+    # GREEN_LOWER_HSV = np.array([60, 60, 60], 'uint8')
+    # GREEN_UPPER_HSV = np.array([170, 255, 220], 'uint8')
+
+    GREEN_LOWER_HSV = np.array([50, 50, 50], 'uint8')
     GREEN_UPPER_HSV = np.array([170, 255, 220], 'uint8')
     
 
